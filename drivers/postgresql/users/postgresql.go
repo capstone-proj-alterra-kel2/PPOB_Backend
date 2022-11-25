@@ -58,3 +58,11 @@ func (ur *userRepository) Login(userDomain *users.Domain) users.Domain {
 	}
 	return user.ToDomain()
 }
+
+func (ur *userRepository) Profile(idUser string) users.Domain {
+	var user User
+
+	ur.conn.First(&user, "id=?", idUser)
+
+	return user.ToDomain()
+}

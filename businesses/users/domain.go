@@ -24,10 +24,12 @@ type Usecase interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) Domain
 	Login(userDomain *Domain) string
+	Profile(idUser string) Domain
 }
 
 type Repository interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) Domain
 	Login(userDomain *Domain) Domain
+	Profile(idUser string) Domain
 }

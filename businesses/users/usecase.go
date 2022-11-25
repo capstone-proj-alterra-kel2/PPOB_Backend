@@ -33,3 +33,7 @@ func (uu *userUsecase) Login(userDomain *Domain) string {
 	token := uu.jwtAuth.GenerateToken(user.ID, user.RoleID)
 	return token
 }
+
+func (uu *userUsecase) Profile(idUser string) Domain{
+	return uu.userRepository.Profile(idUser)
+}

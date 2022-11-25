@@ -8,6 +8,7 @@ import (
 	"PPOB_BACKEND/controllers/users/request"
 	"PPOB_BACKEND/controllers/users/response"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -96,4 +97,15 @@ func (ctrl *UserController) Logout(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "logout succes",
 	})
+}
+
+func (ctrl *UserController) Profile(c echo.Context) error {
+	id := middlewares.GetUser(c).ID
+	idUser := strconv.FormatUint(uint64(id), 10)
+	user := ctrl.userUsecase.Profile(idUser)
+
+	if user.ID == 0 {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", "cannot load profile", "")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "profile loaded", response.FromDomain(user))
 }
