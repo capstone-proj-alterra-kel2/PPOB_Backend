@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -55,6 +56,15 @@ func GetUser(c echo.Context) *JWTCustomClaims {
 	}
 	claims := user.Claims.(*JWTCustomClaims)
 	return claims
+}
+
+// Get user ID from JWT
+func GetUserID(c echo.Context) string {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*JWTCustomClaims)
+	userID := claims.ID
+	idUser := strconv.FormatUint(uint64(userID ), 10)
+	return idUser
 }
 
 // IsSuperAdmin perform athorized only Superadmin can access
