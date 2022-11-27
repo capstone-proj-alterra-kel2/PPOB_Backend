@@ -14,7 +14,7 @@ type User struct {
 	Email       string         `json:"email"`
 	Password    string         `json:"password"`
 	Image       string         `json:"image"`
-	RoleID      uint           `json:"is_admin"`
+	RoleID      uint           `json:"role_id"`
 	RoleName    string         `json:"role_name"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
