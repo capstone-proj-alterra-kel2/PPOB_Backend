@@ -37,3 +37,7 @@ func (uu *userUsecase) Login(userDomain *Domain) string {
 func (uu *userUsecase) Profile(idUser string) Domain{
 	return uu.userRepository.Profile(idUser)
 }
+
+func (uu *userUsecase) UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool {
+	return uu.userRepository.UpdatePassword(idUser, passwordDomain)
+}

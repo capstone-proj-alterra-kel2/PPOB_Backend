@@ -66,3 +66,17 @@ func (ur *userRepository) Profile(idUser string) users.Domain {
 
 	return user.ToDomain()
 }
+
+func (ur *userRepository) UpdatePassword(idUser string, passDomain *users.UpdatePasswordDomain) bool {
+	var user users.Domain = ur.Profile(idUser)
+	
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passDomain.OldPassword)); err != nil {
+		return false
+	}
+	newPassword, _ := bcrypt.GenerateFromPassword([]byte(passDomain.NewPassword), bcrypt.DefaultCost)
+	updated := FromDomain(&user)
+	updated.Password = string(newPassword)
+
+	ur.conn.Save(&updated)
+	return true
+}

@@ -19,6 +19,11 @@ type UserLogin struct {
 	Password string `json:"password" form:"password" validate:"required"`
 }
 
+type UpdatePassword struct {
+	OldPassword string `json:"old_password" validate:"required"`
+	NewPassword string `json:"new_password" validate:"required"`
+}
+
 func (req *User) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:        req.Name,
@@ -44,6 +49,20 @@ func (req *UserLogin) ToDomain() *users.Domain {
 }
 
 func (req *UserLogin) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
+
+func (req *UpdatePassword) ToDomain() *users.UpdatePasswordDomain {
+	return &users.UpdatePasswordDomain{
+		OldPassword: req.OldPassword,
+		NewPassword: req.NewPassword,
+	}
+}
+
+func (req *UpdatePassword) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(req)

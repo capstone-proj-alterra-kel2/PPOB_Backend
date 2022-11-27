@@ -8,7 +8,6 @@ import (
 	"PPOB_BACKEND/controllers/users/request"
 	"PPOB_BACKEND/controllers/users/response"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -100,12 +99,30 @@ func (ctrl *UserController) Logout(c echo.Context) error {
 }
 
 func (ctrl *UserController) Profile(c echo.Context) error {
-	id := middlewares.GetUser(c).ID
-	idUser := strconv.FormatUint(uint64(id), 10)
+	idUser := middlewares.GetUserID(c)
 	user := ctrl.userUsecase.Profile(idUser)
 
 	if user.ID == 0 {
 		return controllers.NewResponse(c, http.StatusNotFound, "failed", "cannot load profile", "")
 	}
 	return controllers.NewResponse(c, http.StatusOK, "success", "profile loaded", response.FromDomain(user))
+}
+
+func (ctrl *UserController) UpdatePassword(c echo.Context) error {
+	idUser := middlewares.GetUserID(c)
+	input := request.UpdatePassword{}
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+	}
+
+	isPasswordUpdated := ctrl.userUsecase.UpdatePassword(idUser, input.ToDomain())
+	if !isPasswordUpdated {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "wrong old password", "")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "password updated", "")
 }

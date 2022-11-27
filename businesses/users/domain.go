@@ -20,11 +20,17 @@ type Domain struct {
 	DeletedAt   gorm.DeletedAt
 }
 
+type UpdatePasswordDomain struct {
+	OldPassword string
+	NewPassword string
+}
+
 type Usecase interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) Domain
 	Login(userDomain *Domain) string
 	Profile(idUser string) Domain
+	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 }
 
 type Repository interface {
@@ -32,4 +38,5 @@ type Repository interface {
 	Register(userDomain *Domain) Domain
 	Login(userDomain *Domain) Domain
 	Profile(idUser string) Domain
+	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 }
