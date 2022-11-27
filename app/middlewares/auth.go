@@ -58,7 +58,7 @@ func GetUser(c echo.Context) *JWTCustomClaims {
 	return claims
 }
 
-// Get user ID from JWT
+// GetUserID perform get id user from JWT
 func GetUserID(c echo.Context) string {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JWTCustomClaims)
@@ -105,7 +105,7 @@ func CheckToken(token string) bool {
 	return false
 }
 
-// logout perform deleting token in whitelist
+// Logout perform deleting token in whitelist
 func Logout(token string) bool {
 	for i, listedToken := range whitelist {
 		if listedToken == token {
