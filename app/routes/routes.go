@@ -33,6 +33,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	user:= v1.Group("/user",middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.GET("/profile", cl.UserController.Profile)
  user.PUT("/password", cl.UserController.UpdatePassword)
+	user.PUT("/data", cl.UserController.UpdateData)
 	// User - Transaction
 	
 	// User - Wallet
