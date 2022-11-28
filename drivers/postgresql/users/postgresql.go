@@ -97,7 +97,20 @@ func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateData
 	if err != nil {
 		return updatedData.ToDomain(), err
 	}
-	fmt.Println(err)
+
+	return updatedData.ToDomain(), nil
+}
+
+func (ur *userRepository) UpdateImage(idUser string, imageDomain *users.UpdateImageDomain) (users.Domain, error) {
+	var user users.Domain = ur.Profile(idUser)
+	updatedData := FromDomain(&user)
+
+	updatedData.Image = imageDomain.Image
+	
+	err := ur.conn.Save(&updatedData).Error
+	if err != nil {
+		return updatedData.ToDomain(), err
+	}
 
 	return updatedData.ToDomain(), nil
 }

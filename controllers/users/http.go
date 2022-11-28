@@ -154,3 +154,29 @@ func (ctrl *UserController) UpdateData(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "data user updated", response.FromDomain(updatedData))
 }
+
+func (ctrl *UserController) UpdateImage(c echo.Context) error {
+	var result string
+	idUser := middlewares.GetUserID(c)
+	input := request.UpdateImage{}
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, image.Filename, src)
+		input.Image = result
+	}
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+	}
+	user, err := ctrl.userUsecase.UpdateImage(idUser, input.ToDomain())
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
+}

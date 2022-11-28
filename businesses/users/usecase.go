@@ -6,16 +6,15 @@ import (
 
 type userUsecase struct {
 	userRepository Repository
-	jwtAuth *middlewares.ConfigJWT
+	jwtAuth        *middlewares.ConfigJWT
 }
 
 func NewUserUseCase(ur Repository, jwtAuth *middlewares.ConfigJWT) Usecase {
-	return &userUsecase {
+	return &userUsecase{
 		userRepository: ur,
-		jwtAuth: jwtAuth,
+		jwtAuth:        jwtAuth,
 	}
 }
-
 
 func (uu *userUsecase) GetAll() []Domain {
 	return uu.userRepository.GetAll()
@@ -34,7 +33,7 @@ func (uu *userUsecase) Login(userDomain *Domain) string {
 	return token
 }
 
-func (uu *userUsecase) Profile(idUser string) Domain{
+func (uu *userUsecase) Profile(idUser string) Domain {
 	return uu.userRepository.Profile(idUser)
 }
 
@@ -44,4 +43,8 @@ func (uu *userUsecase) UpdatePassword(idUser string, passwordDomain *UpdatePassw
 
 func (uu *userUsecase) UpdateData(idUser string, dataDomain *UpdateDataDomain) (Domain, error) {
 	return uu.userRepository.UpdateData(idUser, dataDomain)
+}
+
+func (uu *userUsecase) UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error) {
+	return uu.userRepository.UpdateImage(idUser, imageDomain)
 }

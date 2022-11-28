@@ -26,16 +26,17 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// SignUp
 	auth.POST("/register", cl.UserController.Register)
 	// User
-	usersAdmin := v1.Group("/admin/users",middleware.JWTWithConfig(cl.JWTMIddleware))
+	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware))
 	usersAdmin.GET("", cl.UserController.GetAll, middlewares.IsAdmin)
 
 	// User Profile
-	user:= v1.Group("/user",middleware.JWTWithConfig(cl.JWTMIddleware))
+	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.GET("/profile", cl.UserController.Profile)
- user.PUT("/password", cl.UserController.UpdatePassword)
+	user.PUT("/password", cl.UserController.UpdatePassword)
 	user.PUT("/data", cl.UserController.UpdateData)
+	user.PUT("/image", cl.UserController.UpdateImage)
 	// User - Transaction
-	
+
 	// User - Wallet
 
 	// User - Product Type
