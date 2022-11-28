@@ -126,3 +126,27 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	}
 	return controllers.NewResponse(c, http.StatusOK, "success", "password updated", "")
 }
+
+func (ctrl *UserController) UpdateData(c echo.Context) error {
+	idUser := middlewares.GetUserID(c)
+	input := request.UpdateData{}
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+	}
+
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+	}
+
+	updatedData, err := ctrl.userUsecase.UpdateData(idUser, input.ToDomain())
+	if err != nil{
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
+	if updatedData.ID == 0 {
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", "data user not found", "")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "data user updated", response.FromDomain(updatedData))
+}

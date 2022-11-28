@@ -24,6 +24,12 @@ type UpdatePassword struct {
 	NewPassword string `json:"new_password" validate:"required"`
 }
 
+type UpdateData struct {
+	Name        string `json:"name" form:"name" validate:"required"`
+	PhoneNumber string `json:"phone_number" form:"phone_number" validate:"required"`
+	Email       string `json:"email" form:"email" validate:"required,email"`
+}
+
 func (req *User) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:        req.Name,
@@ -63,6 +69,21 @@ func (req *UpdatePassword) ToDomain() *users.UpdatePasswordDomain {
 }
 
 func (req *UpdatePassword) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
+
+func (req *UpdateData) ToDomain() *users.UpdateDataDomain {
+	return &users.UpdateDataDomain{
+		Name:        req.Name,
+		PhoneNumber: req.PhoneNumber,
+		Email:       req.Email,
+	}
+}
+
+func (req *UpdateData) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(req)

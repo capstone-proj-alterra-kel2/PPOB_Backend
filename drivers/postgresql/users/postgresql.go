@@ -80,3 +80,21 @@ func (ur *userRepository) UpdatePassword(idUser string, passDomain *users.Update
 	ur.conn.Save(&updated)
 	return true
 }
+
+func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateDataDomain) (users.Domain, error) {
+
+	var user users.Domain = ur.Profile(idUser)
+	updatedData := FromDomain(&user)
+
+	updatedData.Name = dataDomain.Name
+	updatedData.PhoneNumber = dataDomain.PhoneNumber
+	updatedData.Email = dataDomain.Email
+	
+	err := ur.conn.Save(&updatedData).Error
+	if err != nil {
+		return updatedData.ToDomain(), err
+	}
+	fmt.Println(err)
+
+	return updatedData.ToDomain(), nil
+}
