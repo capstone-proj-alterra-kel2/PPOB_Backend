@@ -21,7 +21,7 @@ func (uu *userUsecase) GetAll() []Domain {
 	return uu.userRepository.GetAll()
 }
 
-func (uu *userUsecase) Register(userDomain *Domain) Domain {
+func (uu *userUsecase) Register(userDomain *Domain) (Domain, error) {
 	return uu.userRepository.Register(userDomain)
 }
 

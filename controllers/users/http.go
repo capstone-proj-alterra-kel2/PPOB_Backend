@@ -54,7 +54,11 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	if err := input.Validate(); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
 	}
-	user := ctrl.userUsecase.Register(input.ToDomain())
+	user, err := ctrl.userUsecase.Register(input.ToDomain())
+	if err != nil {
+		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+	}
+
 	return controllers.NewResponse(c, http.StatusCreated, "success", "user registered", response.FromDomain(user))
 }
 
@@ -140,7 +144,7 @@ func (ctrl *UserController) UpdateData(c echo.Context) error {
 	}
 
 	updatedData, err := ctrl.userUsecase.UpdateData(idUser, input.ToDomain())
-	if err != nil{
+	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
 	}
 

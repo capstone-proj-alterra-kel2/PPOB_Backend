@@ -31,16 +31,19 @@ func (ur *userRepository) GetAll() []users.Domain {
 	return userDomain
 }
 
-func (ur *userRepository) Register(userDomain *users.Domain) users.Domain {
+func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, error) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(userDomain.Password), bcrypt.DefaultCost)
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 1
 	result := ur.conn.Create(&rec)
 
-	result.Last(&rec)
+	err := result.Last(&rec).Error
+	if err != nil {
+		return rec.ToDomain(), err
+	}
 
-	return rec.ToDomain()
+	return rec.ToDomain(), nil
 }
 
 func (ur *userRepository) Login(userDomain *users.Domain) users.Domain {

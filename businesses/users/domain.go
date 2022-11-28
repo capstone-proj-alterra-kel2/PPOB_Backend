@@ -33,7 +33,7 @@ type UpdateDataDomain struct {
 
 type Usecase interface {
 	GetAll() []Domain
-	Register(userDomain *Domain) Domain
+	Register(userDomain *Domain) (Domain, error)
 	Login(userDomain *Domain) string
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
@@ -42,7 +42,7 @@ type Usecase interface {
 
 type Repository interface {
 	GetAll() []Domain
-	Register(userDomain *Domain) Domain
+	Register(userDomain *Domain) (Domain, error)
 	Login(userDomain *Domain) Domain
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
