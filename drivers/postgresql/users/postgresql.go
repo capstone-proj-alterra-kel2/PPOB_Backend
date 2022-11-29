@@ -46,16 +46,16 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	return rec.ToDomain(), nil
 }
 
-func (ur *userRepository) Login(userDomain *users.Domain) users.Domain {
+func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 	var user User
-	ur.conn.First(&user, "email=?", userDomain.Email)
+	ur.conn.First(&user, "email=?", loginDomain.Email)
 
 	if user.ID == 0 {
 		fmt.Println("user not found")
 		return users.Domain{}
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userDomain.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDomain.Password)); err != nil {
 		fmt.Println("wrong password")
 		return users.Domain{}
 	}

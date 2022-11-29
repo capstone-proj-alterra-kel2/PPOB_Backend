@@ -51,8 +51,8 @@ func (req *User) Validate() error {
 	return err
 }
 
-func (req *UserLogin) ToDomain() *users.Domain {
-	return &users.Domain{
+func (req *UserLogin) ToDomain() *users.LoginDomain {
+	return &users.LoginDomain{
 		Email:    req.Email,
 		Password: req.Password,
 	}
