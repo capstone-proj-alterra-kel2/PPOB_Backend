@@ -1,6 +1,10 @@
 package postgres_driver
 
 import (
+	"PPOB_BACKEND/drivers/postgresql/products"
+	"PPOB_BACKEND/drivers/postgresql/producttypes"
+	"PPOB_BACKEND/drivers/postgresql/providers"
+	"PPOB_BACKEND/drivers/postgresql/stocks"
 	"PPOB_BACKEND/drivers/postgresql/users"
 	"fmt"
 
@@ -40,10 +44,11 @@ func (config *ConfigDB) InitDB() *gorm.DB {
 // Migrating Struct into Table in Database
 func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
-		&users.User{}, // User
-		// Provider
-		// ProductType
-		// ...
+		&users.User{},               // User
+		&producttypes.ProductType{}, // ProductType
+		&providers.Provider{},       // Provider
+		&stocks.Stock{},             // Stock
+		&products.Product{},         // Product
 	)
 }
 

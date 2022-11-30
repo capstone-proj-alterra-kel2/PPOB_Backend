@@ -45,7 +45,6 @@ func (cj *ConfigJWT) GenerateToken(userID uint, roleID uint) string {
 	return listedToken
 }
 
-
 // GetUser perform claims user
 func GetUser(c echo.Context) *JWTCustomClaims {
 	user := c.Get("user").(*jwt.Token)

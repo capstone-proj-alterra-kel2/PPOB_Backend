@@ -1,9 +1,9 @@
 package aws
 
 import (
+	util "PPOB_BACKEND/utils"
 	"log"
 	"mime/multipart"
-	util "PPOB_BACKEND/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -24,8 +24,8 @@ func UploadToS3(c echo.Context, filename string, src multipart.File) (string, er
 	s3Session := session.New(configS3)
 	uploader := s3manager.NewUploader(s3Session)
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("mycuanbucket"),
-		Key:    aws.String("img/"+ filename),
+		Bucket: aws.String("testingmycuans3"),
+		Key:    aws.String("img/" + filename),
 		Body:   src,
 	})
 	if err != nil {

@@ -2,6 +2,10 @@ package routes
 
 import (
 	"PPOB_BACKEND/app/middlewares"
+	"PPOB_BACKEND/controllers/products"
+	"PPOB_BACKEND/controllers/producttypes"
+	"PPOB_BACKEND/controllers/providers"
+	"PPOB_BACKEND/controllers/stocks"
 	"PPOB_BACKEND/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -9,9 +13,13 @@ import (
 )
 
 type ControllerList struct {
-	LoggerMiddleware echo.MiddlewareFunc  // Logger
-	JWTMIddleware    middleware.JWTConfig // JWT
-	UserController   users.UserController // User
+	LoggerMiddleware      echo.MiddlewareFunc  // Logger
+	JWTMIddleware         middleware.JWTConfig // JWT
+	UserController        users.UserController // User
+	ProductController     products.ProductController
+	ProviderController    providers.ProviderController
+	ProductTypeController producttypes.ProductTypeController
+	StockController       stocks.StockController
 	// Admin
 	// Businesse
 }
@@ -26,15 +34,24 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// SignUp
 	auth.POST("/register", cl.UserController.Register)
 	// User
-	usersAdmin := v1.Group("/admin/users",middleware.JWTWithConfig(cl.JWTMIddleware))
+	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware))
 	usersAdmin.GET("", cl.UserController.GetAll, middlewares.IsAdmin)
 	// User - Transaction
-	
+
 	// User - Wallet
 
+	// User - Product
+	userProduct := v1.Group("/users/products", middleware.JWTWithConfig(cl.JWTMIddleware))
+	userProduct.GET("/:product-id", cl.ProductController.GetOne)
+
 	// User - Product Type
+	usersProductType := v1.Group("/users/producttypes")
+	usersProductType.GET("", cl.ProductTypeController.GetAll)
+	usersProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)
 
 	// User - Provider
+	usersProvider := usersProductType.Group("/:product-type-id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
+	usersProvider.GET("/phone", cl.ProviderController.GetByPhone)
 
 	// Admin
 
@@ -42,9 +59,37 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// Admin - Admin
 
+	// Admin - Product
+	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProduct.GET("", cl.ProductController.GetAll)
+	adminProduct.GET("/:product-id", cl.ProductController.GetOne)
+	adminProduct.POST("", cl.ProductController.Create)
+	adminProduct.PUT("/:product-id", cl.ProductController.Update)
+	adminProduct.DELETE("/:product-id", cl.ProductController.Delete)
+
 	// Admin - Product Type
+	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProductType.GET("", cl.ProductTypeController.GetAll)
+	adminProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)
+	adminProductType.POST("", cl.ProductTypeController.Create)
+	adminProductType.PUT("/:product-type-id", cl.ProductTypeController.Update)
+	adminProductType.DELETE("/:product-type-id", cl.ProductTypeController.Delete)
 
 	// Admin - Provider
+	adminProvider := adminProductType.Group("/:product-type-id/providers")
+	adminProvider.GET("", cl.ProviderController.GetAll)
+	adminProvider.GET("/:provider-id", cl.ProviderController.GetOne)
+	adminProvider.POST("", cl.ProviderController.Create)
+	adminProvider.PUT("/:provider-id", cl.ProviderController.Update)
+	adminProvider.DELETE("/:provider-id", cl.ProviderController.Delete)
+
+	// Admin - Stock
+	adminStock := v1.Group("/admin/stocks", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminStock.GET("/:stock-id", cl.StockController.Get)
+	adminStock.POST("", cl.StockController.Create)
+	adminStock.GET("", cl.StockController.GetAll)
+	adminStock.PUT("/:stock-id", cl.StockController.Update)
+	adminStock.DELETE("/:stock-id", cl.StockController.Delete)
 
 	// Admin - Voucher
 

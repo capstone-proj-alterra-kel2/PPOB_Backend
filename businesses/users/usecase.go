@@ -6,16 +6,15 @@ import (
 
 type userUsecase struct {
 	userRepository Repository
-	jwtAuth *middlewares.ConfigJWT
+	jwtAuth        *middlewares.ConfigJWT
 }
 
 func NewUserUseCase(ur Repository, jwtAuth *middlewares.ConfigJWT) Usecase {
-	return &userUsecase {
+	return &userUsecase{
 		userRepository: ur,
-		jwtAuth: jwtAuth,
+		jwtAuth:        jwtAuth,
 	}
 }
-
 
 func (uu *userUsecase) GetAll() []Domain {
 	return uu.userRepository.GetAll()
