@@ -1,9 +1,9 @@
 package aws
 
 import (
+	util "PPOB_BACKEND/utils"
 	"log"
 	"mime/multipart"
-	util "PPOB_BACKEND/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadToS3(c echo.Context, filename string, src multipart.File) (string, error) {
+func UploadToS3(c echo.Context, folder string, filename string, src multipart.File) (string, error) {
 	SECRET_KEY := util.GetEnv("AWS_S3_BUCKET_SECRET_KEY")
 	KEY_ID := util.GetEnv("AWS_S3_BUCKET_KEY_ID")
 	REGION := util.GetEnv("AWS_S3_REGION")
@@ -26,7 +26,7 @@ func UploadToS3(c echo.Context, filename string, src multipart.File) (string, er
 	uploader := s3manager.NewUploader(s3Session)
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(BUCKET_NAME),
-		Key:    aws.String("img/"+ filename),
+		Key:    aws.String(folder + filename),
 		Body:   src,
 	})
 	if err != nil {
