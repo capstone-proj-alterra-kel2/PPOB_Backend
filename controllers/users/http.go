@@ -30,11 +30,24 @@ func (ctrl *UserController) GetAll(c echo.Context) error {
 	users := []response.User{}
 
 	for _, user := range usersData {
-		if user.RoleName != "admin" || user.RoleName != "superadmin" {
+		if user.RoleName != "admin" && user.RoleName != "superadmin" {
 			users = append(users, response.FromDomain(user))
 		}
 	}
 	return controllers.NewResponse(c, http.StatusOK, "success", "all users", users)
+}
+
+func (ctrl *UserController) GetAllAdmin(c echo.Context) error {
+	usersData := ctrl.userUsecase.GetAll()
+
+	admins := []response.User{}
+
+	for _, user := range usersData {
+		if user.RoleName != "user" && user.RoleName != "superadmin" {
+			admins = append(admins, response.FromDomain(user))
+		}
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "all Admin", admins)
 }
 
 func (ctrl *UserController) Register(c echo.Context) error {
@@ -45,18 +58,18 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
 		input.Image = result
 	}
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 	user, err := ctrl.userUsecase.Register(input.ToDomain())
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "user registered", response.FromDomain(user))
@@ -66,22 +79,16 @@ func (ctrl *UserController) Login(c echo.Context) error {
 	userInput := request.UserLogin{}
 
 	if err := c.Bind(&userInput); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"message": "invalid request",
-		})
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
 	if err := userInput.Validate(); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"message": "validation failed",
-		})
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	token := ctrl.userUsecase.Login(userInput.ToDomain())
 	if token == "" {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"message": "invalid email or password",
-		})
+		return controllers.NewResponseFail(c, http.StatusUnauthorized, "failed", "invalid email or password")
 	}
 	return c.JSON(http.StatusOK, map[string]string{
 		"token": token,
@@ -92,9 +99,7 @@ func (ctrl *UserController) Logout(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 
 	if isListed := middlewares.CheckToken(user.Raw); !isListed {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"message": "invalid token",
-		})
+		return controllers.NewResponseFail(c, http.StatusUnauthorized, "failed", "invalid token")
 	}
 	middlewares.Logout(user.Raw)
 	return c.JSON(http.StatusOK, map[string]string{
@@ -164,7 +169,7 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
 		input.Image = result
 	}
 	if err := c.Bind(&input); err != nil {
