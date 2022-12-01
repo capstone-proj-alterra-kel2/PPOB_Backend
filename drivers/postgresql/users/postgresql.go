@@ -45,6 +45,20 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	return rec.ToDomain(), nil
 }
 
+func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, error) {
+	password, _ := bcrypt.GenerateFromPassword([]byte(userDomain.Password), bcrypt.DefaultCost)
+	rec := FromDomain(userDomain)
+	rec.Password = string(password)
+	rec.RoleID = 2
+	result := ur.conn.Create(&rec)
+	err := result.Preload("Role").Last(&rec).Error
+	if err != nil {
+		return rec.ToDomain(), err
+	}
+
+	return rec.ToDomain(), nil
+}
+
 func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 	var user User
 	ur.conn.First(&user, "email=?", loginDomain.Email)

@@ -31,7 +31,8 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersAdmin.POST("", cl.UserController.CreateUser) // Create User
 	// Only Superadmin
 	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsSuperAdmin)
-	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin) // Get All Admins
+	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)  // Get All Admins
+	adminSuperAdmin.POST("", cl.UserController.CreateAdmin) // Create Admin
 	// User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.GET("/profile", cl.UserController.Profile)

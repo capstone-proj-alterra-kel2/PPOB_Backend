@@ -42,6 +42,7 @@ type UpdateImageDomain struct {
 type Usecase interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) (Domain, error)
+	CreateAdmin(userDomain *Domain) (Domain, error)
 	Login(userDomain *LoginDomain) string
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
@@ -52,6 +53,7 @@ type Usecase interface {
 type Repository interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) (Domain, error)
+	CreateAdmin(userDomain *Domain) (Domain, error)
 	Login(userDomain *LoginDomain) Domain
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool

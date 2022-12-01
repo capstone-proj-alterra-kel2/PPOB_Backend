@@ -75,6 +75,31 @@ func (ctrl *UserController) GetAllAdmin(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all Admin", admins)
 }
 
+func (ctrl *UserController) CreateAdmin(c echo.Context) error {
+	var result string
+	input := request.User{}
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
+		input.Image = result
+	}
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	}
+	user, err := ctrl.userUsecase.CreateAdmin(input.ToDomain())
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
+	}
+
+	return controllers.NewResponse(c, http.StatusCreated, "success", "admin created", response.FromDomain(user))
+}
+
 func (ctrl *UserController) Register(c echo.Context) error {
 	var result string
 	input := request.User{}

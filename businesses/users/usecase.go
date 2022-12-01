@@ -25,6 +25,10 @@ func (uu *userUsecase) Register(userDomain *Domain) (Domain, error) {
 	return uu.userRepository.Register(userDomain)
 }
 
+func (uu *userUsecase) CreateAdmin(userDomain *Domain) (Domain, error) {
+	return uu.userRepository.CreateAdmin(userDomain)
+}
+
 func (uu *userUsecase) Login(loginDomain *LoginDomain) string {
 	user := uu.userRepository.Login(loginDomain)
 	if user.ID == 0 {
