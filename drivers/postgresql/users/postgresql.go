@@ -21,7 +21,7 @@ func NewPostgreSQLRepository(conn *gorm.DB) users.Repository {
 func (ur *userRepository) GetAll() []users.Domain {
 	var rec []User
 
-	ur.conn.Find(&rec)
+	ur.conn.Preload("Role").Find(&rec)
 
 	userDomain := []users.Domain{}
 
@@ -37,8 +37,7 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	rec.Password = string(password)
 	rec.RoleID = 1
 	result := ur.conn.Create(&rec)
-
-	err := result.Last(&rec).Error
+	err := result.Preload("Role").Last(&rec).Error
 	if err != nil {
 		return rec.ToDomain(), err
 	}
@@ -65,14 +64,14 @@ func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 func (ur *userRepository) Profile(idUser string) users.Domain {
 	var user User
 
-	ur.conn.First(&user, "id=?", idUser)
+	ur.conn.Preload("Role").First(&user, "id=?", idUser)
 
 	return user.ToDomain()
 }
 
 func (ur *userRepository) UpdatePassword(idUser string, passDomain *users.UpdatePasswordDomain) bool {
 	var user users.Domain = ur.Profile(idUser)
-	
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passDomain.OldPassword)); err != nil {
 		return false
 	}
@@ -92,7 +91,7 @@ func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateData
 	updatedData.Name = dataDomain.Name
 	updatedData.PhoneNumber = dataDomain.PhoneNumber
 	updatedData.Email = dataDomain.Email
-	
+
 	err := ur.conn.Save(&updatedData).Error
 	if err != nil {
 		return updatedData.ToDomain(), err
@@ -106,7 +105,7 @@ func (ur *userRepository) UpdateImage(idUser string, imageDomain *users.UpdateIm
 	updatedData := FromDomain(&user)
 
 	updatedData.Image = imageDomain.Image
-	
+
 	err := ur.conn.Save(&updatedData).Error
 	if err != nil {
 		return updatedData.ToDomain(), err
