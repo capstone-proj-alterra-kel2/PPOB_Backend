@@ -29,6 +29,8 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware))
 	usersAdmin.GET("", cl.UserController.GetAll, middlewares.IsAdmin)
 
+	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin, middlewares.IsSuperAdmin)
 	// User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.GET("/profile", cl.UserController.Profile)
