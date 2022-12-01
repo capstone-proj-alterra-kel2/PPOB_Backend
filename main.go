@@ -9,9 +9,12 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	
+
 	_userUseCase "PPOB_BACKEND/businesses/users"
 	_userController "PPOB_BACKEND/controllers/users"
+
+	_paymentmethodUsecase "PPOB_BACKEND/businesses/payment_method"
+	_paymentmethodController "PPOB_BACKEND/controllers/payment_method"
 
 	_driverFactory "PPOB_BACKEND/drivers"
 
@@ -20,9 +23,9 @@ import (
 	_dbDriver "PPOB_BACKEND/drivers/postgresql"
 
 	util "PPOB_BACKEND/utils"
+
 	"github.com/labstack/echo/v4"
 )
-
 
 type operation func(ctx context.Context) error
 
@@ -58,16 +61,20 @@ func main() {
 
 	// Product Type
 
- // Product
+	// Product
 
 	// Voucher
 
+	// Payment Method
+	paymentmethodRepo := _driverFactory.NewPaymentMethodRepository(db)
+	paymentmethodUsecase := _paymentmethodUsecase.NewPaymentMethodUsecase(paymentmethodRepo)
+	paymentmethodController := _paymentmethodController.NewPaymentController(paymentmethodUsecase)
 
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:      configLogger.Init(),
-		JWTMIddleware:         configJWT.Init(),
-		UserController:        *userCtrl,
-
+		LoggerMiddleware:  configLogger.Init(),
+		JWTMIddleware:     configJWT.Init(),
+		UserController:    *userCtrl,
+		PaymentController: *paymentmethodController,
 	}
 	routesInit.RouteRegister(e)
 

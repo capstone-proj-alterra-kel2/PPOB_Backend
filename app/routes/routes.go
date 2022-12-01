@@ -3,6 +3,7 @@ package routes
 import (
 	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/controllers/users"
+	"PPOB_BACKEND/controllers/payment_method"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -12,6 +13,7 @@ type ControllerList struct {
 	LoggerMiddleware echo.MiddlewareFunc  // Logger
 	JWTMIddleware    middleware.JWTConfig // JWT
 	UserController   users.UserController // User
+	PaymentController payment_method.PaymentController
 	// Admin
 	// Businesse
 }
@@ -35,6 +37,15 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// User - Product Type
 
 	// User - Provider
+
+	// User - Payment Method
+	payment := v1.Group("/payments", middleware.JWTWithConfig(cl.JWTMIddleware))
+	payment.GET("", cl.PaymentController.GetAll)
+	payment.GET("/:id", cl.PaymentController.GetSpecificPayment)
+	payment.POST("", cl.PaymentController.CreatePayment, middlewares.IsAdmin)
+	payment.PUT("/:id", cl.PaymentController.UpdatePaymentByID, middlewares.IsAdmin)
+	payment.DELETE("/:id", cl.PaymentController.DeletePayment, middlewares.IsAdmin)
+
 
 	// Admin
 

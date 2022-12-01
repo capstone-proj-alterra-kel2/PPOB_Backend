@@ -2,6 +2,7 @@ package postgres_driver
 
 import (
 	"PPOB_BACKEND/drivers/postgresql/users"
+	"PPOB_BACKEND/drivers/postgresql/payment_method"
 	"fmt"
 
 	"log"
@@ -41,6 +42,7 @@ func (config *ConfigDB) InitDB() *gorm.DB {
 func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&users.User{}, // User
+		&payment_method.Payment_Method{}, //Payment_Method
 		// Provider
 		// ProductType
 		// ...
