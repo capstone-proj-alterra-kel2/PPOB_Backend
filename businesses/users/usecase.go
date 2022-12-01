@@ -2,6 +2,7 @@ package users
 
 import (
 	"PPOB_BACKEND/app/middlewares"
+	"strconv"
 )
 
 type userUsecase struct {
@@ -29,7 +30,9 @@ func (uu *userUsecase) Login(loginDomain *LoginDomain) string {
 	if user.ID == 0 {
 		return ""
 	}
-	token := uu.jwtAuth.GenerateToken(user.ID, user.RoleID)
+	idUser := strconv.FormatUint(uint64(user.ID), 10)
+	profile := uu.userRepository.Profile(idUser)
+	token := uu.jwtAuth.GenerateToken(user.ID, profile.RoleName)
 	return token
 }
 

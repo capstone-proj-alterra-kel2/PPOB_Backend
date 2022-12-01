@@ -15,7 +15,7 @@ var whitelist []string = make([]string, 200)
 type JWTCustomClaims struct {
 	ID uint `json:"id"`
 	jwt.StandardClaims
-	RoleID uint `json:"role_id"`
+	HasRole string `json:"has_role"`
 }
 
 type ConfigJWT struct {
@@ -31,17 +31,18 @@ func (cj *ConfigJWT) Init() middleware.JWTConfig {
 }
 
 // GenerateToken perform generating token and exp from userID
-func (cj *ConfigJWT) GenerateToken(userID uint, roleID uint) string {
+func (cj *ConfigJWT) GenerateToken(userID uint, role string) string {
+	
 	claims := JWTCustomClaims{
 		userID,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(int64(cj.ExpireDuration))).Unix(),
 		},
-		roleID,
+		role,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	listedToken, _ := token.SignedString([]byte(cj.SecretJWT))
-
+	
 	whitelist = append(whitelist, listedToken)
 	return listedToken
 }
@@ -72,9 +73,9 @@ func IsSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*JWTCustomClaims)
-		roleID := claims.RoleID
+		HasRole := claims.HasRole
 
-		if roleID != 3 {
+		if HasRole == "superadmin" {
 			return next(c)
 		}
 		return echo.ErrUnauthorized
@@ -86,9 +87,9 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*JWTCustomClaims)
-		roleID := claims.RoleID
-
-		if roleID == 3 || roleID == 2 {
+		HasRole := claims.HasRole
+		
+		if HasRole == "admin" || HasRole == "superadmin" {
 			return next(c)
 		}
 		return echo.ErrUnauthorized
