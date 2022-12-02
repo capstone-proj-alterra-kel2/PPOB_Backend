@@ -115,13 +115,37 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "admin created", response.FromDomain(user))
 }
 
+func (ctrl *UserController) DeleteUser(c echo.Context) error {
+	idUser := c.Param("user_id")
+	role := ctrl.userUsecase.Profile(idUser).RoleName
+	if role == "admin" || role == "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete admin & superadmin")
+	}
+	if isSuccess := ctrl.userUsecase.DeleteUser(idUser); !isSuccess {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete user not found")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "user deleted", "")
+}
+
+func (ctrl *UserController) DeleteAdmin(c echo.Context) error {
+	idUser := c.Param("user_id")
+	role := ctrl.userUsecase.Profile(idUser).RoleName
+	if role == "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete superadmin")
+	}
+	if isSuccess := ctrl.userUsecase.DeleteUser(idUser); !isSuccess {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete user not found")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "user deleted", "")
+}
+
 func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 	var result string
 	idUser := c.Param("user_id")
 	image, _ := c.FormFile("image")
 	role := ctrl.userUsecase.Profile(idUser).RoleName
 	input := request.UpdateData{}
-	if role != "admin" && role != "superadmin" {
+	if role == "admin" || role == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update admin & superadmin")
 	}
 	image.Filename = time.Now().String() + ".png"
@@ -158,8 +182,8 @@ func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	image, _ := c.FormFile("image")
 	input := request.UpdateData{}
 	role := ctrl.userUsecase.Profile(idUser).RoleName
-	if role != "user" && role != "superadmin" {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update user & superadmin")
+	if role == "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update superadmin")
 	}
 	image.Filename = time.Now().String() + ".png"
 	if image != nil {

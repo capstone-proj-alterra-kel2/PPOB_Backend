@@ -53,6 +53,17 @@ func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, e
 	return rec.ToDomain(), nil
 }
 
+func (ur *userRepository) DeleteUser(idUser string) bool {
+	var user users.Domain = ur.Profile(idUser)
+
+	deletedUser := FromDomain(&user)
+
+	if result := ur.conn.Delete(&deletedUser); result.RowsAffected == 0 {
+		return false
+	}
+	return true
+}
+
 func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 	var user User
 	ur.conn.First(&user, "email=?", loginDomain.Email)

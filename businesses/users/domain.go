@@ -44,6 +44,7 @@ type Usecase interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) (Domain, error)
 	CreateAdmin(userDomain *Domain) (Domain, error)
+	DeleteUser(idUser string) bool
 	Login(userDomain *LoginDomain) string
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
@@ -55,6 +56,7 @@ type Repository interface {
 	GetAll() []Domain
 	Register(userDomain *Domain) (Domain, error)
 	CreateAdmin(userDomain *Domain) (Domain, error)
+	DeleteUser(idUser string) bool
 	Login(userDomain *LoginDomain) Domain
 	Profile(idUser string) Domain
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
