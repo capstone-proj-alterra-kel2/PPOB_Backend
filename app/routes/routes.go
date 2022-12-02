@@ -33,12 +33,14 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersAdmin.POST("", cl.UserController.CreateUser)             // Create User
 	usersAdmin.PUT("/:user_id", cl.UserController.UpdateDataUser) // Update Data User
 	usersAdmin.DELETE("/:user_id", cl.UserController.DeleteUser)  // Delete User
+	usersAdmin.GET("/:user_id", cl.UserController.DetailUser)     // Get Detail User
 	// Only Superadmin
 	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsSuperAdmin)
 	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
 	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
 	adminSuperAdmin.PUT("/:user_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
 	adminSuperAdmin.DELETE("/user_id", cl.UserController.DeleteAdmin)   // Delete Admin
+	adminSuperAdmin.GET("/:user_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
 	// User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.GET("/profile", cl.UserController.Profile)

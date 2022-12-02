@@ -115,6 +115,30 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "admin created", response.FromDomain(user))
 }
 
+func (ctrl *UserController) DetailAdmin(c echo.Context) error {
+	idUser := c.Param("user_id")
+	user := ctrl.userUsecase.Profile(idUser)
+	if user.RoleName == "user" || user.RoleName == "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "prevent getting detail user & superadmin")
+	}
+	if user.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "cannot get detail admin")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "get detail admin", response.FromDomain(user))
+}
+
+func (ctrl *UserController) DetailUser(c echo.Context) error {
+	idUser := c.Param("user_id")
+	user := ctrl.userUsecase.Profile(idUser)
+	if user.RoleName == "admin" || user.RoleName == "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "prevent getting detail admin & superadmin")
+	}
+	if user.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "cannot get detail user")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "get detail user", response.FromDomain(user))
+}
+
 func (ctrl *UserController) DeleteUser(c echo.Context) error {
 	idUser := c.Param("user_id")
 	role := ctrl.userUsecase.Profile(idUser).RoleName
