@@ -30,6 +30,7 @@ type UpdatePasswordDomain struct {
 }
 
 type UpdateDataDomain struct {
+	Image       string
 	Name        string
 	PhoneNumber string
 	Email       string

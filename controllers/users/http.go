@@ -7,7 +7,9 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/users/request"
 	"PPOB_BACKEND/controllers/users/response"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -55,8 +57,15 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 	user, err := ctrl.userUsecase.Register(input.ToDomain())
-	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
+
+	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
+	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
+
+	if isEmailDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
+	}
+	if isNumberDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Number already registered")
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "user created", response.FromDomain(user))
@@ -93,11 +102,91 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 	user, err := ctrl.userUsecase.CreateAdmin(input.ToDomain())
+
+	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
+	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
+	if isEmailDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
+	}
+	if isNumberDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Number already registered")
+	}
+
+	return controllers.NewResponse(c, http.StatusCreated, "success", "admin created", response.FromDomain(user))
+}
+
+func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
+	var result string
+	idUser := c.Param("user_id")
+	image, _ := c.FormFile("image")
+	role := ctrl.userUsecase.Profile(idUser).RoleName
+	input := request.UpdateData{}
+	if role != "admin" && role != "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update admin & superadmin")
+	}
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
+		input.Image = result
+	}
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	}
+
+	updatedData, err := ctrl.userUsecase.UpdateData(idUser, input.ToDomain())
 	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
-	return controllers.NewResponse(c, http.StatusCreated, "success", "admin created", response.FromDomain(user))
+	if updatedData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "data user not found")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "data user updated", response.FromDomain(updatedData))
+}
+
+func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
+	var result string
+	idUser := c.Param("user_id")
+	image, _ := c.FormFile("image")
+	input := request.UpdateData{}
+	role := ctrl.userUsecase.Profile(idUser).RoleName
+	if role != "user" && role != "superadmin" {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update user & superadmin")
+	}
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
+		input.Image = result
+	}
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	}
+
+	updatedData, err := ctrl.userUsecase.UpdateData(idUser, input.ToDomain())
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
+	}
+
+	if updatedData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "data user not found")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "data user updated", response.FromDomain(updatedData))
 }
 
 func (ctrl *UserController) Register(c echo.Context) error {
@@ -118,8 +207,15 @@ func (ctrl *UserController) Register(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 	user, err := ctrl.userUsecase.Register(input.ToDomain())
-	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
+
+	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
+	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
+
+	if isEmailDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
+	}
+	if isNumberDuplicate {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Number already registered")
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "user registered", response.FromDomain(user))
@@ -162,7 +258,7 @@ func (ctrl *UserController) Profile(c echo.Context) error {
 	user := ctrl.userUsecase.Profile(idUser)
 
 	if user.ID == 0 {
-		return controllers.NewResponse(c, http.StatusNotFound, "failed", "cannot load profile", "")
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "cannot load profile")
 	}
 	return controllers.NewResponse(c, http.StatusOK, "success", "profile loaded", response.FromDomain(user))
 }
@@ -172,39 +268,48 @@ func (ctrl *UserController) UpdatePassword(c echo.Context) error {
 	input := request.UpdatePassword{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	isPasswordUpdated := ctrl.userUsecase.UpdatePassword(idUser, input.ToDomain())
 	if !isPasswordUpdated {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "wrong old password", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "wrong old password")
 	}
 	return controllers.NewResponse(c, http.StatusOK, "success", "password updated", "")
 }
 
 func (ctrl *UserController) UpdateData(c echo.Context) error {
+	var result string
 	idUser := middlewares.GetUserID(c)
+	image, _ := c.FormFile("image")
 	input := request.UpdateData{}
 
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
+		input.Image = result
+	}
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	updatedData, err := ctrl.userUsecase.UpdateData(idUser, input.ToDomain())
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
 	if updatedData.ID == 0 {
-		return controllers.NewResponse(c, http.StatusNotFound, "failed", "data user not found", "")
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "data user not found")
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "data user updated", response.FromDomain(updatedData))
@@ -223,14 +328,14 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 		input.Image = result
 	}
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 	user, err := ctrl.userUsecase.UpdateImage(idUser, input.ToDomain())
 	if err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", err.Error(), "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
