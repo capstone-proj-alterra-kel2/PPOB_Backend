@@ -11,7 +11,7 @@ import (
 type User struct {
 	ID          uint           `json:"id" gorm:"size:100;primaryKey"`
 	Name        string         `json:"name" `
-	PhoneNumber string         `json:"phone_number" `
+	PhoneNumber string         `json:"phone_number" gorm:"unique"`
 	Email       string         `json:"email" gorm:"unique" `
 	Password    string         `json:"password" `
 	RoleID      uint           `json:"role_id"`
