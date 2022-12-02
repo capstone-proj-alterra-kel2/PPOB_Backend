@@ -19,6 +19,8 @@ type ControllerList struct {
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Logger
 	e.Use(cl.LoggerMiddleware)
+	// CORS
+	e.Use(middleware.CORS())
 	v1 := e.Group("/v1")
 	auth := v1.Group("/auth")
 	// Login
