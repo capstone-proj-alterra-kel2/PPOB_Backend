@@ -36,12 +36,9 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 1
-	result := ur.conn.Create(&rec)
-	err := result.Preload("Role").Last(&rec).Error
-	if err != nil {
+	if err := ur.conn.Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
-
 	return rec.ToDomain(), nil
 }
 
@@ -50,12 +47,9 @@ func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, e
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 2
-	result := ur.conn.Create(&rec)
-	err := result.Preload("Role").Last(&rec).Error
-	if err != nil {
+	if err := ur.conn.Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
-
 	return rec.ToDomain(), nil
 }
 
@@ -102,6 +96,7 @@ func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateData
 	var user users.Domain = ur.Profile(idUser)
 	updatedData := FromDomain(&user)
 
+	updatedData.Image = dataDomain.Image
 	updatedData.Name = dataDomain.Name
 	updatedData.PhoneNumber = dataDomain.PhoneNumber
 	updatedData.Email = dataDomain.Email
