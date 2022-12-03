@@ -3,6 +3,7 @@ package users
 import (
 	"PPOB_BACKEND/businesses/users"
 	"fmt"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -18,17 +19,54 @@ func NewPostgreSQLRepository(conn *gorm.DB) users.Repository {
 	}
 }
 
-func (ur *userRepository) GetAll() []users.Domain {
+func (ur *userRepository) GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []users.Domain) {
 	var rec []User
+	var sort string
+	var search string
+	var model *gorm.DB
+	if strings.HasPrefix(Sort, "-") {
+		sort = Sort[1:] + " DESC"
+	} else {
+		sort = Sort[0:] + " ASC"
+	}
+	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "1")
+	if Search != "" {
+		search = "%" + Search +"%"
+		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "1")
+	}
 
-	ur.conn.Preload("Role").Find(&rec)
-
+	ur.conn.Preload("Role").Offset(Page).Limit(Page).Order(sort).Find(&rec)
 	userDomain := []users.Domain{}
-
 	for _, user := range rec {
 		userDomain = append(userDomain, user.ToDomain())
 	}
-	return userDomain
+
+	return model, userDomain
+}
+
+func (ur *userRepository) GetAllAdmin(Page int, Size int, Sort string, Search string) (*gorm.DB, []users.Domain) {
+	var rec []User
+	var sort string
+	var search string
+	var model *gorm.DB
+	if strings.HasPrefix(Sort, "-") {
+		sort = Sort[1:] + " DESC"
+	} else {
+		sort = Sort[0:] + " ASC"
+	}
+	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "2")
+	if Search != "" {
+		search = "%" + Search +"%"
+		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "2")
+	}
+
+	ur.conn.Preload("Role").Offset(Page).Limit(Page).Order(sort).Find(&rec)
+	userDomain := []users.Domain{}
+	for _, user := range rec {
+		userDomain = append(userDomain, user.ToDomain())
+	}
+
+	return model, userDomain
 }
 
 func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, error) {

@@ -3,6 +3,8 @@ package users
 import (
 	"PPOB_BACKEND/app/middlewares"
 	"strconv"
+
+	"gorm.io/gorm"
 )
 
 type userUsecase struct {
@@ -17,8 +19,12 @@ func NewUserUseCase(ur Repository, jwtAuth *middlewares.ConfigJWT) Usecase {
 	}
 }
 
-func (uu *userUsecase) GetAll() []Domain {
-	return uu.userRepository.GetAll()
+func (uu *userUsecase) GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain) {
+	return uu.userRepository.GetAll(Page, Size, Sort, Search)
+}
+
+func (uu *userUsecase) GetAllAdmin(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain) {
+	return uu.userRepository.GetAllAdmin(Page, Size, Sort, Search)
 }
 
 func (uu *userUsecase) Register(userDomain *Domain) (Domain, error) {

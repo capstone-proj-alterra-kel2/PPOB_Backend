@@ -9,11 +9,13 @@ import (
 	"PPOB_BACKEND/controllers/users/response"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"github.com/morkid/paginate"
 )
 
 type UserController struct {
@@ -27,16 +29,18 @@ func NewUserController(userUC users.Usecase) *UserController {
 }
 
 func (ctrl *UserController) GetAll(c echo.Context) error {
-	usersData := ctrl.userUsecase.GetAll()
+	pg := paginate.New()
+	size, _ := strconv.Atoi(c.QueryParam("size"))
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	search := c.QueryParam("search")
+	sort := c.QueryParam("sort")
 
+	usersData, userDomain := ctrl.userUsecase.GetAll(size, page, sort, search)
 	users := []response.User{}
-
-	for _, user := range usersData {
-		if user.RoleName != "admin" && user.RoleName != "superadmin" {
-			users = append(users, response.FromDomain(user))
-		}
+	for _, user := range userDomain {
+		users = append(users, response.FromDomain(user))
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "all users", users)
+	return controllers.NewResponse(c, http.StatusOK, "success", "all users", pg.Response(usersData, c.Request(), &users))
 }
 
 func (ctrl *UserController) CreateUser(c echo.Context) error {
@@ -72,16 +76,17 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 }
 
 func (ctrl *UserController) GetAllAdmin(c echo.Context) error {
-	usersData := ctrl.userUsecase.GetAll()
-
-	admins := []response.User{}
-
-	for _, user := range usersData {
-		if user.RoleName != "user" && user.RoleName != "superadmin" {
-			admins = append(admins, response.FromDomain(user))
-		}
+	pg := paginate.New()
+	size, _ := strconv.Atoi(c.QueryParam("size"))
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	search := c.QueryParam("search")
+	sort := c.QueryParam("sort")
+	usersData, userDomain := ctrl.userUsecase.GetAllAdmin(size, page, sort, search)
+	users := []response.User{}
+	for _, user := range userDomain {
+		users = append(users, response.FromDomain(user))
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "all Admin", admins)
+	return controllers.NewResponse(c, http.StatusOK, "success", "all Admin", pg.Response(usersData, c.Request(), &users))
 }
 
 func (ctrl *UserController) CreateAdmin(c echo.Context) error {

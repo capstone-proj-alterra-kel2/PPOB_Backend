@@ -41,7 +41,8 @@ type UpdateImageDomain struct {
 }
 
 type Usecase interface {
-	GetAll() []Domain
+	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
+	GetAllAdmin(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Register(userDomain *Domain) (Domain, error)
 	CreateAdmin(userDomain *Domain) (Domain, error)
 	DeleteUser(idUser string) bool
@@ -53,7 +54,8 @@ type Usecase interface {
 }
 
 type Repository interface {
-	GetAll() []Domain
+	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
+	GetAllAdmin(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Register(userDomain *Domain) (Domain, error)
 	CreateAdmin(userDomain *Domain) (Domain, error)
 	DeleteUser(idUser string) bool
