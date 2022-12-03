@@ -47,8 +47,9 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 	var result string
 	input := request.User{}
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -93,8 +94,9 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 	var result string
 	input := request.User{}
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -177,8 +179,8 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 	if role == "admin" || role == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update admin & superadmin")
 	}
-	image.Filename = time.Now().String() + ".png"
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -214,8 +216,9 @@ func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	if role == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant update superadmin")
 	}
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -246,8 +249,8 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	var result string
 	input := request.User{}
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -341,8 +344,8 @@ func (ctrl *UserController) UpdateData(c echo.Context) error {
 	image, _ := c.FormFile("image")
 	input := request.UpdateData{}
 
-	image.Filename = time.Now().String() + ".png"
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
@@ -373,8 +376,9 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	idUser := middlewares.GetUserID(c)
 	input := request.UpdateImage{}
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
