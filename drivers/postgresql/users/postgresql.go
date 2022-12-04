@@ -171,3 +171,26 @@ func (ur *userRepository) UpdateImage(idUser string, imageDomain *users.UpdateIm
 
 	return updatedData.ToDomain(), nil
 }
+
+func (ur *userRepository) CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool) {
+	var rec []User
+	var DuplicateEmail bool
+	var DuplicatePhoneNumber bool
+	if isEmailDuplicate := ur.conn.First(&rec, "users.email = ?", Email).Error; isEmailDuplicate != gorm.ErrRecordNotFound{
+		DuplicateEmail = true
+	}
+
+	if isPhoneNumberDuplicate := ur.conn.First(&rec, "users.phone_number = ?", PhoneNumber).Error; isPhoneNumberDuplicate != gorm.ErrRecordNotFound {
+		DuplicatePhoneNumber = true
+	}
+	if DuplicateEmail && DuplicatePhoneNumber {
+		return true, true
+	}
+	if DuplicateEmail {
+		return true, false
+	}
+	if DuplicatePhoneNumber {
+		return false, true
+	}
+	return false, false
+}

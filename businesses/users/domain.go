@@ -51,6 +51,7 @@ type Usecase interface {
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 	UpdateData(idUser string, dataDomain *UpdateDataDomain) (Domain, error)
 	UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error)
+	CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool)
 }
 
 type Repository interface {
@@ -64,4 +65,5 @@ type Repository interface {
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 	UpdateData(idUser string, dataDomain *UpdateDataDomain) (Domain, error)
 	UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error)
+	CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool)
 }

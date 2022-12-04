@@ -65,3 +65,7 @@ func (uu *userUsecase) UpdateData(idUser string, dataDomain *UpdateDataDomain) (
 func (uu *userUsecase) UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error) {
 	return uu.userRepository.UpdateImage(idUser, imageDomain)
 }
+
+func (uu *userUsecase) CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool) {
+	return uu.userRepository.CheckDuplicateUser(Email, PhoneNumber)
+}
