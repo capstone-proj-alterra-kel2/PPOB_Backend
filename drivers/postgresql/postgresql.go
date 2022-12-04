@@ -1,6 +1,7 @@
 package postgres_driver
 
 import (
+	"PPOB_BACKEND/drivers/postgresql/roles"
 	"PPOB_BACKEND/drivers/postgresql/users"
 	"fmt"
 
@@ -40,6 +41,7 @@ func (config *ConfigDB) InitDB() *gorm.DB {
 // Migrating Struct into Table in Database
 func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
+		&roles.Role{}, // role
 		&users.User{}, // User
 		// Provider
 		// ProductType
