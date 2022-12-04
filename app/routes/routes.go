@@ -41,7 +41,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
 	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
 	adminSuperAdmin.PUT("/:user_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
-	adminSuperAdmin.DELETE("/user_id", cl.UserController.DeleteAdmin)   // Delete Admin
+	adminSuperAdmin.DELETE("/:user_id", cl.UserController.DeleteAdmin)   // Delete Admin
 	adminSuperAdmin.GET("/:user_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
 	// User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
@@ -76,6 +76,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// Logout
 	withAuth := v1.Group("/auth", middleware.JWTWithConfig(cl.JWTMIddleware))
-	
+
 	withAuth.POST("/logout", cl.UserController.Logout)
 }
