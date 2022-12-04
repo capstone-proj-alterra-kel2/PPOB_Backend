@@ -85,6 +85,7 @@ func (req *UpdateData) ToDomain() *users.UpdateDataDomain {
 		Name:        req.Name,
 		PhoneNumber: req.PhoneNumber,
 		Email:       req.Email,
+		Image:       req.Image,
 	}
 }
 
