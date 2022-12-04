@@ -12,10 +12,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadToS3(c echo.Context, filename string, src multipart.File) (string, error) {
+func UploadToS3(c echo.Context, folder string, filename string, src multipart.File) (string, error) {
 	SECRET_KEY := util.GetEnv("AWS_S3_BUCKET_SECRET_KEY")
 	KEY_ID := util.GetEnv("AWS_S3_BUCKET_KEY_ID")
 	REGION := util.GetEnv("AWS_S3_REGION")
+	BUCKET_NAME := util.GetEnv("AWS_S3_BUCKET_NAME")
 
 	configS3 := &aws.Config{
 		Region:      aws.String(REGION),
@@ -24,8 +25,8 @@ func UploadToS3(c echo.Context, filename string, src multipart.File) (string, er
 	s3Session := session.New(configS3)
 	uploader := s3manager.NewUploader(s3Session)
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("testingmycuans3"),
-		Key:    aws.String("img/" + filename),
+		Bucket: aws.String(BUCKET_NAME),
+		Key:    aws.String(folder + filename),
 		Body:   src,
 	})
 	if err != nil {

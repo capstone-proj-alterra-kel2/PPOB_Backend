@@ -25,21 +25,44 @@ type ControllerList struct {
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Logger
 	e.Use(cl.LoggerMiddleware)
+	// CORS
+	e.Use(middleware.CORS())
 	v1 := e.Group("/v1")
 	auth := v1.Group("/auth")
 	// Login
 	auth.POST("/login", cl.UserController.Login)
 	// SignUp
 	auth.POST("/register", cl.UserController.Register)
-	// User
-	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware))
-	usersAdmin.GET("", cl.UserController.GetAll, middlewares.IsAdmin)
+	// Only Admin & Superadmin
+	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	usersAdmin.Use(middlewares.CheckStatusToken)
+	usersAdmin.GET("", cl.UserController.GetAll)                  // Get All User
+	usersAdmin.POST("", cl.UserController.CreateUser)             // Create User
+	usersAdmin.PUT("/:user_id", cl.UserController.UpdateDataUser) // Update Data User
+	usersAdmin.DELETE("/:user_id", cl.UserController.DeleteUser)  // Delete User
+	usersAdmin.GET("/:user_id", cl.UserController.DetailUser)     // Get Detail User
+	// Only Superadmin
+	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsSuperAdmin)
+	adminSuperAdmin.Use(middlewares.CheckStatusToken)
+	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
+	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
+	adminSuperAdmin.PUT("/:user_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
+	adminSuperAdmin.DELETE("/:user_id", cl.UserController.DeleteAdmin)  // Delete Admin
+	adminSuperAdmin.GET("/:user_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
+	// User Profile
+	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
+	user.Use(middlewares.CheckStatusToken)
+	user.GET("/profile", cl.UserController.Profile)
+	user.PUT("/password", cl.UserController.UpdatePassword)
+	user.PUT("/data", cl.UserController.UpdateData)
+	user.PUT("/image", cl.UserController.UpdateImage)
 	// User - Transaction
 
 	// User - Wallet
 
 	// User - Product
 	userProduct := v1.Group("/users/products", middleware.JWTWithConfig(cl.JWTMIddleware))
+	userProduct.Use(middlewares.CheckStatusToken)
 	userProduct.GET("/:product-id", cl.ProductController.GetOne)
 
 	// User - Product Type
@@ -49,6 +72,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// User - Provider
 	usersProvider := usersProductType.Group("/:product-type-id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
+	usersProvider.Use(middlewares.CheckStatusToken)
 	usersProvider.POST("/phone", cl.ProviderController.GetByPhone)
 
 	// Admin
@@ -58,7 +82,8 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Admin - Admin
 
 	// Admin - Product
-	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProduct.Use(middlewares.CheckStatusToken)
 	adminProduct.GET("", cl.ProductController.GetAll)
 	adminProduct.GET("/:product-id", cl.ProductController.GetOne)
 	adminProduct.POST("", cl.ProductController.Create)
@@ -66,7 +91,8 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProduct.DELETE("/:product-id", cl.ProductController.Delete)
 
 	// Admin - Product Type
-	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProductType.Use(middlewares.CheckStatusToken)
 	adminProductType.GET("", cl.ProductTypeController.GetAll)
 	adminProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)
 	adminProductType.POST("", cl.ProductTypeController.Create)
@@ -75,6 +101,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// Admin - Provider
 	adminProvider := adminProductType.Group("/:product-type-id/providers")
+	adminProvider.Use(middlewares.CheckStatusToken)
 	adminProvider.GET("", cl.ProviderController.GetAll)
 	adminProvider.GET("/:provider-id", cl.ProviderController.GetOne)
 	adminProvider.POST("", cl.ProviderController.Create)
@@ -89,5 +116,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// Logout
 	withAuth := v1.Group("/auth", middleware.JWTWithConfig(cl.JWTMIddleware))
+
 	withAuth.POST("/logout", cl.UserController.Logout)
 }

@@ -2,6 +2,7 @@ package users
 
 import (
 	"PPOB_BACKEND/businesses/users"
+	"PPOB_BACKEND/drivers/postgresql/roles"
 	"time"
 
 	"gorm.io/gorm"
@@ -10,10 +11,11 @@ import (
 type User struct {
 	ID          uint           `json:"id" gorm:"size:100;primaryKey"`
 	Name        string         `json:"name" `
-	PhoneNumber string         `json:"phone_number" `
+	PhoneNumber string         `json:"phone_number" gorm:"unique"`
 	Email       string         `json:"email" gorm:"unique" `
 	Password    string         `json:"password" `
 	RoleID      uint           `json:"role_id"`
+	Role        roles.Role     `json:"role" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Image       string         `json:"image"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
@@ -43,6 +45,7 @@ func (rec *User) ToDomain() users.Domain {
 		Email:       rec.Email,
 		Password:    rec.Password,
 		RoleID:      rec.RoleID,
+		RoleName:    rec.Role.RoleName,
 		Image:       rec.Image,
 		CreatedAt:   rec.CreatedAt,
 		UpdateAt:    rec.UpdatedAt,

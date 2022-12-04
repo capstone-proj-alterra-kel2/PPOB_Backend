@@ -2,7 +2,6 @@ package producttypes
 
 import (
 	"PPOB_BACKEND/app/aws"
-	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/producttypes"
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/producttypes/request"
@@ -37,16 +36,6 @@ func (ctrl *ProductTypeController) GetAll(c echo.Context) error {
 }
 
 func (ctrl *ProductTypeController) Create(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	// if claims.RoleID != 2 || claims.RoleID != 3 {
-	// 	return echo.ErrUnauthorized
-	// }
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	var result string
 	input := request.ProductType{}
 
@@ -55,7 +44,7 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "producttype/", image.Filename, src)
 		input.Image = result
 	}
 
@@ -79,12 +68,6 @@ func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
 }
 
 func (ctrl *ProductTypeController) Update(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	var result string
 
 	paramID := c.Param("product-type-id")
@@ -97,7 +80,7 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "producttype/", image.Filename, src)
 		input.Image = result
 	}
 
@@ -113,12 +96,6 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 }
 
 func (ctrl *ProductTypeController) Delete(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	paramID := c.Param("product-type-id")
 	productID, _ := strconv.Atoi(paramID)
 

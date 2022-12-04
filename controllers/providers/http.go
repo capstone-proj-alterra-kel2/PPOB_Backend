@@ -2,7 +2,6 @@ package providers
 
 import (
 	"PPOB_BACKEND/app/aws"
-	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/providers"
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/providers/request"
@@ -37,16 +36,6 @@ func (ctrl *ProviderController) GetAll(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Create(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	// if claims.RoleID != 2 || claims.RoleID != 3 {
-	// 	return echo.ErrUnauthorized
-	// }
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	paramID := c.Param("product-type-id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
@@ -58,7 +47,7 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "provider/", image.Filename, src)
 		input.Image = result
 	}
 
@@ -126,12 +115,6 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Update(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	paramID := c.Param("provider-id")
 	providerID, _ := strconv.Atoi(paramID)
 
@@ -144,7 +127,7 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, image.Filename, src)
+		result, _ = aws.UploadToS3(c, "provider/", image.Filename, src)
 		input.Image = result
 	}
 
@@ -160,12 +143,6 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Delete(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	paramID := c.Param("provider-id")
 	providerID, _ := strconv.Atoi(paramID)
 

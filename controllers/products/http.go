@@ -1,7 +1,6 @@
 package products
 
 import (
-	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/products"
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/products/request"
@@ -35,7 +34,6 @@ func (ctrl *ProductController) GetAll(c echo.Context) error {
 }
 
 func (ctrl *ProductController) GetOne(c echo.Context) error {
-
 	paramID := c.Param("product-id")
 	productID, _ := strconv.Atoi(paramID)
 
@@ -45,23 +43,13 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 }
 
 func (ctrl *ProductController) Create(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
-	// if claims.RoleID != 2 || claims.RoleID != 3 {
-	// 	return echo.ErrUnauthorized
-	// }
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
-
 	input := request.Product{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	product := ctrl.productUsecase.Create(input.ToDomain())
@@ -69,19 +57,13 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 }
 
 func (ctrl *ProductController) Update(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
 	paramID := c.Param("product-id")
 	productID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
 
 	input := request.Product{}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
 	product := ctrl.productUsecase.Update(input.ToDomain(), productID)
@@ -89,14 +71,8 @@ func (ctrl *ProductController) Update(c echo.Context) error {
 }
 
 func (ctrl *ProductController) Delete(c echo.Context) error {
-	claims := middlewares.GetUser(c)
-
 	paramID := c.Param("product-id")
 	productID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 1 {
-		return echo.ErrUnauthorized
-	}
 
 	ctrl.productUsecase.Delete(productID)
 	return controllers.NewResponse(c, http.StatusOK, "success", "product deleted", "")
