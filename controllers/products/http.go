@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/morkid/paginate"
 )
 
 type ProductController struct {
@@ -23,15 +24,14 @@ func NewProductController(productUC products.Usecase) *ProductController {
 }
 
 func (ctrl *ProductController) GetAll(c echo.Context) error {
-	productsData := ctrl.productUsecase.GetAll()
+	model := ctrl.productUsecase.GetAll()
+	pg := paginate.New(&paginate.Config{
+		DefaultSize: 6,
+	})
 
 	products := []response.Product{}
 
-	for _, product := range productsData {
-		products = append(products, response.FromDomain(product))
-	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "all products", products)
+	return controllers.NewResponse(c, http.StatusOK, "success", "all products", pg.With(model).Request(c.Request()).Response(&products))
 }
 
 func (ctrl *ProductController) GetOne(c echo.Context) error {
@@ -47,7 +47,11 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 func (ctrl *ProductController) Create(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	// if claims.RoleID != 2 || claims.RoleID != 3 {
+	// 	return echo.ErrUnauthorized
+	// }
+
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
@@ -70,7 +74,7 @@ func (ctrl *ProductController) Update(c echo.Context) error {
 	paramID := c.Param("product-id")
 	productID, _ := strconv.Atoi(paramID)
 
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
@@ -90,7 +94,7 @@ func (ctrl *ProductController) Delete(c echo.Context) error {
 	paramID := c.Param("product-id")
 	productID, _ := strconv.Atoi(paramID)
 
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 

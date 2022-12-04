@@ -13,16 +13,23 @@ type Domain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
-	StockID               int
+	Stock                 int
+	Status                string
 	TotalPurchased        int
 	AdditionalInformation string
+	IsAvailable           bool
+	IsPromo               bool
+	IsPromoActive         bool
+	Discount              int
+	PromoStartDate        string
+	PromoEndDate          string
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 	DeletedAt             gorm.DeletedAt
 }
 
 type Usecase interface {
-	GetAll() []Domain
+	GetAll() *gorm.DB
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	Update(productDomain *Domain, product_id int) Domain
@@ -30,7 +37,7 @@ type Usecase interface {
 }
 
 type Repository interface {
-	GetAll() []Domain
+	GetAll() *gorm.DB
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	Update(productDomain *Domain, product_id int) Domain

@@ -48,7 +48,8 @@ func (ptr *productTypeRepository) Update(productTypeDomain *producttypes.Domain,
 
 	ptr.conn.Model(&prodtype).Where("id = ?", product_type_id).Updates(
 		ProductType{
-			Name: productTypeDomain.Name,
+			Name:  productTypeDomain.Name,
+			Image: productTypeDomain.Image,
 		},
 	)
 

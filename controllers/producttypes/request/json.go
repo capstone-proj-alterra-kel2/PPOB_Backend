@@ -7,12 +7,14 @@ import (
 )
 
 type ProductType struct {
-	Name string `json:"name" form:"name" validate:"required"`
+	Name  string `json:"name" form:"name" validate:"required"`
+	Image string `json:"image" form :"image" validate:"required"`
 }
 
 func (req *ProductType) ToDomain() *producttypes.Domain {
 	return &producttypes.Domain{
-		Name: req.Name,
+		Name:  req.Name,
+		Image: req.Image,
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"PPOB_BACKEND/drivers/postgresql/products"
 	"PPOB_BACKEND/drivers/postgresql/producttypes"
 	"PPOB_BACKEND/drivers/postgresql/providers"
-	"PPOB_BACKEND/drivers/postgresql/stocks"
 	"PPOB_BACKEND/drivers/postgresql/users"
 	"fmt"
 
@@ -47,7 +46,6 @@ func DBMigrate(db *gorm.DB) {
 		&users.User{},               // User
 		&producttypes.ProductType{}, // ProductType
 		&providers.Provider{},       // Provider
-		&stocks.Stock{},             // Stock
 		&products.Product{},         // Product
 	)
 }

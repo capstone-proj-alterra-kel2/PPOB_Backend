@@ -13,6 +13,7 @@ type ProductType struct {
 	ID        uint                 `json:"id" gorm:"size:100;primaryKey"`
 	Name      string               `json:"name"`
 	Providers []providers.Provider `json:"providers" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Image     string               `json:"image"`
 	CreatedAt time.Time            `json:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at"`
 	DeletedAt gorm.DeletedAt       `json:"deleted_at"`
@@ -37,6 +38,7 @@ func FromDomain(domain *producttypes.Domain) *ProductType {
 		ID:        domain.ID,
 		Name:      domain.Name,
 		Providers: providersData,
+		Image:     domain.Image,
 		CreatedAt: domain.CreatedAt,
 		UpdatedAt: domain.UpdateAt,
 		DeletedAt: domain.DeletedAt,
@@ -53,6 +55,7 @@ func (recProdType *ProductType) ToDomain() producttypes.Domain {
 		ID:        recProdType.ID,
 		Name:      recProdType.Name,
 		Providers: providersFromDomain,
+		Image:     recProdType.Image,
 		CreatedAt: recProdType.CreatedAt,
 		UpdateAt:  recProdType.UpdatedAt,
 		DeletedAt: recProdType.DeletedAt,

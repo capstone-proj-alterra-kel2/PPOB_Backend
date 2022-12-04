@@ -11,6 +11,7 @@ type Domain struct {
 	ID        uint
 	Name      string
 	Providers []providers.Domain
+	Image     string
 	CreatedAt time.Time
 	UpdateAt  time.Time
 	DeletedAt gorm.DeletedAt

@@ -4,6 +4,7 @@ import (
 	"PPOB_BACKEND/businesses/providers"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type providerRepository struct {
@@ -19,7 +20,7 @@ func NewPostgreSQLRepository(conn *gorm.DB) providers.Repository {
 func (pr *providerRepository) GetAll() []providers.Domain {
 	var providersData []Provider
 
-	pr.conn.Preload("Products").Find(&providersData)
+	pr.conn.Preload(clause.Associations).Find(&providersData)
 
 	providerDomain := []providers.Domain{}
 	for _, provider := range providersData {
@@ -46,7 +47,9 @@ func (pr *providerRepository) GetOne(provider_id int) providers.Domain {
 func (pr *providerRepository) GetByPhone(provider string, product_type_id int) providers.Domain {
 	var providerData Provider
 
-	pr.conn.Preload("Products").First(&providerData).Where("product_type_id = ? AND name = ?", product_type_id, provider)
+	pr.conn.Preload("Products", func(db *gorm.DB) *gorm.DB {
+		return db.Order("products.price")
+	}).First(&providerData).Where("product_type_id = ? AND name = ?", product_type_id, provider)
 	return providerData.ToDomain()
 }
 
@@ -55,11 +58,20 @@ func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_
 
 	pr.conn.Model(&providerData).Where("id = ?", provider_id).Updates(
 		Provider{
-			Name: providerDomain.Name,
+			Name:  providerDomain.Name,
+			Image: providerDomain.Image,
 		},
 	)
 
 	return providerData.ToDomain()
+}
+
+func (pr *providerRepository) UpdateCheck(providerDomain *providers.ProviderDomain, provider_id int) providers.Domain {
+	updatedProviderData := FromDomainUpdate(providerDomain)
+
+	pr.conn.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&updatedProviderData)
+
+	return updatedProviderData.ToDomain()
 }
 
 func (pr *providerRepository) Delete(provider_id int) providers.Domain {

@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 type providerUsecase struct {
 	providerRepository Repository
 }
 
-func NewProviderUseCase(pr Repository) Usecase {
+func NewProviderUseCase(providerrepo Repository) Usecase {
 	return &providerUsecase{
-		providerRepository: pr,
+		providerRepository: providerrepo,
 	}
 }
 
@@ -28,8 +29,13 @@ func (pu *providerUsecase) GetOne(provider_id int) Domain {
 }
 func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) Domain {
 	var provider string
+	var prefixes []Prefix
+	var parsedStartDate time.Time
+	var parsedEndDate time.Time
+	var parsedCurrentTime time.Time
+	var providerResult Domain
+
 	sliced_phone_number := phone_number[:4]
-	fmt.Println(sliced_phone_number)
 	prefixJSON, err := os.Open("prefix.json")
 
 	if err != nil {
@@ -38,22 +44,52 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 
 	defer prefixJSON.Close()
 
-	var prefixes []Prefix
-
 	byteValuePrefix, _ := ioutil.ReadAll(prefixJSON)
 	json.Unmarshal(byteValuePrefix, &prefixes)
 
 	for i := 0; i < len(prefixes); i++ {
 		fmt.Println(prefixes[i].Prefix)
 		if prefixes[i].Prefix == sliced_phone_number {
-			provider = prefixes[i].Type
+			provider = prefixes[i].Provider
 		} else {
 			continue
 		}
 	}
 
-	return pu.providerRepository.GetByPhone(provider, product_type_id)
+	result := pu.providerRepository.GetByPhone(provider, product_type_id)
+
+	layoutFormat := "2006-01-02 15:04:05"
+
+	currentTime := time.Now().Local().Format(layoutFormat)
+	parsedCurrentTime, _ = time.Parse(layoutFormat, currentTime)
+
+	for _, prodProvider := range result.Products {
+		parsedStartDate, _ = time.Parse(layoutFormat, prodProvider.PromoStartDate)
+		parsedEndDate, _ = time.Parse(layoutFormat, prodProvider.PromoEndDate)
+
+		if parsedCurrentTime.Before(parsedEndDate) && parsedCurrentTime.After(parsedStartDate) {
+			prodProvider.IsPromoActive = true
+			providerResult.Products = append(providerResult.Products, prodProvider)
+		} else {
+			prodProvider.IsPromoActive = false
+			providerResult.Products = append(providerResult.Products, prodProvider)
+		}
+	}
+
+	providerResult.ID = result.ID
+	providerResult.Image = result.Image
+	providerResult.Name = result.Name
+	providerResult.CreatedAt = result.CreatedAt
+	providerResult.UpdateAt = result.UpdateAt
+	providerResult.DeletedAt = result.DeletedAt
+
+	return providerResult
 }
+
+func (pu *providerUsecase) UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain {
+	return pu.providerRepository.UpdateCheck(providerDomain, provider_id)
+}
+
 func (pu *providerUsecase) Update(providerDomain *Domain, provider_id int) Domain {
 	return pu.providerRepository.Update(providerDomain, provider_id)
 }

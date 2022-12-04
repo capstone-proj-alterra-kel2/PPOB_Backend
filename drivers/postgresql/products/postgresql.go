@@ -16,23 +16,18 @@ func NewPostgreSQLRepository(conn *gorm.DB) products.Repository {
 	}
 }
 
-func (pr *productRepository) GetAll() []products.Domain {
+func (pr *productRepository) GetAll() *gorm.DB {
 	var prod []Product
 
-	pr.conn.Find(&prod)
+	model := pr.conn.Order("price desc").Find(&prod).Model(&prod)
 
-	productDomain := []products.Domain{}
-
-	for _, products := range prod {
-		productDomain = append(productDomain, products.ToDomain())
-	}
-
-	return productDomain
+	return model
 }
 
 func (pr *productRepository) Create(productDomain *products.Domain) products.Domain {
 	prod := FromDomain(productDomain)
 	prod.TotalPurchased = 0
+	prod.IsPromoActive = false
 
 	pr.conn.Create(&prod)
 	return prod.ToDomain()
@@ -56,8 +51,14 @@ func (pr *productRepository) Update(productDomain *products.Domain, product_id i
 			Description:           productDomain.Description,
 			Price:                 productDomain.Price,
 			ProviderID:            productDomain.ProviderID,
-			StockID:               productDomain.StockID,
+			Status:                productDomain.Status,
 			AdditionalInformation: productDomain.AdditionalInformation,
+			IsAvailable:           productDomain.IsAvailable,
+			IsPromo:               productDomain.IsPromo,
+			IsPromoActive:         prod.IsPromoActive,
+			Discount:              productDomain.Discount,
+			PromoStartDate:        productDomain.PromoStartDate,
+			PromoEndDate:          productDomain.PromoEndDate,
 		},
 	)
 

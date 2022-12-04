@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"PPOB_BACKEND/app/aws"
 	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/providers"
 	"PPOB_BACKEND/controllers"
@@ -8,6 +9,7 @@ import (
 	"PPOB_BACKEND/controllers/providers/response"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -37,7 +39,11 @@ func (ctrl *ProviderController) GetAll(c echo.Context) error {
 func (ctrl *ProviderController) Create(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	// if claims.RoleID != 2 || claims.RoleID != 3 {
+	// 	return echo.ErrUnauthorized
+	// }
+
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
@@ -45,6 +51,17 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	input := request.Provider{}
+	var result string
+
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, image.Filename, src)
+		input.Image = result
+	}
+
 	input.ProductTypeID = productTypeID
 
 	if err := c.Bind(&input); err != nil {
@@ -73,20 +90,63 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	providerData := ctrl.providerUsecase.GetByPhone(phoneNumber, productTypeID)
-	return controllers.NewResponse(c, http.StatusOK, "success", "provider", response.FromDomain(providerData))
+
+	inputProviderUpdates := []request.UpdateCheckProduct{}
+	inputProvider := request.InputProvider{}
+
+	for _, v := range providerData.Products {
+		inputProviderUpdates = append(inputProviderUpdates, request.UpdateCheckProduct{
+			ID:                    int(v.ID),
+			Name:                  v.Name,
+			Category:              v.Category,
+			Description:           v.Description,
+			Price:                 v.Price,
+			ProviderID:            v.ProviderID,
+			Stock:                 v.Stock,
+			Status:                v.Status,
+			AdditionalInformation: v.AdditionalInformation,
+			IsAvailable:           v.IsAvailable,
+			IsPromo:               v.IsPromo,
+			IsPromoActive:         v.IsPromoActive,
+			Discount:              v.Discount,
+			PromoStartDate:        v.PromoStartDate,
+			PromoEndDate:          v.PromoEndDate,
+		})
+	}
+
+	inputProvider.ID = int(providerData.ID)
+	inputProvider.Name = providerData.Name
+	inputProvider.Image = providerData.Image
+	inputProvider.ProductTypeID = providerData.ProductTypeID
+	inputProvider.Products = inputProviderUpdates
+
+	providerUpdatedData := ctrl.providerUsecase.UpdateCheck(inputProvider.ToDomain(), int(providerData.ID))
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "provider", response.FromDomain(providerUpdatedData))
 }
 
 func (ctrl *ProviderController) Update(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	paramID := c.Param("provider-id")
-	providerID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
+	paramID := c.Param("provider-id")
+	providerID, _ := strconv.Atoi(paramID)
+
 	input := request.Provider{}
+
+	var result string
+
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, image.Filename, src)
+		input.Image = result
+	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
@@ -102,12 +162,12 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 func (ctrl *ProviderController) Delete(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	paramID := c.Param("provider-id")
-	providerID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
+
+	paramID := c.Param("provider-id")
+	providerID, _ := strconv.Atoi(paramID)
 
 	ctrl.providerUsecase.Delete(providerID)
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider deleted", "")

@@ -5,7 +5,6 @@ import (
 	"PPOB_BACKEND/controllers/products"
 	"PPOB_BACKEND/controllers/producttypes"
 	"PPOB_BACKEND/controllers/providers"
-	"PPOB_BACKEND/controllers/stocks"
 	"PPOB_BACKEND/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -19,7 +18,6 @@ type ControllerList struct {
 	ProductController     products.ProductController
 	ProviderController    providers.ProviderController
 	ProductTypeController producttypes.ProductTypeController
-	StockController       stocks.StockController
 	// Admin
 	// Businesse
 }
@@ -51,7 +49,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// User - Provider
 	usersProvider := usersProductType.Group("/:product-type-id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
-	usersProvider.GET("/phone", cl.ProviderController.GetByPhone)
+	usersProvider.POST("/phone", cl.ProviderController.GetByPhone)
 
 	// Admin
 
@@ -82,14 +80,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProvider.POST("", cl.ProviderController.Create)
 	adminProvider.PUT("/:provider-id", cl.ProviderController.Update)
 	adminProvider.DELETE("/:provider-id", cl.ProviderController.Delete)
-
-	// Admin - Stock
-	adminStock := v1.Group("/admin/stocks", middleware.JWTWithConfig(cl.JWTMIddleware))
-	adminStock.GET("/:stock-id", cl.StockController.Get)
-	adminStock.POST("", cl.StockController.Create)
-	adminStock.GET("", cl.StockController.GetAll)
-	adminStock.PUT("/:stock-id", cl.StockController.Update)
-	adminStock.DELETE("/:stock-id", cl.StockController.Delete)
 
 	// Admin - Voucher
 

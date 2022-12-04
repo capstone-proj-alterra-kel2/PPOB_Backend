@@ -1,5 +1,7 @@
 package products
 
+import "gorm.io/gorm"
+
 type productUsecase struct {
 	productRepository Repository
 }
@@ -10,7 +12,7 @@ func NewProductUseCase(pr Repository) Usecase {
 	}
 }
 
-func (pu *productUsecase) GetAll() []Domain {
+func (pu *productUsecase) GetAll() *gorm.DB {
 	return pu.productRepository.GetAll()
 }
 

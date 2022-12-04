@@ -22,9 +22,6 @@ import (
 	_productUseCase "PPOB_BACKEND/businesses/products"
 	_productController "PPOB_BACKEND/controllers/products"
 
-	_stockUseCase "PPOB_BACKEND/businesses/stocks"
-	_stockController "PPOB_BACKEND/controllers/stocks"
-
 	_driverFactory "PPOB_BACKEND/drivers"
 
 	_middleware "PPOB_BACKEND/app/middlewares"
@@ -66,6 +63,11 @@ func main() {
 	userUseCase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUseCase)
 
+	// Product
+	productRepo := _driverFactory.NewProductRepository(db)
+	productUseCase := _productUseCase.NewProductUseCase(productRepo)
+	productCtrl := _productController.NewProductController(productUseCase)
+
 	// Provider
 	providerRepo := _driverFactory.NewProviderRepository(db)
 	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
@@ -76,16 +78,6 @@ func main() {
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
 	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 
-	// Product
-	productRepo := _driverFactory.NewProductRepository(db)
-	productUseCase := _productUseCase.NewProductUseCase(productRepo)
-	productCtrl := _productController.NewProductController(productUseCase)
-
-	// Stock
-	stockRepo := _driverFactory.NewStockRepository(db)
-	stockUseCase := _stockUseCase.NewStockUseCase(stockRepo)
-	stockCtrl := _stockController.NewStockController(stockUseCase)
-
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:      configLogger.Init(),
 		JWTMIddleware:         configJWT.Init(),
@@ -93,7 +85,6 @@ func main() {
 		ProviderController:    *providerCtrl,
 		ProductTypeController: *productTypeCtrl,
 		ProductController:     *productCtrl,
-		StockController:       *stockCtrl,
 	}
 	routesInit.RouteRegister(e)
 

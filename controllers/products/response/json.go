@@ -14,9 +14,16 @@ type Product struct {
 	Description           string         `json:"description"`
 	Price                 int            `json:"price"`
 	ProviderID            int            `json:"provider_id"`
-	StockID               int            `json:"stock_id"`
+	Stock                 int            `json:"stock"`
+	Status                string         `json:"status"`
 	TotalPurchased        int            `json:"total_purchased"`
 	AdditionalInformation string         `json:"additional_information"`
+	IsAvailable           bool           `json:"is_available"`
+	IsPromo               bool           `json:"is_promo"`
+	IsPromoActive         bool           `json:"is_promo_active"`
+	Discount              int            `json:"discount"`
+	PromoStartDate        string         `json:"promo_start_date"`
+	PromoEndDate          string         `json:"promo_end_date"`
 	CreatedAt             time.Time      `json:"created_at"`
 	UpdatedAt             time.Time      `json:"updated_at"`
 	DeletedAt             gorm.DeletedAt `json:"deleted_at"`
@@ -30,9 +37,16 @@ func FromDomain(domain products.Domain) Product {
 		Description:           domain.Description,
 		Price:                 domain.Price,
 		ProviderID:            domain.ProviderID,
-		StockID:               domain.StockID,
+		Stock:                 domain.Stock,
+		Status:                domain.Status,
 		TotalPurchased:        domain.TotalPurchased,
 		AdditionalInformation: domain.AdditionalInformation,
+		IsAvailable:           domain.IsAvailable,
+		IsPromo:               domain.IsPromo,
+		IsPromoActive:         domain.IsPromoActive,
+		Discount:              domain.Discount,
+		PromoStartDate:        domain.PromoStartDate,
+		PromoEndDate:          domain.PromoEndDate,
 		CreatedAt:             domain.CreatedAt,
 		UpdatedAt:             domain.UpdatedAt,
 		DeletedAt:             domain.DeletedAt,

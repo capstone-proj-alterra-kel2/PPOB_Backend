@@ -1,6 +1,7 @@
 package producttypes
 
 import (
+	"PPOB_BACKEND/app/aws"
 	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/producttypes"
 	"PPOB_BACKEND/controllers"
@@ -8,6 +9,7 @@ import (
 	"PPOB_BACKEND/controllers/producttypes/response"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -37,11 +39,25 @@ func (ctrl *ProductTypeController) GetAll(c echo.Context) error {
 func (ctrl *ProductTypeController) Create(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	// if claims.RoleID != 2 || claims.RoleID != 3 {
+	// 	return echo.ErrUnauthorized
+	// }
+
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
+	var result string
 	input := request.ProductType{}
+
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, image.Filename, src)
+		input.Image = result
+	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
@@ -65,14 +81,25 @@ func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
 func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	paramID := c.Param("product-type-id")
-	productTypeID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
 
+	var result string
+
+	paramID := c.Param("product-type-id")
+	productTypeID, _ := strconv.Atoi(paramID)
+
 	input := request.ProductType{}
+
+	image, _ := c.FormFile("image")
+	image.Filename = time.Now().String() + ".png"
+	if image != nil {
+		src, _ := image.Open()
+		defer src.Close()
+		result, _ = aws.UploadToS3(c, image.Filename, src)
+		input.Image = result
+	}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
@@ -88,12 +115,12 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 func (ctrl *ProductTypeController) Delete(c echo.Context) error {
 	claims := middlewares.GetUser(c)
 
-	paramID := c.Param("product-type-id")
-	productID, _ := strconv.Atoi(paramID)
-
-	if claims.RoleID != 2 || claims.RoleID != 3 {
+	if claims.RoleID != 1 {
 		return echo.ErrUnauthorized
 	}
+
+	paramID := c.Param("product-type-id")
+	productID, _ := strconv.Atoi(paramID)
 
 	ctrl.productTypeUsecase.Delete(productID)
 	return controllers.NewResponse(c, http.StatusOK, "success", "product type deleted", "")
