@@ -29,6 +29,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	auth.POST("/register", cl.UserController.Register)
 	// Only Admin & Superadmin
 	usersAdmin := v1.Group("/admin/users", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	usersAdmin.Use(middlewares.CheckStatusToken)
 	usersAdmin.GET("", cl.UserController.GetAll)                  // Get All User
 	usersAdmin.POST("", cl.UserController.CreateUser)             // Create User
 	usersAdmin.PUT("/:user_id", cl.UserController.UpdateDataUser) // Update Data User
@@ -36,6 +37,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersAdmin.GET("/:user_id", cl.UserController.DetailUser)     // Get Detail User
 	// Only Superadmin
 	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsSuperAdmin)
+	adminSuperAdmin.Use(middlewares.CheckStatusToken)
 	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
 	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
 	adminSuperAdmin.PUT("/:user_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
@@ -43,6 +45,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminSuperAdmin.GET("/:user_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
 	// User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
+	user.Use(middlewares.CheckStatusToken)
 	user.GET("/profile", cl.UserController.Profile)
 	user.PUT("/password", cl.UserController.UpdatePassword)
 	user.PUT("/data", cl.UserController.UpdateData)
@@ -73,5 +76,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	// Logout
 	withAuth := v1.Group("/auth", middleware.JWTWithConfig(cl.JWTMIddleware))
+	
 	withAuth.POST("/logout", cl.UserController.Logout)
 }

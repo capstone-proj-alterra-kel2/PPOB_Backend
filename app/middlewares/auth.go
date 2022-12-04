@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"net/http"
 	"strconv"
 	"time"
 
@@ -68,6 +69,18 @@ func GetUserID(c echo.Context) string {
 	return idUser
 }
 
+func CheckStatusToken(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+	userID := GetUser(c)
+
+	if userID == nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{
+			"message": "invalid token",
+		})
+	}
+	return next(c)
+	}
+}
 // IsSuperAdmin perform athorized only Superadmin can access
 func IsSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
