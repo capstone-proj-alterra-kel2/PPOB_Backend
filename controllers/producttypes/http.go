@@ -44,7 +44,7 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 	if image != nil {
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, "producttype/", image.Filename, src)
+		result, _ = aws.UploadToS3(c, "product-type/", image.Filename, src)
 		input.Image = result
 	}
 
@@ -73,14 +73,15 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	paramID := c.Param("product-type-id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
-	input := request.ProductType{}
+	input := request.UpdateProductType{}
 
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
-		result, _ = aws.UploadToS3(c, "producttype/", image.Filename, src)
+		result, _ = aws.UploadToS3(c, "product-type/", image.Filename, src)
 		input.Image = result
 	}
 

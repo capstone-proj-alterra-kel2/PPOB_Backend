@@ -24,3 +24,22 @@ func (req *ProductType) Validate() error {
 	err := validate.Struct(req)
 	return err
 }
+
+type UpdateProductType struct {
+	Name  string `json:"name" form:"name" validate:"required"`
+	Image string `json:"image" form :"image"`
+}
+
+func (req *UpdateProductType) ToDomain() *producttypes.Domain {
+	return &producttypes.Domain{
+		Name:  req.Name,
+		Image: req.Image,
+	}
+}
+
+func (req *UpdateProductType) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}

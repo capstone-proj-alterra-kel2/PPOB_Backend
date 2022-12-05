@@ -64,16 +64,18 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 	parsedCurrentTime, _ = time.Parse(layoutFormat, currentTime)
 
 	for _, prodProvider := range result.Products {
-		parsedStartDate, _ = time.Parse(layoutFormat, prodProvider.PromoStartDate)
-		parsedEndDate, _ = time.Parse(layoutFormat, prodProvider.PromoEndDate)
+		if prodProvider.IsPromo {
+			parsedStartDate, _ = time.Parse(layoutFormat, prodProvider.PromoStartDate)
+			parsedEndDate, _ = time.Parse(layoutFormat, prodProvider.PromoEndDate)
 
-		if parsedCurrentTime.Before(parsedEndDate) && parsedCurrentTime.After(parsedStartDate) {
-			prodProvider.IsPromoActive = true
-			providerResult.Products = append(providerResult.Products, prodProvider)
-		} else {
-			prodProvider.IsPromoActive = false
-			providerResult.Products = append(providerResult.Products, prodProvider)
+			if parsedCurrentTime.Before(parsedEndDate) && parsedCurrentTime.After(parsedStartDate) {
+				prodProvider.IsPromoActive = true
+			} else {
+				prodProvider.IsPromoActive = false
+			}
 		}
+
+		providerResult.Products = append(providerResult.Products, prodProvider)
 	}
 
 	providerResult.ID = result.ID

@@ -16,7 +16,7 @@ type Product struct {
 	Status                string `json:"status" form:"status" validate:"required"`
 	AdditionalInformation string `json:"additional_information" form:"additional_information"`
 	IsAvailable           bool   `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo               bool   `json:"is_promo" form:"is_promo" validate:"required"`
+	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`
 	IsPromoActive         bool   `json:"is_promo_active" form:"is_promo_active"`
 	Discount              int    `json:"discount" form:"discount"`
 	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
@@ -34,7 +34,7 @@ func (req *Product) ToDomain() *products.Domain {
 		Status:                req.Status,
 		AdditionalInformation: req.AdditionalInformation,
 		IsAvailable:           req.IsAvailable,
-		IsPromo:               req.IsPromo,
+		IsPromo:               *req.IsPromo,
 		IsPromoActive:         req.IsPromoActive,
 		Discount:              req.Discount,
 		PromoStartDate:        req.PromoStartDate,

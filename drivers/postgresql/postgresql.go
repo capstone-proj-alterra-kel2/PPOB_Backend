@@ -44,11 +44,11 @@ func (config *ConfigDB) InitDB() *gorm.DB {
 // Migrating Struct into Table in Database
 func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
+		&roles.Role{},               // role
 		&users.User{},               // User
 		&producttypes.ProductType{}, // ProductType
 		&providers.Provider{},       // Provider
 		&products.Product{},         // Product
-		&roles.Role{},               // role
 		// Provider
 		// ProductType
 		// ...

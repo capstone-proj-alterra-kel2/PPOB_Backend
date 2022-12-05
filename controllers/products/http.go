@@ -5,6 +5,7 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/products/request"
 	"PPOB_BACKEND/controllers/products/response"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -49,6 +50,7 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
+		fmt.Println(err.Error())
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 

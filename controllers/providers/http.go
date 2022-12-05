@@ -43,8 +43,9 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 	var result string
 
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "provider/", image.Filename, src)
@@ -118,13 +119,13 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 	paramID := c.Param("provider-id")
 	providerID, _ := strconv.Atoi(paramID)
 
-	input := request.Provider{}
+	input := request.UpdateData{}
 
 	var result string
 
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
 	if image != nil {
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "provider/", image.Filename, src)

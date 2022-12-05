@@ -96,3 +96,22 @@ func (req *Provider) Validate() error {
 	err := validate.Struct(req)
 	return err
 }
+
+type UpdateData struct {
+	Image string `json:"image" form:"image"`
+	Name  string `json:"name" form:"name" validate:"required"`
+}
+
+func (req *UpdateData) ToDomain() *providers.Domain {
+	return &providers.Domain{
+		Name:  req.Name,
+		Image: req.Image,
+	}
+}
+
+func (req *UpdateData) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
