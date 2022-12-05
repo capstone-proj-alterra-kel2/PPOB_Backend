@@ -292,6 +292,10 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	input := request.User{}
 	image, _ := c.FormFile("image")
 
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
@@ -310,9 +314,7 @@ func (ctrl *UserController) Register(c echo.Context) error {
 		result, _ = aws.UploadToS3(c, "profile/", image.Filename, src)
 		input.Image = result
 	}
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
-	}
+
 	if err := input.Validate(); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
