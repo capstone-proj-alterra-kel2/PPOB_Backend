@@ -54,6 +54,16 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
+	if *input.IsPromo {
+		if input.Discount == 0 {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
+		}
+
+		if input.PromoStartDate == "" || input.PromoEndDate == "" {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "promo start or end date aren't allowed empty")
+		}
+	}
+
 	product := ctrl.productUsecase.Create(input.ToDomain())
 	return controllers.NewResponse(c, http.StatusCreated, "success", "product created", response.FromDomain(product))
 }
