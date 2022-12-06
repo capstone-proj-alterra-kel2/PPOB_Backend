@@ -35,7 +35,8 @@ func (ur *userRepository) GetAll(Page int, Size int, Sort string, Search string)
 		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "1")
 	}
 
-	ur.conn.Preload("Role").Offset(Page).Limit(Page).Order(sort).Find(&rec)
+	ur.conn.Preload("Role").Offset(Page).Limit(Size).Order(sort).Find(&rec)
+
 	userDomain := []users.Domain{}
 	for _, user := range rec {
 		userDomain = append(userDomain, user.ToDomain())
@@ -60,7 +61,7 @@ func (ur *userRepository) GetAllAdmin(Page int, Size int, Sort string, Search st
 		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "2")
 	}
 
-	ur.conn.Preload("Role").Offset(Page).Limit(Page).Order(sort).Find(&rec)
+	ur.conn.Preload("Role").Offset(Page).Limit(Size).Order(sort).Find(&rec)
 	userDomain := []users.Domain{}
 	for _, user := range rec {
 		userDomain = append(userDomain, user.ToDomain())
@@ -74,7 +75,7 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 1
-	if err := ur.conn.Create(&rec).Error; err != nil {
+	if err := ur.conn.Preload("Role").Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
 	return rec.ToDomain(), nil
@@ -85,7 +86,7 @@ func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, e
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 2
-	if err := ur.conn.Create(&rec).Error; err != nil {
+	if err := ur.conn.Preload("Role").Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
 	return rec.ToDomain(), nil

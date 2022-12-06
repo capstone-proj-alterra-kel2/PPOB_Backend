@@ -35,7 +35,7 @@ func (ctrl *UserController) GetAll(c echo.Context) error {
 	search := c.QueryParam("search")
 	sort := c.QueryParam("sort")
 
-	usersData, userDomain := ctrl.userUsecase.GetAll(size, page, sort, search)
+	usersData, userDomain := ctrl.userUsecase.GetAll(page, size, sort, search)
 	users := []response.User{}
 	for _, user := range userDomain {
 		users = append(users, response.FromDomain(user))
@@ -95,7 +95,7 @@ func (ctrl *UserController) GetAllAdmin(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	search := c.QueryParam("search")
 	sort := c.QueryParam("sort")
-	usersData, userDomain := ctrl.userUsecase.GetAllAdmin(size, page, sort, search)
+	usersData, userDomain := ctrl.userUsecase.GetAllAdmin(page, size, sort, search)
 	users := []response.User{}
 	for _, user := range userDomain {
 		users = append(users, response.FromDomain(user))
