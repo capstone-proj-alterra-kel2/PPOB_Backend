@@ -82,7 +82,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Admin - Admin
 
 	// Admin - Product
-	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProduct.Use(middlewares.CheckStatusToken)
 	adminProduct.GET("", cl.ProductController.GetAll)
 	adminProduct.GET("/:product-id", cl.ProductController.GetOne)
@@ -91,7 +91,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProduct.DELETE("/:product-id", cl.ProductController.Delete)
 
 	// Admin - Product Type
-	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProductType.Use(middlewares.CheckStatusToken)
 	adminProductType.GET("", cl.ProductTypeController.GetAll)
 	adminProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)

@@ -21,13 +21,11 @@ func NewProviderUseCase(providerrepo Repository) Usecase {
 func (pu *providerUsecase) GetAll(product_type_id int) ([]Domain, error) {
 	return pu.providerRepository.GetAll(product_type_id)
 }
-func (pu *providerUsecase) Create(providerDomain *Domain, product_type_id int) (Domain, error) {
+func (pu *providerUsecase) Create(providerDomain *Domain, product_type_id int) (Domain, bool) {
 	return pu.providerRepository.Create(providerDomain, product_type_id)
 }
-func (pu *providerUsecase) GetOne(provider_id int, product_type_id int) (Domain, error) {
-	res, err := pu.providerRepository.GetOne(provider_id, product_type_id)
-
-	return res, err
+func (pu *providerUsecase) GetOne(provider_id int, product_type_id int) (Domain, bool, bool) {
+	return pu.providerRepository.GetOne(provider_id, product_type_id)
 }
 func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) Domain {
 	var provider string

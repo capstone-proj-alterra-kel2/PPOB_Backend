@@ -36,31 +36,49 @@ func (pr *providerRepository) GetAll(product_type_id int) ([]providers.Domain, e
 	return providerDomain, nil
 }
 
-func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, error) {
+func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, bool) {
 	providerData := FromDomain(providerDomain)
 
-	err := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error
+	checkName := providerData.Name
 
-	if err != nil {
-		return providerData.ToDomain(), err
+	if checkProvider := pr.conn.First(&providerData, "name = ? AND product_type_id = ?", checkName, product_type_id).Error; checkProvider != gorm.ErrRecordNotFound {
+		return providerData.ToDomain(), true
 	}
 
 	pr.conn.Create(&providerData)
-	return providerData.ToDomain(), nil
+
+	return providerData.ToDomain(), false
 }
 
-func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (providers.Domain, error) {
+func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (providers.Domain, bool, bool) {
 	var providerData Provider
+	var isProviderFound bool
+	var isProductTypeFound bool
 
-	err := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error
-
-	if err != nil {
-		return providerData.ToDomain(), err
+	if checkProductType := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error; checkProductType != gorm.ErrRecordNotFound {
+		isProductTypeFound = true
 	}
 
-	pr.conn.Preload("Products").Find(&providerData).Where("id = ? AND product_type_id = ?", provider_id, product_type_id)
+	if checkProvider := pr.conn.First(&providerData, "id = ?", provider_id).Error; checkProvider != gorm.ErrRecordNotFound {
+		isProviderFound = true
+	}
 
-	return providerData.ToDomain(), nil
+	if isProductTypeFound && isProviderFound {
+		pr.conn.Preload("Products").Find(&providerData).Where("id = ? AND product_type_id = ?", provider_id, product_type_id)
+
+		return providerData.ToDomain(), true, true
+	}
+
+	if !isProductTypeFound {
+		return providerData.ToDomain(), false, true
+	}
+
+	if !isProviderFound {
+		return providerData.ToDomain(), true, false
+	}
+
+	return providerData.ToDomain(), false, false
+
 }
 
 func (pr *providerRepository) GetByPhone(provider string, product_type_id int) providers.Domain {

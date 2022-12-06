@@ -30,7 +30,7 @@ func (ctrl *ProviderController) GetAll(c echo.Context) error {
 	providersData, err := ctrl.providerUsecase.GetAll(productTypeID)
 
 	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "provider with that product type not found")
 	}
 
 	providers := []response.Provider{}
@@ -68,10 +68,14 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	providerData, err := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
+	providerData, isNameDuplicated := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
 
-	if err != nil {
+	if providerData.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
+	}
+
+	if isNameDuplicated {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "provider already exist")
 	}
 
 	return controllers.NewResponse(c, http.StatusCreated, "success", "provider created", response.FromDomain(providerData))
@@ -84,14 +88,14 @@ func (ctrl *ProviderController) GetOne(c echo.Context) error {
 	paramProductTypeID := c.Param("product-type-id")
 	productTypeID, _ := strconv.Atoi(paramProductTypeID)
 
-	providerData, err := ctrl.providerUsecase.GetOne(providerID, productTypeID)
+	providerData, isProductTypeFound, isProviderFound := ctrl.providerUsecase.GetOne(providerID, productTypeID)
 
-	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product types not found")
+	if !isProductTypeFound {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Product Type Not Found")
 	}
 
-	if providerData.ID == 0 {
-		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "providers not found")
+	if !isProviderFound {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Provider Not Found")
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider", response.FromDomain(providerData))
