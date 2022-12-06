@@ -2,6 +2,7 @@ package products
 
 import (
 	"PPOB_BACKEND/businesses/products"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -16,12 +17,32 @@ func NewPostgreSQLRepository(conn *gorm.DB) products.Repository {
 	}
 }
 
-func (pr *productRepository) GetAll() *gorm.DB {
+func (pr *productRepository) GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []products.Domain) {
 	var prod []Product
+	var sort string
+	var search string
+	var model *gorm.DB
 
-	model := pr.conn.Order("price desc").Find(&prod).Model(&prod)
+	if strings.HasPrefix(Sort, "-") {
+		sort = Sort[1:] + " DESC"
+	} else {
+		sort = Sort[0:] + " ASC"
+	}
 
-	return model
+	model = pr.conn.Order(sort).Find(&prod).Model(&prod)
+
+	if Search != "" {
+		search = "%" + Search + "%"
+		model = pr.conn.Order(sort).Model(&prod).Where("name LIKE ?", search)
+	}
+
+	pr.conn.Offset(Page).Limit(Size).Order(sort).Find(&prod)
+	productDomain := []products.Domain{}
+	for _, product := range prod {
+		productDomain = append(productDomain, product.ToDomain())
+	}
+
+	return model, productDomain
 }
 
 func (pr *productRepository) Create(productDomain *products.Domain) products.Domain {

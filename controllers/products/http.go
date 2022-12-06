@@ -24,14 +24,21 @@ func NewProductController(productUC products.Usecase) *ProductController {
 }
 
 func (ctrl *ProductController) GetAll(c echo.Context) error {
-	model := ctrl.productUsecase.GetAll()
-	pg := paginate.New(&paginate.Config{
-		DefaultSize: 6,
-	})
+	pg := paginate.New()
+
+	size, _ := strconv.Atoi(c.QueryParam("size"))
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	search := c.QueryParam("search")
+	sort := c.QueryParam("sort")
+
+	modelProduct, productDomain := ctrl.productUsecase.GetAll(page, size, sort, search)
 
 	products := []response.Product{}
+	for _, product := range productDomain {
+		products = append(products, response.FromDomain(product))
+	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "all products", pg.With(model).Request(c.Request()).Response(&products))
+	return controllers.NewResponse(c, http.StatusOK, "success", "all products", pg.Response(modelProduct, c.Request(), &products))
 }
 
 func (ctrl *ProductController) GetOne(c echo.Context) error {

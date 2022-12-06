@@ -12,8 +12,8 @@ func NewProductUseCase(pr Repository) Usecase {
 	}
 }
 
-func (pu *productUsecase) GetAll() *gorm.DB {
-	return pu.productRepository.GetAll()
+func (pu *productUsecase) GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain) {
+	return pu.productRepository.GetAll(Page, Size, Sort, Search)
 }
 
 func (pu *productUsecase) Create(productDomain *Domain) Domain {

@@ -29,7 +29,7 @@ type Domain struct {
 }
 
 type Usecase interface {
-	GetAll() *gorm.DB
+	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	Update(productDomain *Domain, product_id int) Domain
@@ -37,7 +37,7 @@ type Usecase interface {
 }
 
 type Repository interface {
-	GetAll() *gorm.DB
+	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	Update(productDomain *Domain, product_id int) Domain
