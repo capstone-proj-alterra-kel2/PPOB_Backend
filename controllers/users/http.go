@@ -191,9 +191,9 @@ func (ctrl *UserController) DeleteAdmin(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete superadmin")
 	}
 	if isSuccess := ctrl.userUsecase.DeleteUser(idUser); !isSuccess {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete user not found")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete admin not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "user deleted", "")
+	return controllers.NewResponse(c, http.StatusOK, "success", "admin deleted", "")
 }
 
 func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
