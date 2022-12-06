@@ -35,7 +35,7 @@ func (ctrl *UserController) GetAll(c echo.Context) error {
 	search := c.QueryParam("search")
 	sort := c.QueryParam("sort")
 
-	usersData, userDomain := ctrl.userUsecase.GetAll(size, page, sort, search)
+	usersData, userDomain := ctrl.userUsecase.GetAll(page, size, sort, search)
 	users := []response.User{}
 	for _, user := range userDomain {
 		users = append(users, response.FromDomain(user))
@@ -95,7 +95,7 @@ func (ctrl *UserController) GetAllAdmin(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	search := c.QueryParam("search")
 	sort := c.QueryParam("sort")
-	usersData, userDomain := ctrl.userUsecase.GetAllAdmin(size, page, sort, search)
+	usersData, userDomain := ctrl.userUsecase.GetAllAdmin(page, size, sort, search)
 	users := []response.User{}
 	for _, user := range userDomain {
 		users = append(users, response.FromDomain(user))
@@ -191,9 +191,9 @@ func (ctrl *UserController) DeleteAdmin(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete superadmin")
 	}
 	if isSuccess := ctrl.userUsecase.DeleteUser(idUser); !isSuccess {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete user not found")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cannot delete admin not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "user deleted", "")
+	return controllers.NewResponse(c, http.StatusOK, "success", "admin deleted", "")
 }
 
 func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
