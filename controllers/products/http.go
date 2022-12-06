@@ -47,6 +47,10 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 
 	productData := ctrl.productUsecase.GetOne(productID)
 
+	if productData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product", response.FromDomain(productData))
 }
 

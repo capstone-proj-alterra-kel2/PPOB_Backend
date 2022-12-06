@@ -49,10 +49,10 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 	}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	productType := ctrl.productTypeUsecase.Create(input.ToDomain())
@@ -64,6 +64,11 @@ func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	productTypeData := ctrl.productTypeUsecase.GetOne(productTypeID)
+
+	if productTypeData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product type not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "prodcut type", response.FromDomain(productTypeData))
 }
 
@@ -86,10 +91,10 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	productType := ctrl.productTypeUsecase.Update(input.ToDomain(), productTypeID)

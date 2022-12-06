@@ -17,31 +17,50 @@ func NewPostgreSQLRepository(conn *gorm.DB) providers.Repository {
 	}
 }
 
-func (pr *providerRepository) GetAll() []providers.Domain {
+func (pr *providerRepository) GetAll(product_type_id int) ([]providers.Domain, error) {
 	var providersData []Provider
-
-	pr.conn.Preload(clause.Associations).Find(&providersData)
-
 	providerDomain := []providers.Domain{}
+
+	err := pr.conn.First(&providersData, "product_type_id = ?", product_type_id).Error
+
+	if err != nil {
+		return providerDomain, err
+	}
+
+	pr.conn.Preload(clause.Associations).Find(&providersData).Where("product_type_id = ?", product_type_id)
+
 	for _, provider := range providersData {
 		providerDomain = append(providerDomain, provider.ToDomain())
 	}
 
-	return providerDomain
+	return providerDomain, nil
 }
 
-func (pr *providerRepository) Create(providerDomain *providers.Domain) providers.Domain {
+func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, error) {
 	providerData := FromDomain(providerDomain)
 
+	err := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error
+
+	if err != nil {
+		return providerData.ToDomain(), err
+	}
+
 	pr.conn.Create(&providerData)
-	return providerData.ToDomain()
+	return providerData.ToDomain(), nil
 }
 
-func (pr *providerRepository) GetOne(provider_id int) providers.Domain {
+func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (providers.Domain, error) {
 	var providerData Provider
 
-	pr.conn.Preload("Products").First(&providerData, provider_id)
-	return providerData.ToDomain()
+	err := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error
+
+	if err != nil {
+		return providerData.ToDomain(), err
+	}
+
+	pr.conn.Preload("Products").Find(&providerData).Where("id = ? AND product_type_id = ?", provider_id, product_type_id)
+
+	return providerData.ToDomain(), nil
 }
 
 func (pr *providerRepository) GetByPhone(provider string, product_type_id int) providers.Domain {

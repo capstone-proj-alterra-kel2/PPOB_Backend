@@ -24,7 +24,14 @@ func NewProviderController(providerUC providers.Usecase) *ProviderController {
 }
 
 func (ctrl *ProviderController) GetAll(c echo.Context) error {
-	providersData := ctrl.providerUsecase.GetAll()
+	paramID := c.Param("product-type-id")
+	productTypeID, _ := strconv.Atoi(paramID)
+
+	providersData, err := ctrl.providerUsecase.GetAll(productTypeID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
+	}
 
 	providers := []response.Provider{}
 
@@ -55,21 +62,38 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 	input.ProductTypeID = productTypeID
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	providerData := ctrl.providerUsecase.Create(input.ToDomain())
+	providerData, err := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusCreated, "success", "provider created", response.FromDomain(providerData))
 }
 
 func (ctrl *ProviderController) GetOne(c echo.Context) error {
-	paramID := c.Param("provider-id")
-	providerID, _ := strconv.Atoi(paramID)
+	paramProviderID := c.Param("provider-id")
+	providerID, _ := strconv.Atoi(paramProviderID)
 
-	providerData := ctrl.providerUsecase.GetOne(providerID)
+	paramProductTypeID := c.Param("product-type-id")
+	productTypeID, _ := strconv.Atoi(paramProductTypeID)
+
+	providerData, err := ctrl.providerUsecase.GetOne(providerID, productTypeID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product types not found")
+	}
+
+	if providerData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "providers not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider", response.FromDomain(providerData))
 }
 
@@ -133,10 +157,10 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 	}
 
 	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "invalid request", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
 	providerData := ctrl.providerUsecase.Update(input.ToDomain(), providerID)
