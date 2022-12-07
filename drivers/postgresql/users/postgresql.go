@@ -31,7 +31,7 @@ func (ur *userRepository) GetAll(Page int, Size int, Sort string, Search string)
 	}
 	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "1")
 	if Search != "" {
-		search = "%" + Search +"%"
+		search = "%" + Search + "%"
 		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "1")
 	}
 
@@ -57,7 +57,7 @@ func (ur *userRepository) GetAllAdmin(Page int, Size int, Sort string, Search st
 	}
 	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "2")
 	if Search != "" {
-		search = "%" + Search +"%"
+		search = "%" + Search + "%"
 		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "2")
 	}
 
@@ -177,7 +177,7 @@ func (ur *userRepository) CheckDuplicateUser(Email string, PhoneNumber string) (
 	var rec []User
 	var DuplicateEmail bool
 	var DuplicatePhoneNumber bool
-	if isEmailDuplicate := ur.conn.First(&rec, "users.email = ?", Email).Error; isEmailDuplicate != gorm.ErrRecordNotFound{
+	if isEmailDuplicate := ur.conn.First(&rec, "users.email = ?", Email).Error; isEmailDuplicate != gorm.ErrRecordNotFound {
 		DuplicateEmail = true
 	}
 

@@ -228,7 +228,7 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 	if updatedData.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "data user not found")
 	}
- 
+
 	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
 	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
 

@@ -9,9 +9,18 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	
+
 	_userUseCase "PPOB_BACKEND/businesses/users"
 	_userController "PPOB_BACKEND/controllers/users"
+
+	_providerUseCase "PPOB_BACKEND/businesses/providers"
+	_providerController "PPOB_BACKEND/controllers/providers"
+
+	_productTypeUseCase "PPOB_BACKEND/businesses/producttypes"
+	_productTypeController "PPOB_BACKEND/controllers/producttypes"
+
+	_productUseCase "PPOB_BACKEND/businesses/products"
+	_productController "PPOB_BACKEND/controllers/products"
 
 	_driverFactory "PPOB_BACKEND/drivers"
 
@@ -20,9 +29,9 @@ import (
 	_dbDriver "PPOB_BACKEND/drivers/postgresql"
 
 	util "PPOB_BACKEND/utils"
+
 	"github.com/labstack/echo/v4"
 )
-
 
 type operation func(ctx context.Context) error
 
@@ -54,20 +63,28 @@ func main() {
 	userUseCase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUseCase)
 
+	// Product
+	productRepo := _driverFactory.NewProductRepository(db)
+	productUseCase := _productUseCase.NewProductUseCase(productRepo)
+	productCtrl := _productController.NewProductController(productUseCase)
+
 	// Provider
+	providerRepo := _driverFactory.NewProviderRepository(db)
+	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
+	providerCtrl := _providerController.NewProviderController(providerUsecase)
 
 	// Product Type
-
- // Product
-
-	// Voucher
-
+	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
+	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
+	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:      configLogger.Init(),
 		JWTMIddleware:         configJWT.Init(),
 		UserController:        *userCtrl,
-
+		ProviderController:    *providerCtrl,
+		ProductTypeController: *productTypeCtrl,
+		ProductController:     *productCtrl,
 	}
 	routesInit.RouteRegister(e)
 

@@ -33,7 +33,7 @@ func (cj *ConfigJWT) Init() middleware.JWTConfig {
 
 // GenerateToken perform generating token and exp from userID
 func (cj *ConfigJWT) GenerateToken(userID uint, role string) string {
-	
+
 	claims := JWTCustomClaims{
 		userID,
 		jwt.StandardClaims{
@@ -43,11 +43,10 @@ func (cj *ConfigJWT) GenerateToken(userID uint, role string) string {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	listedToken, _ := token.SignedString([]byte(cj.SecretJWT))
-	
+
 	whitelist = append(whitelist, listedToken)
 	return listedToken
 }
-
 
 // GetUser perform claims user
 func GetUser(c echo.Context) *JWTCustomClaims {
@@ -65,22 +64,23 @@ func GetUserID(c echo.Context) string {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JWTCustomClaims)
 	userID := claims.ID
-	idUser := strconv.FormatUint(uint64(userID ), 10)
+	idUser := strconv.FormatUint(uint64(userID), 10)
 	return idUser
 }
 
 func CheckStatusToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-	userID := GetUser(c)
+		userID := GetUser(c)
 
-	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, map[string]string{
-			"message": "invalid token",
-		})
-	}
-	return next(c)
+		if userID == nil {
+			return c.JSON(http.StatusUnauthorized, map[string]string{
+				"message": "invalid token",
+			})
+		}
+		return next(c)
 	}
 }
+
 // IsSuperAdmin perform athorized only Superadmin can access
 func IsSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -101,7 +101,7 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*JWTCustomClaims)
 		HasRole := claims.HasRole
-		
+
 		if HasRole == "admin" || HasRole == "superadmin" {
 			return next(c)
 		}

@@ -14,16 +14,16 @@ type ResponseFail struct {
 }
 
 func NewResponse[T any](c echo.Context, statusCode int, statusMessage string, message string, data T) error {
-	return c.JSON(statusCode, Response[T] {
-		Status: statusMessage,
+	return c.JSON(statusCode, Response[T]{
+		Status:  statusMessage,
 		Message: message,
-		Data: data,
+		Data:    data,
 	})
 }
 
 func NewResponseFail(c echo.Context, statusCode int, statusMessage string, message string) error {
-	return c.JSON(statusCode, ResponseFail {
-		Status: statusMessage,
+	return c.JSON(statusCode, ResponseFail{
+		Status:  statusMessage,
 		Message: message,
 	})
 }
