@@ -3,7 +3,7 @@ package providers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 )
@@ -18,18 +18,18 @@ func NewProviderUseCase(providerrepo Repository) Usecase {
 	}
 }
 
-func (pu *providerUsecase) GetAll(product_type_id int) ([]Domain, error) {
+func (pu *providerUsecase) GetAll(product_type_id int) ([]Domain, bool) {
 	return pu.providerRepository.GetAll(product_type_id)
 }
-func (pu *providerUsecase) Create(providerDomain *Domain, product_type_id int) (Domain, bool) {
+func (pu *providerUsecase) Create(providerDomain *Domain, product_type_id int) (Domain, bool, bool) {
 	return pu.providerRepository.Create(providerDomain, product_type_id)
 }
 func (pu *providerUsecase) GetOne(provider_id int, product_type_id int) (Domain, bool, bool) {
 	return pu.providerRepository.GetOne(provider_id, product_type_id)
 }
-func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) Domain {
+func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) (Domain, bool) {
 	var provider string
-	var prefixes []Prefix
+	var prefixes Prefixes
 	var parsedStartDate time.Time
 	var parsedEndDate time.Time
 	var parsedCurrentTime time.Time
@@ -44,19 +44,22 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 
 	defer prefixJSON.Close()
 
-	byteValuePrefix, _ := ioutil.ReadAll(prefixJSON)
+	byteValuePrefix, _ := io.ReadAll(prefixJSON)
 	json.Unmarshal(byteValuePrefix, &prefixes)
 
-	for i := 0; i < len(prefixes); i++ {
-		fmt.Println(prefixes[i].Prefix)
-		if prefixes[i].Prefix == sliced_phone_number {
-			provider = prefixes[i].Provider
+	for i := 0; i < len(prefixes.Prefixes); i++ {
+		if prefixes.Prefixes[i].Prefix == sliced_phone_number {
+			provider = prefixes.Prefixes[i].Provider
 		} else {
 			continue
 		}
 	}
 
-	result := pu.providerRepository.GetByPhone(provider, product_type_id)
+	result, isProductTypeFound := pu.providerRepository.GetByPhone(provider, product_type_id)
+
+	if !isProductTypeFound {
+		return providerResult, false
+	}
 
 	layoutFormat := "2006-01-02 15:04:05"
 
@@ -85,7 +88,7 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 	providerResult.UpdateAt = result.UpdateAt
 	providerResult.DeletedAt = result.DeletedAt
 
-	return providerResult
+	return providerResult, true
 }
 
 func (pu *providerUsecase) UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain {

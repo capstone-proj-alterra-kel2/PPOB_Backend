@@ -2,9 +2,9 @@ package providers
 
 import (
 	"PPOB_BACKEND/businesses/providers"
+	"fmt"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type providerRepository struct {
@@ -17,60 +17,91 @@ func NewPostgreSQLRepository(conn *gorm.DB) providers.Repository {
 	}
 }
 
-func (pr *providerRepository) GetAll(product_type_id int) ([]providers.Domain, error) {
+func (pr *providerRepository) GetAll(product_type_id int) ([]providers.Domain, bool) {
 	var providersData []Provider
 	providerDomain := []providers.Domain{}
 
-	err := pr.conn.First(&providersData, "product_type_id = ?", product_type_id).Error
+	var productTypeID int
 
-	if err != nil {
-		return providerDomain, err
+	pr.conn.Raw("SELECT pt.id FROM providers INNER JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
+
+	if productTypeID == 0 {
+		return providerDomain, false
 	}
 
-	pr.conn.Preload(clause.Associations).Find(&providersData).Where("product_type_id = ?", product_type_id)
+	pr.conn.Where("product_type_id = ?", product_type_id).Find(&providersData)
 
 	for _, provider := range providersData {
 		providerDomain = append(providerDomain, provider.ToDomain())
 	}
 
-	return providerDomain, nil
+	return providerDomain, true
 }
 
-func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, bool) {
+func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, bool, bool) {
 	providerData := FromDomain(providerDomain)
 
 	checkName := providerData.Name
 
-	if checkProvider := pr.conn.First(&providerData, "name = ? AND product_type_id = ?", checkName, product_type_id).Error; checkProvider != gorm.ErrRecordNotFound {
-		return providerData.ToDomain(), true
+	var productTypeID int
+	var isProductTypeFound bool
+	var isNameDuplicated bool
+
+	pr.conn.Raw("SELECT pt.id FROM providers LEFT JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
+
+	fmt.Println(productTypeID)
+
+	if productTypeID == 0 {
+		isProductTypeFound = false
+	} else {
+		isProductTypeFound = true
 	}
 
-	pr.conn.Create(&providerData)
+	if checkProvider := pr.conn.First(&providerData, "name = ? AND product_type_id = ?", checkName, product_type_id).Error; checkProvider != gorm.ErrRecordNotFound {
+		isNameDuplicated = true
+	}
 
-	return providerData.ToDomain(), false
+	if !isProductTypeFound {
+		return providerData.ToDomain(), false, false
+	}
+
+	if isNameDuplicated {
+		return providerData.ToDomain(), true, true
+	}
+
+	if !isNameDuplicated && isProductTypeFound {
+		pr.conn.Create(&providerData)
+		return providerData.ToDomain(), true, false
+	}
+
+	return providerData.ToDomain(), false, false
 }
 
 func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (providers.Domain, bool, bool) {
 	var providerData Provider
+	var productTypeID int
+
 	var isProviderFound bool
 	var isProductTypeFound bool
 
-	if checkProductType := pr.conn.First(&providerData, "product_type_id = ?", product_type_id).Error; checkProductType != gorm.ErrRecordNotFound {
+	pr.conn.Raw("SELECT pt.id FROM providers INNER JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
+
+	if productTypeID != 0 {
 		isProductTypeFound = true
 	}
 
-	if checkProvider := pr.conn.First(&providerData, "id = ?", provider_id).Error; checkProvider != gorm.ErrRecordNotFound {
+	if checkProvider := pr.conn.First(&providerData, "id = ? AND product_type_id = ?", provider_id, product_type_id).Error; checkProvider != gorm.ErrRecordNotFound {
 		isProviderFound = true
 	}
 
-	if isProductTypeFound && isProviderFound {
+	if isProviderFound && isProductTypeFound {
 		pr.conn.Preload("Products").Find(&providerData).Where("id = ? AND product_type_id = ?", provider_id, product_type_id)
 
 		return providerData.ToDomain(), true, true
 	}
 
 	if !isProductTypeFound {
-		return providerData.ToDomain(), false, true
+		return providerData.ToDomain(), false, false
 	}
 
 	if !isProviderFound {
@@ -81,13 +112,21 @@ func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (prov
 
 }
 
-func (pr *providerRepository) GetByPhone(provider string, product_type_id int) providers.Domain {
+func (pr *providerRepository) GetByPhone(provider string, product_type_id int) (providers.Domain, bool) {
 	var providerData Provider
+	var productTypeID int
 
-	pr.conn.Preload("Products", func(db *gorm.DB) *gorm.DB {
+	pr.conn.Raw("SELECT pt.id FROM providers INNER JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
+
+	if productTypeID == 0 {
+		return providerData.ToDomain(), false
+	}
+
+	pr.conn.Where("product_type_id = ? AND name = ?", product_type_id, provider).Preload("Products", func(db *gorm.DB) *gorm.DB {
 		return db.Order("products.price")
-	}).First(&providerData).Where("product_type_id = ? AND name = ?", product_type_id, provider)
-	return providerData.ToDomain()
+	}).Find(&providerData)
+
+	return providerData.ToDomain(), true
 }
 
 func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_id int) providers.Domain {

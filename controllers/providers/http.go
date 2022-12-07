@@ -27,10 +27,10 @@ func (ctrl *ProviderController) GetAll(c echo.Context) error {
 	paramID := c.Param("product-type-id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
-	providersData, err := ctrl.providerUsecase.GetAll(productTypeID)
+	providersData, isProductTypeFound := ctrl.providerUsecase.GetAll(productTypeID)
 
-	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "provider with that product type not found")
+	if !isProductTypeFound {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
 	}
 
 	providers := []response.Provider{}
@@ -68,9 +68,9 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	providerData, isNameDuplicated := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
+	providerData, isProductTypeFound, isNameDuplicated := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
 
-	if providerData.ID == 0 {
+	if !isProductTypeFound {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
 	}
 
@@ -91,11 +91,11 @@ func (ctrl *ProviderController) GetOne(c echo.Context) error {
 	providerData, isProductTypeFound, isProviderFound := ctrl.providerUsecase.GetOne(providerID, productTypeID)
 
 	if !isProductTypeFound {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Product Type Not Found")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
 	}
 
 	if !isProviderFound {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "Provider Not Found")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "provider not found")
 	}
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider", response.FromDomain(providerData))
@@ -107,7 +107,15 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 	paramID := c.Param("product-type-id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
-	providerData := ctrl.providerUsecase.GetByPhone(phoneNumber, productTypeID)
+	providerData, isProductTypeFound := ctrl.providerUsecase.GetByPhone(phoneNumber, productTypeID)
+
+	if !isProductTypeFound {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
+	}
+
+	if providerData.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "provider not found")
+	}
 
 	inputProviderUpdates := []request.UpdateCheckProduct{}
 	inputProvider := request.InputProvider{}
