@@ -135,3 +135,19 @@ func (recProvider *Provider) ToDomainUpdate() providers.ProviderDomain {
 		DeletedAt:     recProvider.DeletedAt,
 	}
 }
+
+type CheckProductType struct {
+	ProductTypeID int
+}
+
+func FromChekcProductTypeDomain(domain *providers.CheckProductTypeDomain) *CheckProductType {
+	return &CheckProductType{
+		ProductTypeID: domain.ProductTypeID,
+	}
+}
+
+func (recProvider *CheckProductType) ToDomain() providers.CheckProductTypeDomain {
+	return providers.CheckProductTypeDomain{
+		ProductTypeID: recProvider.ProductTypeID,
+	}
+}

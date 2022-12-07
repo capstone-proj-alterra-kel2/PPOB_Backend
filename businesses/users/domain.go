@@ -1,6 +1,7 @@
 package users
 
 import (
+	"PPOB_BACKEND/businesses/transactions"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ type Domain struct {
 	Password    string
 	RoleID      uint
 	RoleName    string
+	Transaction []transactions.Domain
 	Image       string
 	CreatedAt   time.Time
 	UpdateAt    time.Time
