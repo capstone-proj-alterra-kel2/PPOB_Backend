@@ -102,6 +102,11 @@ func (ctrl *ProductController) Delete(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	ctrl.productUsecase.Delete(productID)
+	_, err := ctrl.productUsecase.Delete(productID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product deleted", "")
 }

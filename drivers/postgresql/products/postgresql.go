@@ -103,10 +103,16 @@ func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateSto
 	return prod.ToDomain()
 }
 
-func (pr *productRepository) Delete(product_id int) products.Domain {
+func (pr *productRepository) Delete(product_id int) (products.Domain, error) {
 	var prod Product
+
+	err := pr.conn.First(&prod, product_id).Error
+
+	if err != nil {
+		return prod.ToDomain(), err
+	}
 
 	pr.conn.Unscoped().Where("id = ?", product_id).Delete(&prod)
 
-	return prod.ToDomain()
+	return prod.ToDomain(), nil
 }

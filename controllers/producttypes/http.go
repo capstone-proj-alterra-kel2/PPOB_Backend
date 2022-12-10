@@ -97,7 +97,12 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	productType := ctrl.productTypeUsecase.Update(input.ToDomain(), productTypeID)
+	productType, err := ctrl.productTypeUsecase.Update(input.ToDomain(), productTypeID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product type updated", response.FromDomain(productType))
 }
 
@@ -105,6 +110,11 @@ func (ctrl *ProductTypeController) Delete(c echo.Context) error {
 	paramID := c.Param("product_type_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	ctrl.productTypeUsecase.Delete(productID)
+	_, err := ctrl.productTypeUsecase.Delete(productID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product type deleted", "")
 }

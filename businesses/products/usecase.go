@@ -32,6 +32,6 @@ func (pu *productUsecase) UpdateStockStatus(productDomain *UpdateStockStatusDoma
 	return pu.productRepository.UpdateStockStatus(productDomain, product_id)
 }
 
-func (pu *productUsecase) Delete(product_id int) Domain {
+func (pu *productUsecase) Delete(product_id int) (Domain, error) {
 	return pu.productRepository.Delete(product_id)
 }
