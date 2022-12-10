@@ -195,3 +195,17 @@ func (ur *userRepository) CheckDuplicateUser(Email string, PhoneNumber string) (
 	}
 	return false, false
 }
+
+func (ur *userRepository) UpdateBalance(idUser string, balanceDomain *users.UpdateBalanceDomain) (users.Domain, error) {
+	var user users.Domain = ur.Profile(idUser)
+	updatedData := FromDomain(&user)
+
+	updatedData.Balance = balanceDomain.Balance
+
+	err := ur.conn.Save(&updatedData).Error
+	if err != nil {
+		return updatedData.ToDomain(), err
+	}
+
+	return updatedData.ToDomain(), nil
+}

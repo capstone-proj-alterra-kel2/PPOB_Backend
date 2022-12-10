@@ -13,13 +13,13 @@ type Domain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
-	Stock                 int
+	Stock                 *int
 	Status                string
 	TotalPurchased        int
 	AdditionalInformation string
-	IsAvailable           bool
-	IsPromo               bool
-	IsPromoActive         bool
+	IsAvailable           *bool
+	IsPromo               *bool
+	IsPromoActive         *bool
 	Discount              int
 	PromoStartDate        string
 	PromoEndDate          string
@@ -28,11 +28,36 @@ type Domain struct {
 	DeletedAt             gorm.DeletedAt
 }
 
+type UpdateDataDomain struct {
+	Name                  string
+	Category              string
+	Description           string
+	Price                 int
+	ProviderID            int
+	Stock                 *int
+	Status                string
+	AdditionalInformation string
+	IsAvailable           *bool
+	IsPromo               *bool
+	IsPromoActive         *bool
+	Discount              int
+	PromoStartDate        string
+	PromoEndDate          string
+}
+
+type UpdateStockStatusDomain struct {
+	Stock          *int
+	TotalPurchased int
+	Status         string
+	IsAvailable    *bool
+}
+
 type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
-	Update(productDomain *Domain, product_id int) Domain
+	UpdateData(productDomain *UpdateDataDomain, product_id int) Domain
+	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) Domain
 }
 
@@ -40,6 +65,7 @@ type Repository interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
-	Update(productDomain *Domain, product_id int) Domain
+	UpdateData(productDomain *UpdateDataDomain, product_id int) Domain
+	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) Domain
 }

@@ -22,6 +22,9 @@ import (
 	_productUseCase "PPOB_BACKEND/businesses/products"
 	_productController "PPOB_BACKEND/controllers/products"
 
+	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
+	_transactionController "PPOB_BACKEND/controllers/transactions"
+
 	_driverFactory "PPOB_BACKEND/drivers"
 
 	_middleware "PPOB_BACKEND/app/middlewares"
@@ -73,6 +76,11 @@ func main() {
 	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
 	providerCtrl := _providerController.NewProviderController(providerUsecase)
 
+	// Transaction
+	transactionRepo := _driverFactory.NewTransactionRepository(db)
+	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
+	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase)
+
 	// Product Type
 	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
@@ -85,6 +93,7 @@ func main() {
 		ProviderController:    *providerCtrl,
 		ProductTypeController: *productTypeCtrl,
 		ProductController:     *productCtrl,
+		TransactionController: *transactionCtrl,
 	}
 	routesInit.RouteRegister(e)
 

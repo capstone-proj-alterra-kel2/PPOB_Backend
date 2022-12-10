@@ -5,6 +5,7 @@ import (
 	"PPOB_BACKEND/controllers/products"
 	"PPOB_BACKEND/controllers/producttypes"
 	"PPOB_BACKEND/controllers/providers"
+	"PPOB_BACKEND/controllers/transactions"
 	"PPOB_BACKEND/controllers/users"
 
 	"github.com/labstack/echo/v4"
@@ -18,6 +19,7 @@ type ControllerList struct {
 	ProductController     products.ProductController
 	ProviderController    providers.ProviderController
 	ProductTypeController producttypes.ProductTypeController
+	TransactionController transactions.TransactionController
 	// Admin
 	// Businesse
 }
@@ -56,22 +58,28 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	user.PUT("/password", cl.UserController.UpdatePassword)
 	user.PUT("/data", cl.UserController.UpdateData)
 	user.PUT("/image", cl.UserController.UpdateImage)
+
 	// User - Transaction
+	userTransaction := v1.Group("/users/transactions", middleware.JWTWithConfig(cl.JWTMIddleware))
+	userTransaction.Use(middlewares.CheckStatusToken)
+	userTransaction.GET("/history", cl.TransactionController.GetTransactionHistory)
+	userTransaction.GET("/:transaction_id", cl.TransactionController.GetDetail)
+	userTransaction.POST("/create", cl.TransactionController.Create)
 
 	// User - Wallet
 
 	// User - Product
 	userProduct := v1.Group("/users/products", middleware.JWTWithConfig(cl.JWTMIddleware))
 	userProduct.Use(middlewares.CheckStatusToken)
-	userProduct.GET("/:product-id", cl.ProductController.GetOne)
+	userProduct.GET("/:product_id", cl.ProductController.GetOne)
 
 	// User - Product Type
 	usersProductType := v1.Group("/users/producttypes")
 	usersProductType.GET("", cl.ProductTypeController.GetAll)
-	usersProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)
+	usersProductType.GET("/:product_type_id", cl.ProductTypeController.GetOne)
 
 	// User - Provider
-	usersProvider := usersProductType.Group("/:product-type-id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
+	usersProvider := usersProductType.Group("/:product_type_id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
 	usersProvider.Use(middlewares.CheckStatusToken)
 	usersProvider.POST("/phone", cl.ProviderController.GetByPhone)
 
@@ -85,32 +93,35 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProduct.Use(middlewares.CheckStatusToken)
 	adminProduct.GET("", cl.ProductController.GetAll)
-	adminProduct.GET("/:product-id", cl.ProductController.GetOne)
+	adminProduct.GET("/:product_id", cl.ProductController.GetOne)
 	adminProduct.POST("", cl.ProductController.Create)
-	adminProduct.PUT("/:product-id", cl.ProductController.Update)
-	adminProduct.DELETE("/:product-id", cl.ProductController.Delete)
+	adminProduct.PUT("/:product_id", cl.ProductController.UpdateData)
+	adminProduct.DELETE("/:product_id", cl.ProductController.Delete)
 
 	// Admin - Product Type
 	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProductType.Use(middlewares.CheckStatusToken)
 	adminProductType.GET("", cl.ProductTypeController.GetAll)
-	adminProductType.GET("/:product-type-id", cl.ProductTypeController.GetOne)
+	adminProductType.GET("/:product_type_id", cl.ProductTypeController.GetOne)
 	adminProductType.POST("", cl.ProductTypeController.Create)
-	adminProductType.PUT("/:product-type-id", cl.ProductTypeController.Update)
-	adminProductType.DELETE("/:product-type-id", cl.ProductTypeController.Delete)
+	adminProductType.PUT("/:product_type_id", cl.ProductTypeController.Update)
+	adminProductType.DELETE("/:product_type_id", cl.ProductTypeController.Delete)
 
 	// Admin - Provider
-	adminProvider := adminProductType.Group("/:product-type-id/providers")
+	adminProvider := adminProductType.Group("/:product_type_id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProvider.Use(middlewares.CheckStatusToken)
 	adminProvider.GET("", cl.ProviderController.GetAll)
-	adminProvider.GET("/:provider-id", cl.ProviderController.GetOne)
+	adminProvider.GET("/:provider_id", cl.ProviderController.GetOne)
 	adminProvider.POST("", cl.ProviderController.Create)
-	adminProvider.PUT("/:provider-id", cl.ProviderController.Update)
-	adminProvider.DELETE("/:provider-id", cl.ProviderController.Delete)
+	adminProvider.PUT("/:provider_id", cl.ProviderController.Update)
+	adminProvider.DELETE("/:provider_id", cl.ProviderController.Delete)
 
 	// Admin - Voucher
 
 	// Admin - Transaction
+	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminTransaction.Use(middlewares.CheckStatusToken)
+	adminTransaction.GET("", cl.TransactionController.GetAll)
 
 	// Admin - Wallet
 

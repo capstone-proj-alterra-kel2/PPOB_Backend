@@ -60,7 +60,7 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 }
 
 func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	productTypeData := ctrl.productTypeUsecase.GetOne(productTypeID)
@@ -75,7 +75,7 @@ func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
 func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	var result string
 
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	input := request.UpdateProductType{}
@@ -102,7 +102,7 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 }
 
 func (ctrl *ProductTypeController) Delete(c echo.Context) error {
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productID, _ := strconv.Atoi(paramID)
 
 	ctrl.productTypeUsecase.Delete(productID)

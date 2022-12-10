@@ -31,8 +31,25 @@ type UpdateData struct {
 	Email       string `json:"email" form:"email" validate:"required,email"`
 }
 
+type UpdateBalance struct {
+	Balance int `json:"balance" validate:"required"`
+}
+
 type UpdateImage struct {
 	Image string `json:"image" form:"image" validate:"required"`
+}
+
+func (req *UpdateBalance) ToDomain() *users.UpdateBalanceDomain {
+	return &users.UpdateBalanceDomain{
+		Balance: req.Balance,
+	}
+}
+
+func (req *UpdateBalance) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
 }
 
 func (req *User) ToDomain() *users.Domain {

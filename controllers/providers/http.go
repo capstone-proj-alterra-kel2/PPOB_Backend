@@ -24,7 +24,7 @@ func NewProviderController(providerUC providers.Usecase) *ProviderController {
 }
 
 func (ctrl *ProviderController) GetAll(c echo.Context) error {
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	providersData, isProductTypeFound := ctrl.providerUsecase.GetAll(productTypeID)
@@ -43,7 +43,7 @@ func (ctrl *ProviderController) GetAll(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Create(c echo.Context) error {
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	input := request.Provider{}
@@ -70,7 +70,7 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 
 	providerData, isProductTypeFound, isNameDuplicated := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
 
-	if !isProductTypeFound {
+	if !isProductTypeFound || providerData.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
 	}
 
@@ -82,10 +82,10 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) GetOne(c echo.Context) error {
-	paramProviderID := c.Param("provider-id")
+	paramProviderID := c.Param("provider_id")
 	providerID, _ := strconv.Atoi(paramProviderID)
 
-	paramProductTypeID := c.Param("product-type-id")
+	paramProductTypeID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramProductTypeID)
 
 	providerData, isProductTypeFound, isProviderFound := ctrl.providerUsecase.GetOne(providerID, productTypeID)
@@ -104,7 +104,7 @@ func (ctrl *ProviderController) GetOne(c echo.Context) error {
 func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 	phoneNumber := c.FormValue("phone_number")
 
-	paramID := c.Param("product-type-id")
+	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
 	providerData, isProductTypeFound := ctrl.providerUsecase.GetByPhone(phoneNumber, productTypeID)
@@ -152,7 +152,7 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Update(c echo.Context) error {
-	paramID := c.Param("provider-id")
+	paramID := c.Param("provider_id")
 	providerID, _ := strconv.Atoi(paramID)
 
 	input := request.UpdateData{}
@@ -180,7 +180,7 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) Delete(c echo.Context) error {
-	paramID := c.Param("provider-id")
+	paramID := c.Param("provider_id")
 	providerID, _ := strconv.Atoi(paramID)
 
 	ctrl.providerUsecase.Delete(providerID)

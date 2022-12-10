@@ -21,12 +21,12 @@ type UpdateCheckProduct struct {
 	Description           string `json:"description" form:"description" validate:"required"`
 	Price                 int    `json:"price" form:"price" validate:"required"`
 	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
-	Stock                 int    `json:"stock" form:"stock" validate:"required"`
+	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
 	Status                string `json:"status" form:"status" validate:"required"`
 	AdditionalInformation string `json:"additional_information" form:"additional_information"`
-	IsAvailable           bool   `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo               bool   `json:"is_promo" form:"is_promo" validate:"required"`
-	IsPromoActive         bool   `json:"is_promo_active" form:"is_promo_active"`
+	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
+	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`
+	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
 	Discount              int    `json:"discount" form:"discount"`
 	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
 	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
