@@ -60,8 +60,14 @@ func (pr *productRepository) GetOne(product_id int) products.Domain {
 	return prod.ToDomain()
 }
 
-func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) products.Domain {
+func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) (products.Domain, error) {
 	prod := FromUpdatedDomain(productDomain)
+
+	err := pr.conn.First(&prod, product_id).Error
+
+	if err != nil {
+		return prod.ToDomain(), err
+	}
 
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
@@ -80,7 +86,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 		},
 	)
 
-	return prod.ToDomain()
+	return prod.ToDomain(), nil
 }
 
 func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateStockStatusDomain, product_id int) products.Domain {

@@ -24,7 +24,7 @@ func (pu *productUsecase) GetOne(product_id int) Domain {
 	return pu.productRepository.GetOne(product_id)
 }
 
-func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) Domain {
+func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error) {
 	return pu.productRepository.UpdateData(productDomain, product_id)
 }
 

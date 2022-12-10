@@ -89,7 +89,12 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
-	product := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+	product, err := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product updated", response.FromDomain(product))
 }
 
