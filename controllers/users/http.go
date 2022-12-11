@@ -459,3 +459,18 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
 }
+
+func (ctrl *UserController) CheckDuplicateUser (c echo.Context) error {
+	input := request.CheckRegister{}
+	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
+	if email && phone {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+	}
+	if email {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
+	}
+	if phone {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "phone already registered")
+	}
+	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & password found", "")
+}

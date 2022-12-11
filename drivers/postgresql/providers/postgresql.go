@@ -2,7 +2,6 @@ package providers
 
 import (
 	"PPOB_BACKEND/businesses/providers"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -47,9 +46,7 @@ func (pr *providerRepository) Create(providerDomain *providers.Domain, product_t
 	var isProductTypeFound bool
 	var isNameDuplicated bool
 
-	pr.conn.Raw("SELECT pt.id FROM providers LEFT JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
-
-	fmt.Println(productTypeID)
+	pr.conn.Raw("SELECT pt.id FROM providers RIGHT JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
 
 	if productTypeID == 0 {
 		isProductTypeFound = false

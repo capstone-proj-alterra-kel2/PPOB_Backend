@@ -42,7 +42,7 @@ func (ctrl *ProductController) GetAll(c echo.Context) error {
 }
 
 func (ctrl *ProductController) GetOne(c echo.Context) error {
-	paramID := c.Param("product-id")
+	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
 	productData := ctrl.productUsecase.GetOne(productID)
@@ -79,22 +79,22 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "product created", response.FromDomain(product))
 }
 
-func (ctrl *ProductController) Update(c echo.Context) error {
-	paramID := c.Param("product-id")
+func (ctrl *ProductController) UpdateData(c echo.Context) error {
+	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	input := request.Product{}
+	input := request.UpdateDataProduct{}
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
-	product := ctrl.productUsecase.Update(input.ToDomain(), productID)
+	product := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
 	return controllers.NewResponse(c, http.StatusOK, "success", "product updated", response.FromDomain(product))
 }
 
 func (ctrl *ProductController) Delete(c echo.Context) error {
-	paramID := c.Param("product-id")
+	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
 	ctrl.productUsecase.Delete(productID)

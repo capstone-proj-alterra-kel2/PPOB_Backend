@@ -40,13 +40,13 @@ type UpdateDomain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
-	Stock                 int
+	Stock                 *int
 	Status                string
 	TotalPurchased        int
 	AdditionalInformation string
-	IsAvailable           bool
-	IsPromo               bool
-	IsPromoActive         bool
+	IsAvailable           *bool
+	IsPromo               *bool
+	IsPromoActive         *bool
 	Discount              int
 	PromoStartDate        string
 	PromoEndDate          string

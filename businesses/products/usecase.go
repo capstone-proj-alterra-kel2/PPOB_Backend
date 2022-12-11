@@ -24,8 +24,12 @@ func (pu *productUsecase) GetOne(product_id int) Domain {
 	return pu.productRepository.GetOne(product_id)
 }
 
-func (pu *productUsecase) Update(productDomain *Domain, product_id int) Domain {
-	return pu.productRepository.Update(productDomain, product_id)
+func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) Domain {
+	return pu.productRepository.UpdateData(productDomain, product_id)
+}
+
+func (pu *productUsecase) UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain {
+	return pu.productRepository.UpdateStockStatus(productDomain, product_id)
 }
 
 func (pu *productUsecase) Delete(product_id int) Domain {

@@ -35,6 +35,12 @@ type UpdateImage struct {
 	Image string `json:"image" form:"image" validate:"required"`
 }
 
+type CheckRegister struct {
+	Name        string `json:"name" form:"name" validate:"required"`
+	PhoneNumber string `json:"phone_number" form:"phone_number" validate:"required"`
+	Email       string `json:"email" form:"email" validate:"required,email"`
+}
+
 func (req *User) ToDomain() *users.Domain {
 	return &users.Domain{
 		Name:        req.Name,
@@ -103,6 +109,13 @@ func (req *UpdateImage) ToDomain() *users.UpdateImageDomain {
 }
 
 func (req *UpdateImage) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
+
+func (req *CheckRegister) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(req)

@@ -69,3 +69,5 @@ func (uu *userUsecase) UpdateImage(idUser string, imageDomain *UpdateImageDomain
 func (uu *userUsecase) CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool) {
 	return uu.userRepository.CheckDuplicateUser(Email, PhoneNumber)
 }
+
+

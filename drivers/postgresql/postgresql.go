@@ -5,7 +5,10 @@ import (
 	"PPOB_BACKEND/drivers/postgresql/producttypes"
 	"PPOB_BACKEND/drivers/postgresql/providers"
 	"PPOB_BACKEND/drivers/postgresql/roles"
+	"PPOB_BACKEND/drivers/postgresql/transactions"
 	"PPOB_BACKEND/drivers/postgresql/users"
+	"PPOB_BACKEND/drivers/postgresql/wallet_histories"
+	"PPOB_BACKEND/drivers/postgresql/wallets"
 	"fmt"
 
 	"log"
@@ -46,9 +49,13 @@ func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&roles.Role{},               // role
 		&users.User{},               // User
+		&wallets.Wallet{},
+		&wallet_histories.WalletHistory{},
+		&users.User{},               // User
 		&producttypes.ProductType{}, // ProductType
 		&providers.Provider{},       // Provider
 		&products.Product{},         // Product
+		&transactions.Transaction{}, // Transaction
 		// Provider
 		// ProductType
 		// ...

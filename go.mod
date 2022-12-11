@@ -8,6 +8,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/morkid/paginate v1.1.6
+	github.com/nsuprun/ccgen v0.0.0-20220426203743-028ccdaf79c9
 	github.com/spf13/viper v1.14.0
 	golang.org/x/crypto v0.3.0
 	gorm.io/driver/postgres v1.4.5

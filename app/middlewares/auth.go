@@ -91,7 +91,7 @@ func IsSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 		if HasRole == "superadmin" {
 			return next(c)
 		}
-		return echo.ErrUnauthorized
+		return echo.ErrForbidden
 	}
 }
 
@@ -105,7 +105,7 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 		if HasRole == "admin" || HasRole == "superadmin" {
 			return next(c)
 		}
-		return echo.ErrUnauthorized
+		return echo.ErrForbidden
 	}
 }
 

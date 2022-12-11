@@ -47,8 +47,6 @@ func (pr *productRepository) GetAll(Page int, Size int, Sort string, Search stri
 
 func (pr *productRepository) Create(productDomain *products.Domain) products.Domain {
 	prod := FromDomain(productDomain)
-	prod.TotalPurchased = 0
-	prod.IsPromoActive = false
 
 	pr.conn.Create(&prod)
 	return prod.ToDomain()
@@ -62,27 +60,40 @@ func (pr *productRepository) GetOne(product_id int) products.Domain {
 	return prod.ToDomain()
 }
 
-func (pr *productRepository) Update(productDomain *products.Domain, product_id int) products.Domain {
-	prod := FromDomain(productDomain)
+func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) products.Domain {
+	prod := FromUpdatedDomain(productDomain)
 
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
-			Name:                  productDomain.Name,
-			Category:              productDomain.Category,
-			Description:           productDomain.Description,
-			Price:                 productDomain.Price,
-			ProviderID:            productDomain.ProviderID,
-			Status:                productDomain.Status,
-			AdditionalInformation: productDomain.AdditionalInformation,
-			IsAvailable:           productDomain.IsAvailable,
-			IsPromo:               productDomain.IsPromo,
-			IsPromoActive:         prod.IsPromoActive,
-			Discount:              productDomain.Discount,
-			PromoStartDate:        productDomain.PromoStartDate,
-			PromoEndDate:          productDomain.PromoEndDate,
+			Name:           productDomain.Name,
+			Category:       productDomain.Category,
+			Description:    productDomain.Description,
+			Price:          productDomain.Price,
+			ProviderID:     productDomain.ProviderID,
+			Status:         productDomain.Status,
+			IsAvailable:    productDomain.IsAvailable,
+			IsPromo:        productDomain.IsPromo,
+			IsPromoActive:  productDomain.IsPromoActive,
+			Discount:       productDomain.Discount,
+			PromoStartDate: productDomain.PromoStartDate,
+			PromoEndDate:   productDomain.PromoEndDate,
 		},
 	)
 
+	return prod.ToDomain()
+}
+
+func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateStockStatusDomain, product_id int) products.Domain {
+	prod := FromUpdatedStockStatusDomain(productDomain)
+
+	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
+		Product{
+			Status:         productDomain.Status,
+			TotalPurchased: productDomain.TotalPurchased,
+			Stock:          productDomain.Stock,
+			IsAvailable:    productDomain.IsAvailable,
+		},
+	)
 	return prod.ToDomain()
 }
 
