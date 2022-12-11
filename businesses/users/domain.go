@@ -1,6 +1,7 @@
 package users
 
 import (
+	"PPOB_BACKEND/businesses/wallets"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,8 +15,8 @@ type Domain struct {
 	Password    string
 	RoleID      uint
 	RoleName    string
+	Wallet      wallets.Domain
 	Image       string
-	Balance     int
 	CreatedAt   time.Time
 	UpdateAt    time.Time
 	DeletedAt   gorm.DeletedAt
@@ -41,10 +42,6 @@ type UpdateImageDomain struct {
 	Image string
 }
 
-type UpdateBalanceDomain struct {
-	Balance int
-}
-
 type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	GetAllAdmin(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
@@ -56,7 +53,6 @@ type Usecase interface {
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 	UpdateData(idUser string, dataDomain *UpdateDataDomain) (Domain, error)
 	UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error)
-	UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
 	CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool)
 }
 
@@ -71,6 +67,5 @@ type Repository interface {
 	UpdatePassword(idUser string, passwordDomain *UpdatePasswordDomain) bool
 	UpdateData(idUser string, dataDomain *UpdateDataDomain) (Domain, error)
 	UpdateImage(idUser string, imageDomain *UpdateImageDomain) (Domain, error)
-	UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
 	CheckDuplicateUser(Email string, PhoneNumber string) (bool, bool)
 }

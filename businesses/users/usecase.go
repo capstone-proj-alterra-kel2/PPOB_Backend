@@ -70,10 +70,4 @@ func (uu *userUsecase) CheckDuplicateUser(Email string, PhoneNumber string) (boo
 	return uu.userRepository.CheckDuplicateUser(Email, PhoneNumber)
 }
 
-func (uu *userUsecase) UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error) {
-	return uu.userRepository.UpdateBalance(idUser, balanceDomain)
-}
 
-func (uu *userUsecase) UpdateAdminBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error) {
-	return uu.userRepository.UpdateBalance(idUser, balanceDomain)
-}

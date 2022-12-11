@@ -22,6 +22,12 @@ import (
 	_productUseCase "PPOB_BACKEND/businesses/products"
 	_productController "PPOB_BACKEND/controllers/products"
 
+	_walletUseCase "PPOB_BACKEND/businesses/wallets"
+	_walletController "PPOB_BACKEND/controllers/wallets"
+
+	_walletHistoryUseCase "PPOB_BACKEND/businesses/wallet_histories"
+	_walletHistoryController "PPOB_BACKEND/controllers/wallet_histories"
+
 	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
 	_transactionController "PPOB_BACKEND/controllers/transactions"
 
@@ -75,25 +81,34 @@ func main() {
 	providerRepo := _driverFactory.NewProviderRepository(db)
 	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
 	providerCtrl := _providerController.NewProviderController(providerUsecase)
-
+	// Wallet
+	walletRepo := _driverFactory.NewWalletRepository(db)
+	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
+	walletCtrl := _walletController.NewWalletController(walletUseCase)
+	// Wallet History
+	walletHistoryRepo := _driverFactory.NewWalletHistoryRepository(db)
+	walletHistoryUseCase := _walletHistoryUseCase.NewWalletHistoryUseCase(walletHistoryRepo)
+	walletHistoryCtrl := _walletHistoryController.NewWalletHistoryController(walletHistoryUseCase, userUseCase)
 	// Transaction
 	transactionRepo := _driverFactory.NewTransactionRepository(db)
 	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
-	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase)
+	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase, walletUseCase, walletHistoryUseCase)
 
 	// Product Type
 	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
-	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 
+	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:      configLogger.Init(),
-		JWTMIddleware:         configJWT.Init(),
-		UserController:        *userCtrl,
-		ProviderController:    *providerCtrl,
-		ProductTypeController: *productTypeCtrl,
-		ProductController:     *productCtrl,
-		TransactionController: *transactionCtrl,
+		LoggerMiddleware:        configLogger.Init(),
+		JWTMIddleware:           configJWT.Init(),
+		UserController:          *userCtrl,
+		WalletHistoryController: *walletHistoryCtrl,
+		WalletController:        *walletCtrl,
+		ProviderController:      *providerCtrl,
+		ProductTypeController:   *productTypeCtrl,
+		ProductController:       *productCtrl,
+		TransactionController:   *transactionCtrl,
 	}
 	routesInit.RouteRegister(e)
 
