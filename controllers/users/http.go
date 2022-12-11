@@ -460,20 +460,17 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
 }
 
-func (ctrl *UserController) UpdateBalance(c echo.Context) error {
-	idUser := middlewares.GetUserID(c)
-	input := request.UpdateBalance{}
-
-	if err := c.Bind(&input); err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+func (ctrl *UserController) CheckDuplicateUser (c echo.Context) error {
+	input := request.CheckRegister{}
+	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
+	if email && phone {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
 	}
-	if err := input.Validate(); err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	if email {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
 	}
-	user, err := ctrl.userUsecase.UpdateBalance(idUser, input.ToDomain())
-	if err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
+	if phone {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "phone already registered")
 	}
-
-	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
+	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & password found", "")
 }

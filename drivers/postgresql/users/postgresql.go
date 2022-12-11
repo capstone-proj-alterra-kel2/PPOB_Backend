@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nsuprun/ccgen"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -75,6 +76,8 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 1
+	rec.Wallet.NoWallet = ccgen.Generate()
+	rec.Wallet.Balance = 0
 	if err := ur.conn.Preload("Role").Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
@@ -86,7 +89,9 @@ func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, e
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 2
-	if err := ur.conn.Preload("Role").Create(&rec).Error; err != nil {
+	rec.Wallet.NoWallet = ccgen.Generate()
+	rec.Wallet.Balance = 0
+	if err := ur.conn.Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
 	}
 	return rec.ToDomain(), nil
@@ -122,7 +127,7 @@ func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 func (ur *userRepository) Profile(idUser string) users.Domain {
 	var user User
 
-	ur.conn.Preload("Role").First(&user, "id=?", idUser)
+	ur.conn.Preload("Role").Preload("Wallet").First(&user, "id=?", idUser)
 
 	return user.ToDomain()
 }
@@ -194,18 +199,4 @@ func (ur *userRepository) CheckDuplicateUser(Email string, PhoneNumber string) (
 		return false, true
 	}
 	return false, false
-}
-
-func (ur *userRepository) UpdateBalance(idUser string, balanceDomain *users.UpdateBalanceDomain) (users.Domain, error) {
-	var user users.Domain = ur.Profile(idUser)
-	updatedData := FromDomain(&user)
-
-	updatedData.Balance = balanceDomain.Balance
-
-	err := ur.conn.Save(&updatedData).Error
-	if err != nil {
-		return updatedData.ToDomain(), err
-	}
-
-	return updatedData.ToDomain(), nil
 }

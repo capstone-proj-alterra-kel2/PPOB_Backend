@@ -5,11 +5,14 @@ import (
 	"PPOB_BACKEND/businesses/products"
 	"PPOB_BACKEND/businesses/transactions"
 	"PPOB_BACKEND/businesses/users"
+	"PPOB_BACKEND/businesses/wallet_histories"
+	"PPOB_BACKEND/businesses/wallets"
 	"PPOB_BACKEND/controllers"
 	productRequest "PPOB_BACKEND/controllers/products/request"
 	"PPOB_BACKEND/controllers/transactions/request"
 	"PPOB_BACKEND/controllers/transactions/response"
-	userRequest "PPOB_BACKEND/controllers/users/request"
+	walletRequest "PPOB_BACKEND/controllers/wallets/request"
+
 	"net/http"
 	"strconv"
 
@@ -18,16 +21,20 @@ import (
 )
 
 type TransactionController struct {
-	transactionUsecase transactions.Usecase
-	productUsecase     products.Usecase
-	userUsecase        users.Usecase
+	transactionUsecase   transactions.Usecase
+	productUsecase       products.Usecase
+	userUsecase          users.Usecase
+	walletUsecase        wallets.Usecase
+	walletHistoryUsecase wallet_histories.Usecase
 }
 
-func NewTransactionController(transactionUC transactions.Usecase, productUC products.Usecase, userUC users.Usecase) *TransactionController {
+func NewTransactionController(transactionUC transactions.Usecase, productUC products.Usecase, userUC users.Usecase, walletUC wallets.Usecase, walletHistoryUC wallet_histories.Usecase) *TransactionController {
 	return &TransactionController{
-		transactionUsecase: transactionUC,
-		productUsecase:     productUC,
-		userUsecase:        userUC,
+		transactionUsecase:   transactionUC,
+		productUsecase:       productUC,
+		userUsecase:          userUC,
+		walletUsecase:        walletUC,
+		walletHistoryUsecase: walletHistoryUC,
 	}
 }
 
@@ -121,14 +128,14 @@ func (tc *TransactionController) Create(c echo.Context) error {
 	}
 
 	if *product.IsPromoActive {
-		if user.Balance < (product.Price - product.Discount) {
+		if user.Wallet.Balance < (product.Price - product.Discount) {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "not enough balance")
 		}
 
 		totalAmount = product.Price - product.Discount
 		productDiscount = product.Discount
 	} else {
-		if user.Balance < product.Price {
+		if user.Wallet.Balance < product.Price {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "not enough balance")
 		}
 
@@ -141,14 +148,17 @@ func (tc *TransactionController) Create(c echo.Context) error {
 
 	// update balance
 	if *product.IsPromoActive {
-		updatedBalance = user.Balance - (product.Price - product.Discount)
+		updatedBalance = user.Wallet.Balance - (product.Price - product.Discount)
 	} else {
-		updatedBalance = user.Balance - product.Price
+		updatedBalance = user.Wallet.Balance - product.Price
 	}
 
-	requestUpdateBalance := userRequest.UpdateBalance{}
+	requestUpdateBalance := walletRequest.UpdateBalance{}
 	requestUpdateBalance.Balance = updatedBalance
-	tc.userUsecase.UpdateBalance(userID, requestUpdateBalance.ToDomain())
+	tc.walletUsecase.UpdateBalance(userID, requestUpdateBalance.ToDomain())
+
+	// create history
+	tc.walletHistoryUsecase.CreateWalletHistory(user.Wallet.NoWallet, 0, transaction.ProductPrice, "buy product "+product.Name)
 
 	// update stock and status
 	requestUpdateStockStatus := productRequest.UpdateStockStatus{}

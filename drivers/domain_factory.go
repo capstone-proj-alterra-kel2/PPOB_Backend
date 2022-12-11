@@ -12,6 +12,12 @@ import (
 	transactionDB "PPOB_BACKEND/drivers/postgresql/transactions"
 	userDB "PPOB_BACKEND/drivers/postgresql/users"
 
+	walletDomain "PPOB_BACKEND/businesses/wallets"
+	walletDB "PPOB_BACKEND/drivers/postgresql/wallets"
+
+	walletHistoryDomain "PPOB_BACKEND/businesses/wallet_histories"
+	walletHistoryDB "PPOB_BACKEND/drivers/postgresql/wallet_histories"
+
 	"gorm.io/gorm"
 )
 
@@ -29,6 +35,14 @@ func NewProductTypeRepository(conn *gorm.DB) productTypeDomain.Repository {
 
 func NewProviderRepository(conn *gorm.DB) providerDomain.Repository {
 	return providerDB.NewPostgreSQLRepository(conn)
+}
+
+func NewWalletHistoryRepository(conn *gorm.DB) walletHistoryDomain.Repository {
+	return walletHistoryDB.NewPostgreSQLRepository(conn)
+}
+
+func NewWalletRepository(conn *gorm.DB) walletDomain.Repository {
+	return walletDB.NewPostgreSQLRepository(conn)
 }
 
 func NewTransactionRepository(conn *gorm.DB) trnsactionDomain.Repository {
