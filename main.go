@@ -15,6 +15,23 @@ import (
 
 	_paymentmethodUsecase "PPOB_BACKEND/businesses/payment_method"
 	_paymentmethodController "PPOB_BACKEND/controllers/payment_method"
+	_providerUseCase "PPOB_BACKEND/businesses/providers"
+	_providerController "PPOB_BACKEND/controllers/providers"
+
+	_productTypeUseCase "PPOB_BACKEND/businesses/producttypes"
+	_productTypeController "PPOB_BACKEND/controllers/producttypes"
+
+	_productUseCase "PPOB_BACKEND/businesses/products"
+	_productController "PPOB_BACKEND/controllers/products"
+
+	_walletUseCase "PPOB_BACKEND/businesses/wallets"
+	_walletController "PPOB_BACKEND/controllers/wallets"
+
+	_walletHistoryUseCase "PPOB_BACKEND/businesses/wallet_histories"
+	_walletHistoryController "PPOB_BACKEND/controllers/wallet_histories"
+
+	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
+	_transactionController "PPOB_BACKEND/controllers/transactions"
 
 	_driverFactory "PPOB_BACKEND/drivers"
 
@@ -57,9 +74,31 @@ func main() {
 	userUseCase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUseCase)
 
+	// Product
+	productRepo := _driverFactory.NewProductRepository(db)
+	productUseCase := _productUseCase.NewProductUseCase(productRepo)
+	productCtrl := _productController.NewProductController(productUseCase)
+
 	// Provider
+	providerRepo := _driverFactory.NewProviderRepository(db)
+	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
+	providerCtrl := _providerController.NewProviderController(providerUsecase)
+	// Wallet
+	walletRepo := _driverFactory.NewWalletRepository(db)
+	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
+	walletCtrl := _walletController.NewWalletController(walletUseCase)
+	// Wallet History
+	walletHistoryRepo := _driverFactory.NewWalletHistoryRepository(db)
+	walletHistoryUseCase := _walletHistoryUseCase.NewWalletHistoryUseCase(walletHistoryRepo)
+	walletHistoryCtrl := _walletHistoryController.NewWalletHistoryController(walletHistoryUseCase, userUseCase)
+	// Transaction
+	transactionRepo := _driverFactory.NewTransactionRepository(db)
+	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
+	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase, walletUseCase, walletHistoryUseCase)
 
 	// Product Type
+	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
+	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
 
 	// Product
 
@@ -70,10 +109,17 @@ func main() {
 	paymentmethodUsecase := _paymentmethodUsecase.NewPaymentMethodUsecase(paymentmethodRepo)
 	paymentmethodController := _paymentmethodController.NewPaymentController(paymentmethodUsecase)
 
+	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:  configLogger.Init(),
-		JWTMIddleware:     configJWT.Init(),
-		UserController:    *userCtrl,
+		LoggerMiddleware:        configLogger.Init(),
+		JWTMIddleware:           configJWT.Init(),
+		UserController:          *userCtrl,
+		WalletHistoryController: *walletHistoryCtrl,
+		WalletController:        *walletCtrl,
+		ProviderController:      *providerCtrl,
+		ProductTypeController:   *productTypeCtrl,
+		ProductController:       *productCtrl,
+		TransactionController:   *transactionCtrl,
 		PaymentController: *paymentmethodController,
 	}
 	routesInit.RouteRegister(e)
