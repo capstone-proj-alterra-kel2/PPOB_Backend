@@ -22,10 +22,10 @@ func (ptu *productTypeUsecase) GetOne(product_type_id int) Domain {
 	return ptu.productTypeRepository.GetOne(product_type_id)
 }
 
-func (ptu *productTypeUsecase) Update(productTypeDomain *Domain, product_type_id int) Domain {
+func (ptu *productTypeUsecase) Update(productTypeDomain *Domain, product_type_id int) (Domain, error) {
 	return ptu.productTypeRepository.Update(productTypeDomain, product_type_id)
 }
 
-func (ptu *productTypeUsecase) Delete(product_type_id int) Domain {
+func (ptu *productTypeUsecase) Delete(product_type_id int) (Domain, error) {
 	return ptu.productTypeRepository.Delete(product_type_id)
 }

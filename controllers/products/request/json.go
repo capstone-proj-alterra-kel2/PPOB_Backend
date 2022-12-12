@@ -14,6 +14,7 @@ type Product struct {
 	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
 	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
 	Status                string `json:"status" form:"status" validate:"required"`
+	TotalPurchased        int    `json:"total_purchased"`
 	AdditionalInformation string `json:"additional_information" form:"additional_information"`
 	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
 	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`

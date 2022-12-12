@@ -56,16 +56,16 @@ type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
-	UpdateData(productDomain *UpdateDataDomain, product_id int) Domain
+	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
-	Delete(product_id int) Domain
+	Delete(product_id int) (Domain, error)
 }
 
 type Repository interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
-	UpdateData(productDomain *UpdateDataDomain, product_id int) Domain
+	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
-	Delete(product_id int) Domain
+	Delete(product_id int) (Domain, error)
 }

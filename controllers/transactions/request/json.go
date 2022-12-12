@@ -7,12 +7,14 @@ import (
 )
 
 type Transaction struct {
-	ProductID int `json:"product_id" validate:"required"`
+	ProductID         int    `json:"product_id" validate:"required"`
+	TargetPhoneNumber string `json:"target_phone_number"`
 }
 
 func (req *Transaction) ToDomain() *transactions.Domain {
 	return &transactions.Domain{
-		ProductID: req.ProductID,
+		ProductID:         req.ProductID,
+		TargetPhoneNumber: req.TargetPhoneNumber,
 	}
 }
 

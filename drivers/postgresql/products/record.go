@@ -16,7 +16,7 @@ type Product struct {
 	ProviderID            int            `json:"provider_id"`
 	Stock                 *int           `json:"stock"`
 	Status                string         `json:"status"`
-	TotalPurchased        int            `json:"total_purchased" gorm:"default:0"`
+	TotalPurchased        int            `json:"total_purchased"`
 	AdditionalInformation string         `json:"additional_information"`
 	IsAvailable           *bool          `json:"is_available"`
 	IsPromo               *bool          `json:"is_promo"`
@@ -64,6 +64,7 @@ func (recProd *Product) ToDomain() products.Domain {
 		ProviderID:            recProd.ProviderID,
 		Stock:                 recProd.Stock,
 		Status:                recProd.Status,
+		TotalPurchased:        recProd.TotalPurchased,
 		AdditionalInformation: recProd.AdditionalInformation,
 		IsAvailable:           recProd.IsAvailable,
 		IsPromo:               recProd.IsPromo,

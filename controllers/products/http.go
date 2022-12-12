@@ -56,6 +56,7 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 
 func (ctrl *ProductController) Create(c echo.Context) error {
 	input := request.Product{}
+	input.TotalPurchased = 0
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
@@ -89,7 +90,12 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 
-	product := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+	product, err := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product updated", response.FromDomain(product))
 }
 
@@ -97,6 +103,11 @@ func (ctrl *ProductController) Delete(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	ctrl.productUsecase.Delete(productID)
+	_, err := ctrl.productUsecase.Delete(productID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "product deleted", "")
 }

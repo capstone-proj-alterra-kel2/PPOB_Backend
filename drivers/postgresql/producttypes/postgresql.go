@@ -43,8 +43,14 @@ func (ptr *productTypeRepository) GetOne(product_type_id int) producttypes.Domai
 	return prodtype.ToDomain()
 }
 
-func (ptr *productTypeRepository) Update(productTypeDomain *producttypes.Domain, product_type_id int) producttypes.Domain {
+func (ptr *productTypeRepository) Update(productTypeDomain *producttypes.Domain, product_type_id int) (producttypes.Domain, error) {
 	prodtype := FromDomain(productTypeDomain)
+
+	err := ptr.conn.First(&prodtype, product_type_id).Error
+
+	if err != nil {
+		return prodtype.ToDomain(), err
+	}
 
 	ptr.conn.Model(&prodtype).Where("id = ?", product_type_id).Updates(
 		ProductType{
@@ -53,12 +59,18 @@ func (ptr *productTypeRepository) Update(productTypeDomain *producttypes.Domain,
 		},
 	)
 
-	return prodtype.ToDomain()
+	return prodtype.ToDomain(), nil
 }
 
-func (ptr *productTypeRepository) Delete(product_type_id int) producttypes.Domain {
+func (ptr *productTypeRepository) Delete(product_type_id int) (producttypes.Domain, error) {
 	var prodtype ProductType
 
+	err := ptr.conn.First(&prodtype, product_type_id).Error
+
+	if err != nil {
+		return prodtype.ToDomain(), err
+	}
+
 	ptr.conn.Unscoped().Where("id = ?", product_type_id).Delete(&prodtype)
-	return prodtype.ToDomain()
+	return prodtype.ToDomain(), nil
 }
