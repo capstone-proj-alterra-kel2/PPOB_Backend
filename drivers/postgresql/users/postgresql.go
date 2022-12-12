@@ -127,7 +127,7 @@ func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 func (ur *userRepository) Profile(idUser string) users.Domain {
 	var user User
 
-	ur.conn.Preload("Role").Preload("Wallet").First(&user, "id=?", idUser)
+	ur.conn.Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet").First(&user, "id=?", idUser)
 
 	return user.ToDomain()
 }
