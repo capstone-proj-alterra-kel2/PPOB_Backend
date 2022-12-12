@@ -34,8 +34,8 @@ func FromDomain(domain *users.Domain) *User {
 		historiesData = append(historiesData, recWalletHistory.WalletHistory{
 			HistoryWalletID: history.HistoryWalletID,
 			NoWallet:        history.NoWallet,
-			Income:          history.Income,
-			Outcome:         history.Outcome,
+			CashIn:          history.CashIn,
+			CashOut:         history.CashOut,
 			DateWallet:      history.DateWallet,
 			CreatedAt:       history.CreatedAt,
 			UpdatedAt:       history.UpdatedAt,
@@ -50,7 +50,7 @@ func FromDomain(domain *users.Domain) *User {
 		Email:       domain.Email,
 		Password:    domain.Password,
 		RoleID:      domain.RoleID,
-		Image: domain.Image,
+		Image:       domain.Image,
 		Wallet: wallets.Wallet{
 			NoWallet:        domain.Wallet.NoWallet,
 			UserID:          domain.Wallet.UserID,

@@ -27,8 +27,8 @@ func FromDomain(domain wallets.Domain) Wallet {
 		walletHistoryData = append(walletHistoryData, resWalletHistory.FromDomain(wallet_histories.Domain{
 			HistoryWalletID: history.HistoryWalletID,
 			NoWallet:        history.NoWallet,
-			Income:          history.Income,
-			Outcome:         history.Outcome,
+			CashIn:          history.CashIn,
+			CashOut:         history.CashOut,
 			DateWallet:      history.DateWallet,
 			CreatedAt:       history.CreatedAt,
 			UpdatedAt:       history.UpdatedAt,
