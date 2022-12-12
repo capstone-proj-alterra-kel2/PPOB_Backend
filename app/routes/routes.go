@@ -7,6 +7,7 @@ import (
 	"PPOB_BACKEND/controllers/providers"
 	"PPOB_BACKEND/controllers/transactions"
 	"PPOB_BACKEND/controllers/users"
+	"PPOB_BACKEND/controllers/payment_method"
 	"PPOB_BACKEND/controllers/wallet_histories"
 	"PPOB_BACKEND/controllers/wallets"
 
@@ -15,6 +16,8 @@ import (
 )
 
 type ControllerList struct {
+	PaymentController payment_method.PaymentController
+	// Admin
 	LoggerMiddleware        echo.MiddlewareFunc  // Logger
 	JWTMIddleware           middleware.JWTConfig // JWT
 	UserController          users.UserController // User
@@ -89,6 +92,20 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersProvider.Use(middlewares.CheckStatusToken)
 	usersProvider.POST("/phone", cl.ProviderController.GetByPhone)
 
+	// User - Payment Method
+	payment := v1.Group("/payments", middleware.JWTWithConfig(cl.JWTMIddleware))
+	payment.GET("", cl.PaymentController.GetAll)
+	payment.GET("/:id", cl.PaymentController.GetSpecificPayment)
+	payment.POST("", cl.PaymentController.CreatePayment, middlewares.IsAdmin)
+	payment.PUT("/:id", cl.PaymentController.UpdatePaymentByID, middlewares.IsAdmin)
+	payment.DELETE("/:id", cl.PaymentController.DeletePayment, middlewares.IsAdmin)
+
+
+	// Admin
+
+	// Admin - User
+
+	// Admin - Admin
 	// Admin - Product
 	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminProduct.Use(middlewares.CheckStatusToken)

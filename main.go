@@ -13,6 +13,8 @@ import (
 	_userUseCase "PPOB_BACKEND/businesses/users"
 	_userController "PPOB_BACKEND/controllers/users"
 
+	_paymentmethodUsecase "PPOB_BACKEND/businesses/payment_method"
+	_paymentmethodController "PPOB_BACKEND/controllers/payment_method"
 	_providerUseCase "PPOB_BACKEND/businesses/providers"
 	_providerController "PPOB_BACKEND/controllers/providers"
 
@@ -98,6 +100,15 @@ func main() {
 	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
 
+	// Product
+
+	// Voucher
+
+	// Payment Method
+	paymentmethodRepo := _driverFactory.NewPaymentMethodRepository(db)
+	paymentmethodUsecase := _paymentmethodUsecase.NewPaymentMethodUsecase(paymentmethodRepo)
+	paymentmethodController := _paymentmethodController.NewPaymentController(paymentmethodUsecase)
+
 	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:        configLogger.Init(),
@@ -109,6 +120,7 @@ func main() {
 		ProductTypeController:   *productTypeCtrl,
 		ProductController:       *productCtrl,
 		TransactionController:   *transactionCtrl,
+		PaymentController: *paymentmethodController,
 	}
 	routesInit.RouteRegister(e)
 
