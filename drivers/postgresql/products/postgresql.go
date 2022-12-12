@@ -98,8 +98,7 @@ func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateSto
 			TotalPurchased: productDomain.TotalPurchased,
 			Stock:          productDomain.Stock,
 			IsAvailable:    productDomain.IsAvailable,
-		},
-	)
+		})
 	return prod.ToDomain()
 }
 

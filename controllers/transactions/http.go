@@ -142,7 +142,7 @@ func (tc *TransactionController) Create(c echo.Context) error {
 		totalAmount = product.Price
 	}
 
-	transaction := tc.transactionUsecase.Create(&product, &user, totalAmount, productDiscount)
+	transaction := tc.transactionUsecase.Create(&product, &user, totalAmount, productDiscount, request.TargetPhoneNumber)
 
 	var updatedBalance int
 
@@ -163,10 +163,8 @@ func (tc *TransactionController) Create(c echo.Context) error {
 	// update stock and status
 	requestUpdateStockStatus := productRequest.UpdateStockStatus{}
 	updatedStock := *product.Stock - 1
-	updatedTotalPurchased := product.TotalPurchased + 1
-
 	requestUpdateStockStatus.Stock = updatedStock
-	requestUpdateStockStatus.TotalPurchased = updatedTotalPurchased
+	requestUpdateStockStatus.TotalPurchased = product.TotalPurchased + 1
 
 	if updatedStock == 0 {
 		requestUpdateStockStatus.IsAvailable = false

@@ -56,6 +56,7 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 
 func (ctrl *ProductController) Create(c echo.Context) error {
 	input := request.Product{}
+	input.TotalPurchased = 0
 
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
