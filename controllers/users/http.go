@@ -149,7 +149,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 }
 
 func (ctrl *UserController) DetailAdmin(c echo.Context) error {
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	user := ctrl.userUsecase.Profile(idUser)
 	if user.RoleName == "user" || user.RoleName == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "prevent getting detail user & superadmin")
@@ -185,7 +185,7 @@ func (ctrl *UserController) DeleteUser(c echo.Context) error {
 }
 
 func (ctrl *UserController) DeleteAdmin(c echo.Context) error {
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	role := ctrl.userUsecase.Profile(idUser).RoleName
 	if role == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete superadmin")
@@ -244,7 +244,7 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 
 func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	var result string
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	image, _ := c.FormFile("image")
 	input := request.UpdateData{}
 	role := ctrl.userUsecase.Profile(idUser).RoleName

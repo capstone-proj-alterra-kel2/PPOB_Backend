@@ -14,7 +14,7 @@ type Wallet struct {
 	NoWallet        string                           `json:"no_wallet" gorm:"size:16;primaryKey;unique"`
 	UserID          uint                             `json:"user_id"`
 	Balance         int                              `json:"balance"`
-	HistoriesWallet []resWalletHistory.WalletHistory `json:"histories_wallet" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	HistoriesWallet []resWalletHistory.WalletHistory `json:"histories_wallet" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:no_wallet"`
 	CreatedAt       time.Time                        `json:"created_at"`
 	UpdatedAt       time.Time                        `json:"updated_at"`
 	DeletedAt       gorm.DeletedAt                   `json:"deleted_at"`

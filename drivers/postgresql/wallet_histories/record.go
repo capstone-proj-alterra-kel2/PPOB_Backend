@@ -9,7 +9,7 @@ import (
 
 type WalletHistory struct {
 	HistoryWalletID uint           `json:"history_wallet_id" gorm:"primaryKey"`
-	NoWallet        string         `json:"no_wallet"`
+	NoWallet        string         `json:"no_wallet" gorm:"size:16;"`
 	Income          int            `json:"income"`
 	Outcome         int            `json:"outcome"`
 	Description     string         `json:"description"`
