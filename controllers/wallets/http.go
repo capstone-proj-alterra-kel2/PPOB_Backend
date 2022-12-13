@@ -81,7 +81,7 @@ func (ctrl *WalletController) UpdateBalance(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
+	return controllers.NewResponse(c, http.StatusOK, "success", "balance updated", response.FromDomain(user))
 }
 
 func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
@@ -99,6 +99,6 @@ func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
+	return controllers.NewResponse(c, http.StatusOK, "success", "balance updated", response.FromDomain(user))
 
 }

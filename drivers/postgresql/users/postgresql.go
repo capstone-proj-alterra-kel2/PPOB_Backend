@@ -76,7 +76,7 @@ func (ur *userRepository) Register(userDomain *users.Domain) (users.Domain, erro
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 1
-	rec.Wallet.NoWallet = ccgen.Generate()
+	rec.Wallet.NoWallet = ccgen.Solo.GenerateOfLength(16)
 	rec.Wallet.Balance = 0
 	if err := ur.conn.Preload("Role").Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
@@ -89,7 +89,7 @@ func (ur *userRepository) CreateAdmin(userDomain *users.Domain) (users.Domain, e
 	rec := FromDomain(userDomain)
 	rec.Password = string(password)
 	rec.RoleID = 2
-	rec.Wallet.NoWallet = ccgen.Generate()
+	rec.Wallet.NoWallet = ccgen.Solo.GenerateOfLength(16)
 	rec.Wallet.Balance = 0
 	if err := ur.conn.Create(&rec).Error; err != nil {
 		return rec.ToDomain(), err
