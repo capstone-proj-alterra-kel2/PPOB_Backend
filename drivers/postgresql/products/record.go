@@ -10,7 +10,6 @@ import (
 type Product struct {
 	ID                    uint           `json:"id" gorm:"size:100;primaryKey"`
 	Name                  string         `json:"name"`
-	Category              string         `json:"category"`
 	Description           string         `json:"description"`
 	Price                 int            `json:"price"`
 	ProviderID            int            `json:"provider_id"`
