@@ -8,15 +8,15 @@ import (
 
 type PaymentMethod struct {
 	Payment_Name string `json:"payment_name" form:"payment_name"`
-	Url_Payment string `json:"url_payment" form:"url_payment"`
-	Icon string `json:"icon" form:"icon"`
+	Url_Payment  string `json:"url_payment" form:"url_payment"`
+	Icon         string `json:"icon" form:"icon"`
 }
 
 func (req *PaymentMethod) ToDomain() *payment_method.Domain {
 	return &payment_method.Domain{
 		Payment_Name: req.Payment_Name,
-		Url_Payment: req.Url_Payment,
-		Icon: req.Icon,
+		Url_Payment:  req.Url_Payment,
+		Icon:         req.Icon,
 	}
 }
 

@@ -2,12 +2,12 @@ package routes
 
 import (
 	"PPOB_BACKEND/app/middlewares"
+	"PPOB_BACKEND/controllers/payment_method"
 	"PPOB_BACKEND/controllers/products"
 	"PPOB_BACKEND/controllers/producttypes"
 	"PPOB_BACKEND/controllers/providers"
 	"PPOB_BACKEND/controllers/transactions"
 	"PPOB_BACKEND/controllers/users"
-	"PPOB_BACKEND/controllers/payment_method"
 	"PPOB_BACKEND/controllers/wallet_histories"
 	"PPOB_BACKEND/controllers/wallets"
 
@@ -16,7 +16,6 @@ import (
 )
 
 type ControllerList struct {
-	PaymentController payment_method.PaymentController
 	// Admin
 	LoggerMiddleware        echo.MiddlewareFunc  // Logger
 	JWTMIddleware           middleware.JWTConfig // JWT
@@ -27,6 +26,7 @@ type ControllerList struct {
 	TransactionController   transactions.TransactionController
 	WalletController        wallets.WalletController                 // Wallet
 	WalletHistoryController wallet_histories.WalletHistoryController // Wallet Histories
+	PaymentController       payment_method.PaymentController         // Payment Method
 	// Businesse
 }
 
@@ -53,8 +53,8 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Only Superadmin - Admin
 	adminSuperAdmin := v1.Group("/admin/admins", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsSuperAdmin)
 	adminSuperAdmin.Use(middlewares.CheckStatusToken)
-	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
-	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
+	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)               // Get All Admins
+	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)              // Create Admin
 	adminSuperAdmin.PUT("/:admin_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
 	adminSuperAdmin.DELETE("/:admin_id", cl.UserController.DeleteAdmin)  // Delete Admin
 	adminSuperAdmin.GET("/:admin_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
@@ -99,7 +99,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	payment.POST("", cl.PaymentController.CreatePayment, middlewares.IsAdmin)
 	payment.PUT("/:id", cl.PaymentController.UpdatePaymentByID, middlewares.IsAdmin)
 	payment.DELETE("/:id", cl.PaymentController.DeletePayment, middlewares.IsAdmin)
-
 
 	// Admin
 

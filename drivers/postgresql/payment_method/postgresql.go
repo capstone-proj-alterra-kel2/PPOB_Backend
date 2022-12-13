@@ -34,7 +34,7 @@ func (pr *paymentRepository) GetSpecificPayment(id string) payment_method.Domain
 	return payment.ToDomain()
 }
 
-func (pr *paymentRepository) CreatePayment(paymentDomain *payment_method.Domain) payment_method.Domain{
+func (pr *paymentRepository) CreatePayment(paymentDomain *payment_method.Domain) payment_method.Domain {
 	rec := FromDomain(paymentDomain)
 
 	result := pr.conn.Create(&rec)
@@ -54,19 +54,19 @@ func (pr *paymentRepository) UpdatePaymentByID(id string, paymentDomain *payment
 	updatedPayment.Icon = paymentDomain.Icon
 
 	pr.conn.Save(&updatedPayment)
-	
+
 	return updatedPayment.ToDomain()
 }
 
 func (pr *paymentRepository) DeletePayment(id string) bool {
 	var payment payment_method.Domain = pr.GetSpecificPayment(id)
-	
+
 	deletedPayment := FromDomain(&payment)
 
 	result := pr.conn.Delete(&deletedPayment)
 
-	if result.RowsAffected == 0{
+	if result.RowsAffected == 0 {
 		return false
 	}
-	;return true
+	return true
 }

@@ -50,7 +50,7 @@ func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&roles.Role{}, // role
 		&users.User{}, // User
-		&payment_method.Payment_Method{}, //Payment_Method
+		&payment_method.Payment_Method{}, //PaymentMethod
 		&wallets.Wallet{},
 		&wallet_histories.WalletHistory{},
 		&producttypes.ProductType{}, // ProductType

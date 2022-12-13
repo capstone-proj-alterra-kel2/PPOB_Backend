@@ -14,8 +14,8 @@ import (
 	_userController "PPOB_BACKEND/controllers/users"
 
 	_paymentmethodUsecase "PPOB_BACKEND/businesses/payment_method"
-	_paymentmethodController "PPOB_BACKEND/controllers/payment_method"
 	_providerUseCase "PPOB_BACKEND/businesses/providers"
+	_paymentmethodController "PPOB_BACKEND/controllers/payment_method"
 	_providerController "PPOB_BACKEND/controllers/providers"
 
 	_productTypeUseCase "PPOB_BACKEND/businesses/producttypes"
@@ -120,7 +120,7 @@ func main() {
 		ProductTypeController:   *productTypeCtrl,
 		ProductController:       *productCtrl,
 		TransactionController:   *transactionCtrl,
-		PaymentController: *paymentmethodController,
+		PaymentController:       *paymentmethodController,
 	}
 	routesInit.RouteRegister(e)
 

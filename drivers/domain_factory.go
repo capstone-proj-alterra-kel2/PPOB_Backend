@@ -30,6 +30,7 @@ func NewUserRepository(conn *gorm.DB) userDomain.Repository {
 func NewPaymentMethodRepository(conn *gorm.DB) paymentmethodDomain.Repository {
 	return paymentmethodDB.NewPostgreSQLRepository(conn)
 }
+
 func NewProductRepository(conn *gorm.DB) productDomain.Repository {
 	return productDB.NewPostgreSQLRepository(conn)
 }

@@ -51,8 +51,6 @@ func TestGetSpecificPayment(t *testing.T) {
 		result := paymentService.GetSpecificPayment("1")
 
 		assert.NotNil(t, result)
-    
+
 	})
 }
-
-

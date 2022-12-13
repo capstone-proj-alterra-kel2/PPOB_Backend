@@ -21,10 +21,9 @@ func NewPaymentController(PaymentUC payment_method.Usecase) *PaymentController {
 	}
 }
 
-
 func (ctrl *PaymentController) GetAll(c echo.Context) error {
 	PaymentData := ctrl.paymentUsecase.GetAll()
-	
+
 	payment := []response.Payment_Method{}
 
 	for _, pm := range PaymentData {
@@ -34,19 +33,17 @@ func (ctrl *PaymentController) GetAll(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all payments", payment)
 }
 
-
 func (ctrl *PaymentController) GetSpecificPayment(c echo.Context) error {
 	var id string = c.Param("id")
 
 	payment := ctrl.paymentUsecase.GetSpecificPayment(id)
 
 	if payment.ID == 0 {
-		return controllers.NewResponse(c, http.StatusNotFound,"failed","payment method not found", "")
+		return controllers.NewResponse(c, http.StatusNotFound, "failed", "payment method not found", "")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success","payment method found", response.FromDomain(payment))
+	return controllers.NewResponse(c, http.StatusOK, "success", "payment method found", response.FromDomain(payment))
 }
-
 
 func (ctrl *PaymentController) CreatePayment(c echo.Context) error {
 	input := request.PaymentMethod{}
@@ -66,7 +63,6 @@ func (ctrl *PaymentController) CreatePayment(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusCreated, "success", "note created", response.FromDomain(payment))
 }
 
-
 func (ctrl *PaymentController) UpdatePaymentByID(c echo.Context) error {
 	input := request.PaymentMethod{}
 
@@ -76,7 +72,7 @@ func (ctrl *PaymentController) UpdatePaymentByID(c echo.Context) error {
 
 	var paymentId string = c.Param("id")
 
-	err := input.Validate()	
+	err := input.Validate()
 
 	if err != nil {
 		return controllers.NewResponse(c, http.StatusBadRequest, "failed", "validation failed", "")
@@ -90,7 +86,6 @@ func (ctrl *PaymentController) UpdatePaymentByID(c echo.Context) error {
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "payment method updated", response.FromDomain(payment))
 }
-
 
 func (ctrl *PaymentController) DeletePayment(c echo.Context) error {
 	var paymentId string = c.Param("id")

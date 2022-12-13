@@ -1,18 +1,16 @@
 package mocks
 
 import (
-  "PPOB_BACKEND/businesses/payment_method"
+	"PPOB_BACKEND/businesses/payment_method"
 
-  mock "github.com/stretchr/testify/mock"
+	mock "github.com/stretchr/testify/mock"
 )
 
-
 type Usecase struct {
-  mock.Mock
+	mock.Mock
 }
 
-
-func (_m *Usecase) CreatePayment(paymentDomain *payment_method.Domain)payment_method.Domain {
+func (_m *Usecase) CreatePayment(paymentDomain *payment_method.Domain) payment_method.Domain {
 	ret := _m.Called(paymentDomain)
 
 	var r0 payment_method.Domain
@@ -24,7 +22,6 @@ func (_m *Usecase) CreatePayment(paymentDomain *payment_method.Domain)payment_me
 
 	return r0
 }
-
 
 func (_m *Usecase) DeletePayment(id string) bool {
 	ret := _m.Called(id)
@@ -52,9 +49,8 @@ func (_m *Usecase) UpdatePaymentByID(id string, paymentDomain *payment_method.Do
 	return r0
 }
 
-
 func (_m *Usecase) GetAll() []payment_method.Domain {
-  ret := _m.Called()
+	ret := _m.Called()
 
 	var r0 []payment_method.Domain
 	if rf, ok := ret.Get(0).(func() []payment_method.Domain); ok {

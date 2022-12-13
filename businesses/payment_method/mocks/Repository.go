@@ -3,13 +3,12 @@ package mocks
 import (
 	"PPOB_BACKEND/businesses/payment_method"
 
-	 mock "github.com/stretchr/testify/mock"
+	mock "github.com/stretchr/testify/mock"
 )
 
 type Repository struct {
 	mock.Mock
 }
-
 
 func (_m *Repository) CreatePayment(paymentDomain *payment_method.Domain) payment_method.Domain {
 	ret := _m.Called(paymentDomain)
@@ -36,7 +35,6 @@ func (_m *Repository) DeletePayment(id string) bool {
 
 	return r0
 }
-
 
 func (_m *Repository) UpdatePaymentByID(id string, paymentDomain *payment_method.Domain) payment_method.Domain {
 	ret := _m.Called(id, paymentDomain)

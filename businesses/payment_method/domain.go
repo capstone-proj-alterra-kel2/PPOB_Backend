@@ -2,7 +2,6 @@ package payment_method
 
 import (
 	"time"
-
 	"gorm.io/gorm"
 )
 
