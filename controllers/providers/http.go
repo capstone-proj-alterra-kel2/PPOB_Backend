@@ -124,7 +124,6 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 		inputProviderUpdates = append(inputProviderUpdates, request.UpdateCheckProduct{
 			ID:                    int(v.ID),
 			Name:                  v.Name,
-			Category:              v.Category,
 			Description:           v.Description,
 			Price:                 v.Price,
 			ProviderID:            v.ProviderID,

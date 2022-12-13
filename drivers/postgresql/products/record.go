@@ -34,7 +34,6 @@ func FromDomain(domain *products.Domain) *Product {
 	return &Product{
 		ID:                    domain.ID,
 		Name:                  domain.Name,
-		Category:              domain.Category,
 		Price:                 domain.Price,
 		Description:           domain.Description,
 		ProviderID:            domain.ProviderID,
@@ -58,7 +57,6 @@ func (recProd *Product) ToDomain() products.Domain {
 	return products.Domain{
 		ID:                    recProd.ID,
 		Name:                  recProd.Name,
-		Category:              recProd.Category,
 		Price:                 recProd.Price,
 		Description:           recProd.Description,
 		ProviderID:            recProd.ProviderID,
@@ -82,7 +80,6 @@ func FromUpdatedDomain(domain *products.UpdateDataDomain) *Product {
 
 	return &Product{
 		Name:                  domain.Name,
-		Category:              domain.Category,
 		Price:                 domain.Price,
 		Description:           domain.Description,
 		ProviderID:            domain.ProviderID,

@@ -18,6 +18,9 @@ import (
 	walletHistoryDomain "PPOB_BACKEND/businesses/wallet_histories"
 	walletHistoryDB "PPOB_BACKEND/drivers/postgresql/wallet_histories"
 
+	categoryDomain "PPOB_BACKEND/businesses/category"
+	categoryDB "PPOB_BACKEND/drivers/postgresql/category"
+
 	"gorm.io/gorm"
 )
 
@@ -47,4 +50,8 @@ func NewWalletRepository(conn *gorm.DB) walletDomain.Repository {
 
 func NewTransactionRepository(conn *gorm.DB) trnsactionDomain.Repository {
 	return transactionDB.NewTransactionRepository(conn)
+}
+
+func NewCategoryRepository(conn *gorm.DB) categoryDomain.Repository {
+	return categoryDB.NewCategoryRepository(conn)
 }

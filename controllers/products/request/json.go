@@ -27,7 +27,6 @@ type Product struct {
 func (req *Product) ToDomain() *products.Domain {
 	return &products.Domain{
 		Name:                  req.Name,
-		Category:              req.Category,
 		Description:           req.Description,
 		Price:                 req.Price,
 		ProviderID:            req.ProviderID,
@@ -52,7 +51,6 @@ func (req *Product) Validate() error {
 
 type UpdateDataProduct struct {
 	Name           string `json:"name" form:"name" validate:"required"`
-	Category       string `json:"category" form:"category" validate:"required"`
 	Description    string `json:"description" form:"description" validate:"required"`
 	Price          int    `json:"price" form:"price" validate:"required"`
 	ProviderID     int    `json:"provider_id" form:"provider_id" validate:"required"`
@@ -69,7 +67,6 @@ type UpdateDataProduct struct {
 func (req *UpdateDataProduct) ToDomain() *products.UpdateDataDomain {
 	return &products.UpdateDataDomain{
 		Name:           req.Name,
-		Category:       req.Category,
 		Description:    req.Description,
 		Price:          req.Price,
 		ProviderID:     req.ProviderID,

@@ -55,7 +55,12 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	productType := ctrl.productTypeUsecase.Create(input.ToDomain())
+	productType, isCategoryFound := ctrl.productTypeUsecase.Create(input.ToDomain())
+
+	if !isCategoryFound {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "category not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusCreated, "success", "product type created", response.FromDomain(productType))
 }
 

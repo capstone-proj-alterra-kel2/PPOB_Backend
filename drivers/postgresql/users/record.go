@@ -50,7 +50,7 @@ func FromDomain(domain *users.Domain) *User {
 		Email:       domain.Email,
 		Password:    domain.Password,
 		RoleID:      domain.RoleID,
-		Image: domain.Image,
+		Image:       domain.Image,
 		Wallet: wallets.Wallet{
 			NoWallet:        domain.Wallet.NoWallet,
 			UserID:          domain.Wallet.UserID,

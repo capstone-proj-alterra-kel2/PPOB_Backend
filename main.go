@@ -31,6 +31,9 @@ import (
 	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
 	_transactionController "PPOB_BACKEND/controllers/transactions"
 
+	_categoryUseCase "PPOB_BACKEND/businesses/category"
+	_categoryController "PPOB_BACKEND/controllers/category"
+
 	_driverFactory "PPOB_BACKEND/drivers"
 
 	_middleware "PPOB_BACKEND/app/middlewares"
@@ -97,8 +100,13 @@ func main() {
 	// Product Type
 	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
-
 	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
+
+	// Category
+	categoryRepo := _driverFactory.NewCategoryRepository(db)
+	categoryUseCase := _categoryUseCase.NewCategoryUseCase(categoryRepo)
+	categoryCtrl := _categoryController.NewCategoryController(categoryUseCase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:        configLogger.Init(),
 		JWTMIddleware:           configJWT.Init(),
@@ -109,6 +117,7 @@ func main() {
 		ProductTypeController:   *productTypeCtrl,
 		ProductController:       *productCtrl,
 		TransactionController:   *transactionCtrl,
+		CategoryController:      *categoryCtrl,
 	}
 	routesInit.RouteRegister(e)
 

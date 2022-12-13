@@ -2,6 +2,7 @@ package routes
 
 import (
 	"PPOB_BACKEND/app/middlewares"
+	"PPOB_BACKEND/controllers/category"
 	"PPOB_BACKEND/controllers/products"
 	"PPOB_BACKEND/controllers/producttypes"
 	"PPOB_BACKEND/controllers/providers"
@@ -24,7 +25,7 @@ type ControllerList struct {
 	TransactionController   transactions.TransactionController
 	WalletController        wallets.WalletController                 // Wallet
 	WalletHistoryController wallet_histories.WalletHistoryController // Wallet Histories
-	// Businesse
+	CategoryController      category.CategoryController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -80,7 +81,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	userProduct.GET("/:product_id", cl.ProductController.GetOne)
 
 	// User - Product Type
-	usersProductType := v1.Group("/users/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)
+	usersProductType := v1.Group("/users/product-types", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)
 	usersProductType.GET("", cl.ProductTypeController.GetAll)
 	usersProductType.GET("/:product_type_id", cl.ProductTypeController.GetOne)
 
@@ -89,8 +90,22 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	usersProvider.Use(middlewares.CheckStatusToken)
 	usersProvider.POST("/phone", cl.ProviderController.GetByPhone)
 
+	// User - Category
+	userCategory := v1.Group("/users/category", middleware.JWTWithConfig(cl.JWTMIddleware))
+	userCategory.Use(middlewares.CheckStatusToken)
+	userCategory.GET("", cl.CategoryController.GetAll)
+
+	// Admin - Category
+	adminCategory := v1.Group("/admin/category", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminCategory.Use(middlewares.CheckStatusToken)
+	adminCategory.GET("", cl.CategoryController.GetAll)
+	adminCategory.GET("/:category_id", cl.CategoryController.GetDetail)
+	adminCategory.POST("", cl.CategoryController.Create)
+	adminCategory.PUT("/:category_id", cl.CategoryController.Update)
+	adminCategory.DELETE("/:category_id", cl.CategoryController.Delete)
+
 	// Admin - Product
-	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProduct.Use(middlewares.CheckStatusToken)
 	adminProduct.GET("", cl.ProductController.GetAll)
 	adminProduct.GET("/:product_id", cl.ProductController.GetOne)
@@ -99,7 +114,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProduct.DELETE("/:product_id", cl.ProductController.Delete)
 
 	// Admin - Product Type
-	adminProductType := v1.Group("/admin/producttypes", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProductType := v1.Group("/admin/product-types", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProductType.Use(middlewares.CheckStatusToken)
 	adminProductType.GET("", cl.ProductTypeController.GetAll)
 	adminProductType.GET("/:product_type_id", cl.ProductTypeController.GetOne)
@@ -108,7 +123,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProductType.DELETE("/:product_type_id", cl.ProductTypeController.Delete)
 
 	// Admin - Provider
-	adminProvider := adminProductType.Group("/:product_type_id/providers", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminProvider := adminProductType.Group("/:product_type_id/providers", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminProvider.Use(middlewares.CheckStatusToken)
 	adminProvider.GET("", cl.ProviderController.GetAll)
 	adminProvider.GET("/:provider_id", cl.ProviderController.GetOne)
@@ -119,12 +134,12 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Admin - Voucher
 
 	// Admin - Transaction
-	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware))
 	adminTransaction.Use(middlewares.CheckStatusToken)
 	adminTransaction.GET("", cl.TransactionController.GetAll)
 
 	// Admin - Wallet
-	adminWallet := v1.Group("/admin/wallets", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken, middlewares.IsAdmin)
+	adminWallet := v1.Group("/admin/wallets", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)
 	adminWallet.GET("", cl.WalletController.GetAllWallet)
 	adminWallet.GET("/:user_id", cl.WalletController.GetDetailWallet)
 	adminWallet.PUT("/:user_id", cl.WalletController.UpdateBalance)

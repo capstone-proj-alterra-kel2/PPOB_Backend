@@ -9,7 +9,6 @@ import (
 type Domain struct {
 	ID                    uint
 	Name                  string
-	Category              string
 	Description           string
 	Price                 int
 	ProviderID            int
@@ -30,7 +29,6 @@ type Domain struct {
 
 type UpdateDataDomain struct {
 	Name                  string
-	Category              string
 	Description           string
 	Price                 int
 	ProviderID            int
