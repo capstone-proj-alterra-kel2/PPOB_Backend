@@ -151,10 +151,18 @@ func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateData
 	var user users.Domain = ur.Profile(idUser)
 	updatedData := FromDomain(&user)
 
-	updatedData.Image = dataDomain.Image
-	updatedData.Name = dataDomain.Name
-	updatedData.PhoneNumber = dataDomain.PhoneNumber
-	updatedData.Email = dataDomain.Email
+	if dataDomain.Image != "" {
+		updatedData.Image = dataDomain.Image
+	}
+	if dataDomain.Name != "" {
+		updatedData.Name = dataDomain.Name
+	}
+	if dataDomain.PhoneNumber != "" {
+		updatedData.PhoneNumber = dataDomain.PhoneNumber
+	}
+	if dataDomain.Email != "" {
+		updatedData.Email = dataDomain.Email
+	}
 
 	err := ur.conn.Save(&updatedData).Error
 	if err != nil {
