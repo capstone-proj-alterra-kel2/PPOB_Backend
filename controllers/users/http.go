@@ -7,6 +7,7 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/users/request"
 	"PPOB_BACKEND/controllers/users/response"
+	"PPOB_BACKEND/utils"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -64,6 +65,13 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 	}
 
 	if image != nil {
+
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -124,6 +132,12 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -212,6 +226,12 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -257,6 +277,12 @@ func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -308,6 +334,12 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -401,6 +433,12 @@ func (ctrl *UserController) UpdateData(c echo.Context) error {
 	input := request.UpdateData{}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -440,6 +478,13 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	image, _ := c.FormFile("image")
 
 	if image != nil {
+
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -460,7 +505,7 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
 }
 
-func (ctrl *UserController) CheckDuplicateUser (c echo.Context) error {
+func (ctrl *UserController) CheckDuplicateUser(c echo.Context) error {
 	input := request.CheckRegister{}
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
