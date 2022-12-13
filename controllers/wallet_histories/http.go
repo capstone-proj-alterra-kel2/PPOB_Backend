@@ -32,12 +32,12 @@ func (ctrl *WalletHistoryController) GetWalletHistories(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet histories", walletHistoryData)
 }
 
-func (ctrl *WalletHistoryController) GetOutcomeIncomeMonthly(c echo.Context) error {
+func (ctrl *WalletHistoryController) GetCashInCashOutMonthly(c echo.Context) error {
 	idUser := middlewares.GetUserID(c)
 	profile := ctrl.userUsecase.Profile(idUser)
-	outcomeincomeData := ctrl.walletHistoryUsecase.GetOutcomeIncomeMonthly(profile.Wallet.NoWallet)
+	CashInCashOutData := ctrl.walletHistoryUsecase.GetCashInCashOutMonthly(profile.Wallet.NoWallet)
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "data outcome income", response.FromDomainOutcomeIncome(outcomeincomeData))
+	return controllers.NewResponse(c, http.StatusOK, "success", "data cash-in cash-out", response.FromDomainCashInCashOut(CashInCashOutData ))
 }
 
 func (ctrl *WalletHistoryController) GetWalletHistoriesByUserID(c echo.Context) error {

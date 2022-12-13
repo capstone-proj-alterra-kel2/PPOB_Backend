@@ -32,11 +32,11 @@ func (whr *walletHistoryRepository) GetWalletHistories(NoWallet string) []wallet
 	return historiesDomain
 }
 
-func (whr *walletHistoryRepository) CreateWalletHistory(NoWallet string, Income int, Outcome int, Description string) wallet_histories.Domain {
+func (whr *walletHistoryRepository) CreateWalletHistory(NoWallet string, cashIn int, cashOut int, Description string) wallet_histories.Domain {
 	rec := WalletHistory{}
 	rec.NoWallet = NoWallet
-	rec.Income = Income
-	rec.Outcome = Outcome
+	rec.CashIn = cashIn
+	rec.CashOut = cashOut
 	rec.Description = Description
 	result := whr.conn.Create(&rec)
 	result.Last(&rec)
@@ -64,7 +64,7 @@ func (whr *walletHistoryRepository) GetWalletHistoriesMonthly(NoWallet string) [
 	return historiesDomain
 }
 
-func (whr *walletHistoryRepository) GetOutcomeIncomeMonthly(NoWallet string) wallet_histories.OutcomeIncomeMonthlyDomain {
+func (whr *walletHistoryRepository) GetCashInCashOutMonthly(NoWallet string) wallet_histories.CashInCashOutMonthlyDomain {
 
 	currentTime := time.Now()
 	month := currentTime.Local().Month()
@@ -74,18 +74,19 @@ func (whr *walletHistoryRepository) GetOutcomeIncomeMonthly(NoWallet string) wal
 	startdate, _ := time.Parse(layout, fmt.Sprintf("%d-%d-01T00:00:00.000000+00:00", year, monthN))
 	enddate, _ := time.Parse(layout, fmt.Sprintf("%d-%d-31T23:59:59.000000+00:00", year, monthN))
 	table := whr.conn.Table("wallet_histories").Where("no_wallet = ?", NoWallet).Where("created_at >= ? AND created_at <= ?", startdate, enddate)
-	var outcome int
-	var income int
-	outcomeTotal := table.Select("sum(outcome)").Row()
-	incomeTotal := table.Select("sum(income)").Row()
-	outcomeTotal.Scan(&outcome)
-	incomeTotal.Scan(&income)
+	var cashOut int
+	var cashIn int
+	cashOutTotal := table.Select("sum(cash_out)").Row()
+	cashInTotal := table.Select("sum(cash_in)").Row()
+	cashOutTotal.Scan(&cashOut)
+	cashInTotal.Scan(&cashIn)
 
-	outcomeincomeDomain := wallet_histories.OutcomeIncomeMonthlyDomain{
-		Income:  income,
-		Outcome: outcome,
+	CashInCashOutDomain := wallet_histories.CashInCashOutMonthlyDomain{
+		CashIn:  cashIn,
+		CashOut: cashOut,
+		Month: month.String(),
 	}
-	return outcomeincomeDomain
+	return CashInCashOutDomain
 }
 
 func (whr *walletHistoryRepository) CreateManual(NoWallet string, historyDomain *wallet_histories.Domain) wallet_histories.Domain {
@@ -100,8 +101,8 @@ func (whr *walletHistoryRepository) CreateManual(NoWallet string, historyDomain 
 func (whr *walletHistoryRepository) UpdateWalletHistories(idHistory string, historyDomain *wallet_histories.Domain) wallet_histories.Domain {
 	var walletHistory wallet_histories.Domain = whr.GetDetailWalletHistories(idHistory)
 	updatedHistory := FromDomain(&walletHistory)
-	updatedHistory.Income = historyDomain.Income
-	updatedHistory.Outcome = historyDomain.Outcome
+	updatedHistory.CashIn = historyDomain.CashIn
+	updatedHistory.CashOut = historyDomain.CashOut
 	updatedHistory.Description = historyDomain.Description
 	whr.conn.Save(&updatedHistory)
 	return updatedHistory.ToDomain()

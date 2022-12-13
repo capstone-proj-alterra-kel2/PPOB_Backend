@@ -14,16 +14,16 @@ func (whu *walletHistoryUsecase) GetWalletHistories(NoWallet string) []Domain {
 	return whu.walletHistoryRepository.GetWalletHistories(NoWallet)
 }
 
-func (whu *walletHistoryUsecase) GetOutcomeIncomeMonthly(NoWallet string) OutcomeIncomeMonthlyDomain {
-	return whu.walletHistoryRepository.GetOutcomeIncomeMonthly(NoWallet)
+func (whu *walletHistoryUsecase) GetCashInCashOutMonthly(NoWallet string) CashInCashOutMonthlyDomain {
+	return whu.walletHistoryRepository.GetCashInCashOutMonthly(NoWallet)
 }
 
 func (whu *walletHistoryUsecase) GetWalletHistoriesMonthly(NoWallet string) []Domain {
 	return whu.walletHistoryRepository.GetWalletHistoriesMonthly(NoWallet)
 }
 
-func (whu *walletHistoryUsecase) CreateWalletHistory(NoWallet string, Income int, Outcome int, Description string) Domain {
-	return whu.walletHistoryRepository.CreateWalletHistory(NoWallet, Income, Outcome, Description)
+func (whu *walletHistoryUsecase) CreateWalletHistory(NoWallet string, cashIn int, cashOut int, Description string) Domain {
+	return whu.walletHistoryRepository.CreateWalletHistory(NoWallet, cashIn, cashOut, Description)
 }
 
 func (whu *walletHistoryUsecase) GetDetailWalletHistories(idHistory string) Domain {

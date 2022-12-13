@@ -66,7 +66,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	user.PUT("/data", cl.UserController.UpdateData)
 	user.PUT("/image", cl.UserController.UpdateImage)
 	user.GET("/wallet", cl.WalletController.GetWalletUser)
-	user.GET("/wallet/outcome-income", cl.WalletHistoryController.GetOutcomeIncomeMonthly)
+	user.GET("/wallet/cashin-cashout", cl.WalletHistoryController.GetCashInCashOutMonthly)
 	user.GET("/wallet/histories", cl.WalletHistoryController.GetWalletHistories)
 	user.POST("/wallet/isi-saldo", cl.WalletController.IsiSaldo)
 

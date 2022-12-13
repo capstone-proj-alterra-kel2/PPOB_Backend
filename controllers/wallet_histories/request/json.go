@@ -7,15 +7,15 @@ import (
 )
 
 type WalletHistory struct {
-	Income      int    `json:"income"`
-	Outcome     int    `json:"outcome"`
+	CashIn      int    `json:"cash_in"`
+	CashOut     int    `json:"cash_out"`
 	Description string `json:"description"`
 }
 
 func (req *WalletHistory) ToDomain() *wallet_histories.Domain {
 	return &wallet_histories.Domain{
-		Income:      req.Income,
-		Outcome:     req.Outcome,
+		CashIn: req.CashIn,
+		CashOut: req.CashOut,
 		Description: req.Description,
 	}
 }
