@@ -6,6 +6,7 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/producttypes/request"
 	"PPOB_BACKEND/controllers/producttypes/response"
+	"PPOB_BACKEND/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,8 +41,15 @@ func (ctrl *ProductTypeController) Create(c echo.Context) error {
 	input := request.ProductType{}
 
 	image, _ := c.FormFile("image")
-	image.Filename = time.Now().String() + ".png"
+
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
+		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
 		result, _ = aws.UploadToS3(c, "product-type/", image.Filename, src)
@@ -88,6 +96,12 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	image, _ := c.FormFile("image")
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()

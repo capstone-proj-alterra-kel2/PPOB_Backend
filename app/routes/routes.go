@@ -53,9 +53,9 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminSuperAdmin.Use(middlewares.CheckStatusToken)
 	adminSuperAdmin.GET("", cl.UserController.GetAllAdmin)              // Get All Admins
 	adminSuperAdmin.POST("", cl.UserController.CreateAdmin)             // Create Admin
-	adminSuperAdmin.PUT("/:user_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
-	adminSuperAdmin.DELETE("/:user_id", cl.UserController.DeleteAdmin)  // Delete Admin
-	adminSuperAdmin.GET("/:user_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
+	adminSuperAdmin.PUT("/:admin_id", cl.UserController.UpdateDataAdmin) // Update Data Admin
+	adminSuperAdmin.DELETE("/:admin_id", cl.UserController.DeleteAdmin)  // Delete Admin
+	adminSuperAdmin.GET("/:admin_id", cl.UserController.DetailAdmin)     // Get Detaul Admin
 	// User - User Profile
 	user := v1.Group("/user", middleware.JWTWithConfig(cl.JWTMIddleware))
 	user.Use(middlewares.CheckStatusToken)
@@ -64,7 +64,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	user.PUT("/data", cl.UserController.UpdateData)
 	user.PUT("/image", cl.UserController.UpdateImage)
 	user.GET("/wallet", cl.WalletController.GetWalletUser)
-	user.GET("/wallet/outcome-income", cl.WalletHistoryController.GetOutcomeIncomeMonthly)
+	user.GET("/wallet/cashin-cashout", cl.WalletHistoryController.GetCashInCashOutMonthly)
 	user.GET("/wallet/histories", cl.WalletHistoryController.GetWalletHistories)
 	user.POST("/wallet/isi-saldo", cl.WalletController.IsiSaldo)
 

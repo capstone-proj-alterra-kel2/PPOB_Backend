@@ -30,13 +30,13 @@ func (ur *userRepository) GetAll(Page int, Size int, Sort string, Search string)
 	} else {
 		sort = Sort[0:] + " ASC"
 	}
-	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "1")
+	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", 1).Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet")
 	if Search != "" {
 		search = "%" + Search + "%"
-		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "1")
+		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, 1).Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet")
 	}
 
-	ur.conn.Preload("Role").Offset(Page).Limit(Size).Order(sort).Find(&rec)
+	ur.conn.Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet").Offset(Page).Limit(Size).Order(sort).Where("users.name LIKE ? AND users.role_id = ?", search, 1).Find(&rec)
 
 	userDomain := []users.Domain{}
 	for _, user := range rec {
@@ -56,13 +56,13 @@ func (ur *userRepository) GetAllAdmin(Page int, Size int, Sort string, Search st
 	} else {
 		sort = Sort[0:] + " ASC"
 	}
-	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", "2")
+	model = ur.conn.Order(sort).Model(&rec).Where("users.role_id = ?", 2).Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet")
 	if Search != "" {
 		search = "%" + Search + "%"
-		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, "2")
+		model = ur.conn.Order(sort).Model(&rec).Where("users.name LIKE ? AND users.role_id = ?", search, 2).Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet")
 	}
 
-	ur.conn.Preload("Role").Offset(Page).Limit(Size).Order(sort).Find(&rec)
+	ur.conn.Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet").Offset(Page).Limit(Size).Order(sort).Where("users.name LIKE ? AND users.role_id = ?", search, 2).Find(&rec)
 	userDomain := []users.Domain{}
 	for _, user := range rec {
 		userDomain = append(userDomain, user.ToDomain())
@@ -127,7 +127,7 @@ func (ur *userRepository) Login(loginDomain *users.LoginDomain) users.Domain {
 func (ur *userRepository) Profile(idUser string) users.Domain {
 	var user User
 
-	ur.conn.Preload("Role").Preload("Wallet").First(&user, "id=?", idUser)
+	ur.conn.Preload("Role").Preload("Wallet").Preload("Wallet.HistoriesWallet").First(&user, "id=?", idUser)
 
 	return user.ToDomain()
 }
@@ -151,10 +151,18 @@ func (ur *userRepository) UpdateData(idUser string, dataDomain *users.UpdateData
 	var user users.Domain = ur.Profile(idUser)
 	updatedData := FromDomain(&user)
 
-	updatedData.Image = dataDomain.Image
-	updatedData.Name = dataDomain.Name
-	updatedData.PhoneNumber = dataDomain.PhoneNumber
-	updatedData.Email = dataDomain.Email
+	if dataDomain.Image != "" {
+		updatedData.Image = dataDomain.Image
+	}
+	if dataDomain.Name != "" {
+		updatedData.Name = dataDomain.Name
+	}
+	if dataDomain.PhoneNumber != "" {
+		updatedData.PhoneNumber = dataDomain.PhoneNumber
+	}
+	if dataDomain.Email != "" {
+		updatedData.Email = dataDomain.Email
+	}
 
 	err := ur.conn.Save(&updatedData).Error
 	if err != nil {

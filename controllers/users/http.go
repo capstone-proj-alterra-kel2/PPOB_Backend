@@ -7,6 +7,7 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/users/request"
 	"PPOB_BACKEND/controllers/users/response"
+	"PPOB_BACKEND/utils"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -54,7 +55,7 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -64,6 +65,13 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 	}
 
 	if image != nil {
+
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -114,7 +122,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -124,6 +132,12 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -138,6 +152,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 
 	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
 	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
+	
 	if isEmailDuplicate {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
 	}
@@ -149,7 +164,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 }
 
 func (ctrl *UserController) DetailAdmin(c echo.Context) error {
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	user := ctrl.userUsecase.Profile(idUser)
 	if user.RoleName == "user" || user.RoleName == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "prevent getting detail user & superadmin")
@@ -185,7 +200,7 @@ func (ctrl *UserController) DeleteUser(c echo.Context) error {
 }
 
 func (ctrl *UserController) DeleteAdmin(c echo.Context) error {
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	role := ctrl.userUsecase.Profile(idUser).RoleName
 	if role == "superadmin" {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "cant delete superadmin")
@@ -212,6 +227,12 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -244,7 +265,7 @@ func (ctrl *UserController) UpdateDataUser(c echo.Context) error {
 
 func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	var result string
-	idUser := c.Param("user_id")
+	idUser := c.Param("admin_id")
 	image, _ := c.FormFile("image")
 	input := request.UpdateData{}
 	role := ctrl.userUsecase.Profile(idUser).RoleName
@@ -257,6 +278,12 @@ func (ctrl *UserController) UpdateDataAdmin(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -298,7 +325,7 @@ func (ctrl *UserController) Register(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -308,6 +335,12 @@ func (ctrl *UserController) Register(c echo.Context) error {
 	}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -401,6 +434,12 @@ func (ctrl *UserController) UpdateData(c echo.Context) error {
 	input := request.UpdateData{}
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -440,6 +479,13 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	image, _ := c.FormFile("image")
 
 	if image != nil {
+
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -460,11 +506,14 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "image updated", response.FromDomain(user))
 }
 
-func (ctrl *UserController) CheckDuplicateUser (c echo.Context) error {
+func (ctrl *UserController) CheckDuplicateUser(c echo.Context) error {
 	input := request.CheckRegister{}
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -472,5 +521,5 @@ func (ctrl *UserController) CheckDuplicateUser (c echo.Context) error {
 	if phone {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "phone already registered")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & password found", "")
+	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & phone number found", "")
 }

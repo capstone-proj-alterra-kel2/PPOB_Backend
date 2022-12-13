@@ -9,8 +9,8 @@ import (
 type Domain struct {
 	HistoryWalletID uint
 	NoWallet        string
-	Income          int
-	Outcome         int
+	CashIn          int
+	CashOut         int
 	Description     string
 	DateWallet      time.Time
 	CreatedAt       time.Time
@@ -18,30 +18,30 @@ type Domain struct {
 	DeletedAt       gorm.DeletedAt
 }
 
-type OutcomeIncomeMonthlyDomain struct {
-	Outcome int
-	Income  int
+type CashInCashOutMonthlyDomain struct {
+	CashIn  int
+	CashOut int
 	Month   string
 }
 
 type Usecase interface {
 	GetWalletHistories(NoWallet string) []Domain
 	GetWalletHistoriesMonthly(NoWallet string) []Domain
-	GetOutcomeIncomeMonthly(NoWallet string) OutcomeIncomeMonthlyDomain
+	GetCashInCashOutMonthly(NoWallet string) CashInCashOutMonthlyDomain
 	GetDetailWalletHistories(idHistory string) Domain
 	UpdateWalletHistories(idHistory string, domainHistory *Domain) Domain
 	DeleteWalletHistories(idHistory string) bool
 	CreateManual(NoWallet string, domainHistory *Domain) Domain
-	CreateWalletHistory(NoWallet string, income int, outcome int, Description string) Domain
+	CreateWalletHistory(NoWallet string, cashIn int, cashOut int, Description string) Domain
 }
 
 type Repository interface {
 	GetWalletHistories(NoWallet string) []Domain
 	GetWalletHistoriesMonthly(NoWallet string) []Domain
-	GetOutcomeIncomeMonthly(NoWallet string) OutcomeIncomeMonthlyDomain
+	GetCashInCashOutMonthly(NoWallet string) CashInCashOutMonthlyDomain
 	GetDetailWalletHistories(idHistory string) Domain
 	UpdateWalletHistories(idHistory string, domainHistory *Domain) Domain
 	DeleteWalletHistories(idHistory string) bool
 	CreateManual(NoWallet string, domainHistory *Domain) Domain
-	CreateWalletHistory(NoWallet string, income int, outcome int, Description string) Domain
+	CreateWalletHistory(NoWallet string, cashIn int, cashOut int, Description string) Domain
 }

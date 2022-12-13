@@ -9,9 +9,9 @@ import (
 
 type WalletHistory struct {
 	HistoryWalletID uint           `json:"history_wallet_id" gorm:"primaryKey"`
-	NoWallet        string         `json:"no_wallet"`
-	Income          int            `json:"income"`
-	Outcome         int            `json:"outcome"`
+	NoWallet        string         `json:"no_wallet" gorm:"size:16;"`
+	CashIn          int            `json:"cash_in"`
+	CashOut         int            `json:"cash_out"`
 	Description     string         `json:"description"`
 	DateWallet      time.Time      `json:"date_wallet"`
 	CreatedAt       time.Time      `json:"created_at"`
@@ -23,8 +23,8 @@ func FromDomain(domain *wallet_histories.Domain) *WalletHistory {
 	return &WalletHistory{
 		HistoryWalletID: domain.HistoryWalletID,
 		NoWallet:        domain.NoWallet,
-		Income:          domain.Income,
-		Outcome:         domain.Outcome,
+		CashIn:          domain.CashIn,
+		CashOut:         domain.CashOut,
 		Description:     domain.Description,
 		DateWallet:      domain.DateWallet,
 		CreatedAt:       domain.CreatedAt,
@@ -37,8 +37,8 @@ func (rec *WalletHistory) ToDomain() wallet_histories.Domain {
 	return wallet_histories.Domain{
 		HistoryWalletID: rec.HistoryWalletID,
 		NoWallet:        rec.NoWallet,
-		Income:          rec.Income,
-		Outcome:         rec.Outcome,
+		CashIn:          rec.CashIn,
+		CashOut:         rec.CashOut,
 		Description:     rec.Description,
 		DateWallet:      rec.DateWallet,
 		CreatedAt:       rec.CreatedAt,

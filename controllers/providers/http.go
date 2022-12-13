@@ -6,6 +6,7 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/providers/request"
 	"PPOB_BACKEND/controllers/providers/response"
+	"PPOB_BACKEND/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -52,6 +53,12 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 	image, _ := c.FormFile("image")
 
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
@@ -160,6 +167,12 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 
 	image, _ := c.FormFile("image")
 	if image != nil {
+		isValid, message := utils.IsFileValid(image)
+
+		if !isValid {
+			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", message)
+		}
+
 		image.Filename = time.Now().String() + ".png"
 		src, _ := image.Open()
 		defer src.Close()
