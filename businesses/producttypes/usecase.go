@@ -14,7 +14,7 @@ func (ptu *productTypeUsecase) GetAll() []Domain {
 	return ptu.productTypeRepository.GetAll()
 }
 
-func (ptu *productTypeUsecase) Create(productTypeDomain *Domain) Domain {
+func (ptu *productTypeUsecase) Create(productTypeDomain *Domain) (Domain, bool) {
 	return ptu.productTypeRepository.Create(productTypeDomain)
 }
 

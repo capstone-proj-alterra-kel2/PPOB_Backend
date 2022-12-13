@@ -10,7 +10,6 @@ import (
 type Product struct {
 	ID                    uint           `json:"id" gorm:"size:100;primaryKey"`
 	Name                  string         `json:"name"`
-	Category              string         `json:"category"`
 	Description           string         `json:"description"`
 	Price                 int            `json:"price"`
 	ProviderID            int            `json:"provider_id"`
@@ -33,7 +32,6 @@ func FromDomain(domain products.Domain) Product {
 	return Product{
 		ID:                    domain.ID,
 		Name:                  domain.Name,
-		Category:              domain.Category,
 		Description:           domain.Description,
 		Price:                 domain.Price,
 		ProviderID:            domain.ProviderID,

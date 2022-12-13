@@ -36,7 +36,6 @@ type CheckProductTypeDomain struct {
 type UpdateDomain struct {
 	ID                    uint
 	Name                  string
-	Category              string
 	Description           string
 	Price                 int
 	ProviderID            int

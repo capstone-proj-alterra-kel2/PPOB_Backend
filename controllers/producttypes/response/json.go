@@ -10,13 +10,14 @@ import (
 )
 
 type ProductType struct {
-	ID        uint                   `json:"id" gorm:"primaryKey"`
-	Name      string                 `json:"name"`
-	Providers []resprovider.Provider `json:"providers"`
-	Image     string                 `json:"image"`
-	CreatedAt time.Time              `json:"created_at"`
-	UpdatedAt time.Time              `json:"updated_at"`
-	DeletedAt gorm.DeletedAt         `json:"deleted_at"`
+	ID         uint                   `json:"id" gorm:"primaryKey"`
+	Name       string                 `json:"name"`
+	CategoryID int                    `json:"category_id"`
+	Providers  []resprovider.Provider `json:"providers"`
+	Image      string                 `json:"image"`
+	CreatedAt  time.Time              `json:"created_at"`
+	UpdatedAt  time.Time              `json:"updated_at"`
+	DeletedAt  gorm.DeletedAt         `json:"deleted_at"`
 }
 
 func FromDomain(domain producttypes.Domain) ProductType {
@@ -34,12 +35,13 @@ func FromDomain(domain producttypes.Domain) ProductType {
 	}
 
 	return ProductType{
-		ID:        domain.ID,
-		Providers: providerData,
-		Name:      domain.Name,
-		Image:     domain.Image,
-		CreatedAt: domain.CreatedAt,
-		UpdatedAt: domain.UpdateAt,
-		DeletedAt: domain.DeletedAt,
+		ID:         domain.ID,
+		Providers:  providerData,
+		Name:       domain.Name,
+		CategoryID: domain.CategoryID,
+		Image:      domain.Image,
+		CreatedAt:  domain.CreatedAt,
+		UpdatedAt:  domain.UpdateAt,
+		DeletedAt:  domain.DeletedAt,
 	}
 }

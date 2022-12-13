@@ -28,7 +28,6 @@ func FromDomainUpdate(domain *providers.ProviderDomain) *Provider {
 		productData = append(productData, products.Product{
 			ID:                    product.ID,
 			Name:                  product.Name,
-			Category:              product.Category,
 			Description:           product.Description,
 			Price:                 product.Price,
 			Stock:                 product.Stock,
@@ -68,7 +67,6 @@ func FromDomain(domain *providers.Domain) *Provider {
 		productData = append(productData, products.Product{
 			ID:                    product.ID,
 			Name:                  product.Name,
-			Category:              product.Category,
 			Description:           product.Description,
 			Price:                 product.Price,
 			Stock:                 product.Stock,

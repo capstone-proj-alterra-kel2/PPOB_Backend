@@ -53,7 +53,6 @@ func (req *UpdateCheckProduct) ToDomain() *providers.UpdateDomain {
 	return &providers.UpdateDomain{
 		ID:                    uint(req.ID),
 		Name:                  req.Name,
-		Category:              req.Category,
 		Description:           req.Description,
 		Price:                 req.Price,
 		ProviderID:            req.ProviderID,

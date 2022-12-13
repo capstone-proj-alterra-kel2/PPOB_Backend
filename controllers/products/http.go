@@ -77,6 +77,11 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 	}
 
 	product := ctrl.productUsecase.Create(input.ToDomain())
+
+	if product.ID == 0 {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusCreated, "success", "product created", response.FromDomain(product))
 }
 

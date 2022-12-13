@@ -72,7 +72,6 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
 			Name:           productDomain.Name,
-			Category:       productDomain.Category,
 			Description:    productDomain.Description,
 			Price:          productDomain.Price,
 			ProviderID:     productDomain.ProviderID,

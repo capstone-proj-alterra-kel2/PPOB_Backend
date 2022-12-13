@@ -8,18 +8,19 @@ import (
 )
 
 type Domain struct {
-	ID        uint
-	Name      string
-	Providers []providers.Domain
-	Image     string
-	CreatedAt time.Time
-	UpdateAt  time.Time
-	DeletedAt gorm.DeletedAt
+	ID         uint
+	Name       string
+	Providers  []providers.Domain
+	CategoryID int
+	Image      string
+	CreatedAt  time.Time
+	UpdateAt   time.Time
+	DeletedAt  gorm.DeletedAt
 }
 
 type Usecase interface {
 	GetAll() []Domain
-	Create(productTypeDomain *Domain) Domain
+	Create(productTypeDomain *Domain) (Domain, bool)
 	GetOne(product_type_id int) Domain
 	Update(productTypeDomain *Domain, product_type_id int) (Domain, error)
 	Delete(product_type_id int) (Domain, error)
@@ -27,7 +28,7 @@ type Usecase interface {
 
 type Repository interface {
 	GetAll() []Domain
-	Create(productTypeDomain *Domain) Domain
+	Create(productTypeDomain *Domain) (Domain, bool)
 	GetOne(product_type_id int) Domain
 	Update(productTypeDomain *Domain, product_type_id int) (Domain, error)
 	Delete(product_type_id int) (Domain, error)
