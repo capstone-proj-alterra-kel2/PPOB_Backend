@@ -55,7 +55,7 @@ func (ctrl *UserController) CreateUser(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -122,7 +122,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -152,6 +152,7 @@ func (ctrl *UserController) CreateAdmin(c echo.Context) error {
 
 	isEmailDuplicate := strings.Contains(fmt.Sprint(err), "users_email_key")
 	isNumberDuplicate := strings.Contains(fmt.Sprint(err), "users_phone_number_key")
+	
 	if isEmailDuplicate {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
 	}
@@ -324,7 +325,7 @@ func (ctrl *UserController) Register(c echo.Context) error {
 
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -507,9 +508,12 @@ func (ctrl *UserController) UpdateImage(c echo.Context) error {
 
 func (ctrl *UserController) CheckDuplicateUser(c echo.Context) error {
 	input := request.CheckRegister{}
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
 	email, phone := ctrl.userUsecase.CheckDuplicateUser(input.Email, input.PhoneNumber)
 	if email && phone {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & password already registered")
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email & phone number already registered")
 	}
 	if email {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "email already registered")
@@ -517,5 +521,5 @@ func (ctrl *UserController) CheckDuplicateUser(c echo.Context) error {
 	if phone {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "phone already registered")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & password found", "")
+	return controllers.NewResponse(c, http.StatusOK, "success", "no duplicate email & phone number found", "")
 }
