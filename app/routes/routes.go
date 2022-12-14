@@ -96,7 +96,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	userCategory.GET("", cl.CategoryController.GetAll)
 
 	// Admin - Category
-	adminCategory := v1.Group("/admin/category", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminCategory := v1.Group("/admin/category", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminCategory.Use(middlewares.CheckStatusToken)
 	adminCategory.GET("", cl.CategoryController.GetAll)
 	adminCategory.GET("/:category_id", cl.CategoryController.GetDetail)
@@ -105,7 +105,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminCategory.DELETE("/:category_id", cl.CategoryController.Delete)
 
 	// Admin - Product
-	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProduct := v1.Group("/admin/products", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminProduct.Use(middlewares.CheckStatusToken)
 	adminProduct.GET("", cl.ProductController.GetAll)
 	adminProduct.GET("/:product_id", cl.ProductController.GetOne)
@@ -114,7 +114,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProduct.DELETE("/:product_id", cl.ProductController.Delete)
 
 	// Admin - Product Type
-	adminProductType := v1.Group("/admin/product-types", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminProductType := v1.Group("/admin/product-types", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminProductType.Use(middlewares.CheckStatusToken)
 	adminProductType.GET("", cl.ProductTypeController.GetAll)
 	adminProductType.GET("/:product_type_id", cl.ProductTypeController.GetOne)
@@ -134,7 +134,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Admin - Voucher
 
 	// Admin - Transaction
-	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware))
+	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminTransaction.Use(middlewares.CheckStatusToken)
 	adminTransaction.GET("", cl.TransactionController.GetAll)
 
