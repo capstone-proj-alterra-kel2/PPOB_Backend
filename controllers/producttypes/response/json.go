@@ -28,6 +28,7 @@ func FromDomain(domain producttypes.Domain) ProductType {
 		providerData = append(providerData, resprovider.FromDomain(providers.Domain{
 			ID:        provider.ID,
 			Name:      provider.Name,
+			Image:     provider.Image,
 			CreatedAt: provider.CreatedAt,
 			UpdateAt:  provider.UpdateAt,
 			DeletedAt: provider.DeletedAt,
