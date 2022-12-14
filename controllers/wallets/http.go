@@ -2,10 +2,12 @@ package wallets
 
 import (
 	"PPOB_BACKEND/app/middlewares"
+	"PPOB_BACKEND/businesses/wallet_histories"
 	"PPOB_BACKEND/businesses/wallets"
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/wallets/request"
 	"PPOB_BACKEND/controllers/wallets/response"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -14,12 +16,14 @@ import (
 )
 
 type WalletController struct {
-	walletUsecase wallets.Usecase
+	walletUsecase        wallets.Usecase
+	walletHistoryUsecase wallet_histories.Usecase
 }
 
-func NewWalletController(walletUC wallets.Usecase) *WalletController {
+func NewWalletController(walletUC wallets.Usecase, walletHistoryUC wallet_histories.Usecase) *WalletController {
 	return &WalletController{
-		walletUsecase: walletUC,
+		walletUsecase:        walletUC,
+		walletHistoryUsecase: walletHistoryUC,
 	}
 }
 
@@ -30,7 +34,7 @@ func (ctrl *WalletController) GetWalletUser(c echo.Context) error {
 	if walletData.NoWallet == "" {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", " wallet not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", walletData)
+	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", response.FromDomain(walletData))
 }
 
 func (ctrl *WalletController) GetWalletUserByUserID(c echo.Context) error {
@@ -40,7 +44,7 @@ func (ctrl *WalletController) GetWalletUserByUserID(c echo.Context) error {
 	if walletData.NoWallet == "" {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "wallet not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", walletData)
+	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", response.FromDomain(walletData))
 }
 
 func (ctrl *WalletController) GetAllWallet(c echo.Context) error {
@@ -84,7 +88,7 @@ func (ctrl *WalletController) UpdateBalance(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "balance updated", response.FromDomain(user))
 }
 
-func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
+func (ctrl *WalletController) TopUpBalance(c echo.Context) error {
 	idUser := middlewares.GetUserID(c)
 	input := request.UpdateBalance{}
 
@@ -94,10 +98,11 @@ func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
 	if err := input.Validate(); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
-	user, err := ctrl.walletUsecase.IsiSaldo(idUser, input.ToDomain())
+	user, err := ctrl.walletUsecase.TopUpBalance(idUser, input.ToDomain())
 	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}
+	ctrl.walletHistoryUsecase.CreateWalletHistory(user.NoWallet, input.Balance, 0, fmt.Sprintf("Top Up balance %d", input.Balance))
 
 	return controllers.NewResponse(c, http.StatusOK, "success", "balance updated", response.FromDomain(user))
 

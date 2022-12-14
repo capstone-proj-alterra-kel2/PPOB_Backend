@@ -16,8 +16,8 @@ func (wu *walletUsecase) GetWalletUser(idUser string) Domain {
 	return wu.walletRepository.GetWalletUser(idUser)
 }
 
-func (wu *walletUsecase) IsiSaldo(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error) {
-	return wu.walletRepository.IsiSaldo(idUser, balanceDomain)
+func (wu *walletUsecase) TopUpBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error) {
+	return wu.walletRepository.TopUpBalance(idUser, balanceDomain)
 }
 
 func (wu *walletUsecase) UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error) {
