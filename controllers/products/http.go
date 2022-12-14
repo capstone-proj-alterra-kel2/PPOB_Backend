@@ -51,7 +51,26 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
 	}
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "product", response.FromDomain(productData))
+	input := request.UpdatePromoProduct{
+		ID:                    productData.ID,
+		Name:                  productData.Name,
+		Description:           productData.Description,
+		Price:                 productData.Price,
+		ProviderID:            productData.ProviderID,
+		Stock:                 productData.Stock,
+		Status:                productData.Status,
+		AdditionalInformation: productData.AdditionalInformation,
+		IsAvailable:           productData.IsAvailable,
+		IsPromo:               productData.IsPromo,
+		IsPromoActive:         productData.IsPromoActive,
+		Discount:              productData.Discount,
+		PromoStartDate:        productData.PromoStartDate,
+		PromoEndDate:          productData.PromoEndDate,
+	}
+
+	updateResult := ctrl.productUsecase.UpdatePromo(input.ToDomain())
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "product", response.FromDomain(updateResult))
 }
 
 func (ctrl *ProductController) Create(c echo.Context) error {

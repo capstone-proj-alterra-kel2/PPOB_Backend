@@ -88,6 +88,29 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 	return prod.ToDomain(), nil
 }
 
+func (pr *productRepository) UpdatePromo(productDomain *products.Domain) products.Domain {
+	prod := FromDomain(productDomain)
+
+	pr.conn.Model(&prod).Where("id = ?", productDomain.ID).Updates(
+		Product{
+			ID:             productDomain.ID,
+			Name:           productDomain.Name,
+			Description:    productDomain.Description,
+			Price:          productDomain.Price,
+			ProviderID:     productDomain.ProviderID,
+			Status:         productDomain.Status,
+			IsAvailable:    productDomain.IsAvailable,
+			IsPromo:        productDomain.IsPromo,
+			IsPromoActive:  productDomain.IsPromoActive,
+			Discount:       productDomain.Discount,
+			PromoStartDate: productDomain.PromoStartDate,
+			PromoEndDate:   productDomain.PromoEndDate,
+		},
+	)
+
+	return prod.ToDomain()
+}
+
 func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateStockStatusDomain, product_id int) products.Domain {
 	prod := FromUpdatedStockStatusDomain(productDomain)
 

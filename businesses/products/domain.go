@@ -55,6 +55,7 @@ type Usecase interface {
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)
 }
@@ -64,6 +65,7 @@ type Repository interface {
 	Create(productDomain *Domain) Domain
 	GetOne(product_id int) Domain
 	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)
 }

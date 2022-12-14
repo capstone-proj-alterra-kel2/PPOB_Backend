@@ -17,7 +17,6 @@ type InputProvider struct {
 type UpdateCheckProduct struct {
 	ID                    int    `json:"id" form:"id" validate:"required"`
 	Name                  string `json:"name" form:"name" validate:"required"`
-	Category              string `json:"category" form:"category" validate:"required"`
 	Description           string `json:"description" form:"description" validate:"required"`
 	Price                 int    `json:"price" form:"price" validate:"required"`
 	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
