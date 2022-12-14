@@ -88,7 +88,7 @@ func (ctrl *WalletController) UpdateBalance(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "balance updated", response.FromDomain(user))
 }
 
-func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
+func (ctrl *WalletController) TopUpBalance(c echo.Context) error {
 	idUser := middlewares.GetUserID(c)
 	input := request.UpdateBalance{}
 
@@ -98,7 +98,7 @@ func (ctrl *WalletController) IsiSaldo(c echo.Context) error {
 	if err := input.Validate(); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
-	user, err := ctrl.walletUsecase.IsiSaldo(idUser, input.ToDomain())
+	user, err := ctrl.walletUsecase.TopUpBalance(idUser, input.ToDomain())
 	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", err.Error())
 	}

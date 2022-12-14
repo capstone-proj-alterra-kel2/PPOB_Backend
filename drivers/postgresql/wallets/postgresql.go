@@ -27,7 +27,7 @@ func (wr *walletRepository) GetWalletUser(idUser string) wallets.Domain {
 	return wallet.ToDomain()
 }
 
-func (wr *walletRepository) IsiSaldo(idUser string, balanceDomain *wallets.UpdateBalanceDomain) (wallets.Domain, error) {
+func (wr *walletRepository) TopUpBalance(idUser string, balanceDomain *wallets.UpdateBalanceDomain) (wallets.Domain, error) {
 
 	var wallet wallets.Domain = wr.GetWalletUser(idUser)
 	updatedData := FromDomain(&wallet)

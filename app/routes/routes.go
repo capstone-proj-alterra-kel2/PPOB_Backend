@@ -66,7 +66,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	user.GET("/wallet", cl.WalletController.GetWalletUser)
 	user.GET("/wallet/cashin-cashout", cl.WalletHistoryController.GetCashInCashOutMonthly)
 	user.GET("/wallet/histories", cl.WalletHistoryController.GetWalletHistories)
-	user.POST("/wallet/isi-saldo", cl.WalletController.IsiSaldo)
+	user.POST("/wallet/topup-balance", cl.WalletController.TopUpBalance)
 
 	// User - Transaction
 	userTransaction := v1.Group("/users/transactions", middleware.JWTWithConfig(cl.JWTMIddleware))
