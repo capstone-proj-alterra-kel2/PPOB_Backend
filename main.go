@@ -84,14 +84,14 @@ func main() {
 	providerRepo := _driverFactory.NewProviderRepository(db)
 	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
 	providerCtrl := _providerController.NewProviderController(providerUsecase)
-	// Wallet
-	walletRepo := _driverFactory.NewWalletRepository(db)
-	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
-	walletCtrl := _walletController.NewWalletController(walletUseCase)
 	// Wallet History
 	walletHistoryRepo := _driverFactory.NewWalletHistoryRepository(db)
 	walletHistoryUseCase := _walletHistoryUseCase.NewWalletHistoryUseCase(walletHistoryRepo)
 	walletHistoryCtrl := _walletHistoryController.NewWalletHistoryController(walletHistoryUseCase, userUseCase)
+	// Wallet
+	walletRepo := _driverFactory.NewWalletRepository(db)
+	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
+	walletCtrl := _walletController.NewWalletController(walletUseCase, walletHistoryUseCase)
 	// Transaction
 	transactionRepo := _driverFactory.NewTransactionRepository(db)
 	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
