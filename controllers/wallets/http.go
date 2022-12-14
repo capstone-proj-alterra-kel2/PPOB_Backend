@@ -34,7 +34,7 @@ func (ctrl *WalletController) GetWalletUser(c echo.Context) error {
 	if walletData.NoWallet == "" {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", " wallet not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", walletData)
+	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", response.FromDomain(walletData))
 }
 
 func (ctrl *WalletController) GetWalletUserByUserID(c echo.Context) error {
@@ -44,7 +44,7 @@ func (ctrl *WalletController) GetWalletUserByUserID(c echo.Context) error {
 	if walletData.NoWallet == "" {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "wallet not found")
 	}
-	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", walletData)
+	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet", response.FromDomain(walletData))
 }
 
 func (ctrl *WalletController) GetAllWallet(c echo.Context) error {
