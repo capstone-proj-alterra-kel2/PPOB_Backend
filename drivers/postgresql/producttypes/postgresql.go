@@ -29,20 +29,12 @@ func (ptr *productTypeRepository) GetAll() []producttypes.Domain {
 	return productTypeDomain
 }
 
-func (ptr *productTypeRepository) Create(productTypeDomain *producttypes.Domain) (producttypes.Domain, bool) {
+func (ptr *productTypeRepository) Create(productTypeDomain *producttypes.Domain) producttypes.Domain {
 	prodtype := FromDomain(productTypeDomain)
-
-	var categoryID int
-
-	ptr.conn.Raw("SELECT categories.id FROM providers RIGHT JOIN product_types AS pt ON categories.id = ?", prodtype.CategoryID).Scan(&categoryID)
-
-	if categoryID == 0 {
-		return prodtype.ToDomain(), false
-	}
 
 	ptr.conn.Create(&prodtype)
 
-	return prodtype.ToDomain(), true
+	return prodtype.ToDomain()
 }
 func (ptr *productTypeRepository) GetOne(product_type_id int) producttypes.Domain {
 	var prodtype ProductType
