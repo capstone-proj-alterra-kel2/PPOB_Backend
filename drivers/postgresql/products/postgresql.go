@@ -71,13 +71,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
-			Name:           productDomain.Name,
-			Description:    productDomain.Description,
-			Price:          productDomain.Price,
-			ProviderID:     productDomain.ProviderID,
-			Status:         productDomain.Status,
-			IsAvailable:    productDomain.IsAvailable,
-			IsPromo:        productDomain.IsPromo,
+			PriceStatus:    productDomain.PriceStatus,
 			IsPromoActive:  productDomain.IsPromoActive,
 			Discount:       productDomain.Discount,
 			PromoStartDate: productDomain.PromoStartDate,
@@ -100,7 +94,7 @@ func (pr *productRepository) UpdatePromo(productDomain *products.Domain) product
 			ProviderID:     productDomain.ProviderID,
 			Status:         productDomain.Status,
 			IsAvailable:    productDomain.IsAvailable,
-			IsPromo:        productDomain.IsPromo,
+			PriceStatus:    productDomain.PriceStatus,
 			IsPromoActive:  productDomain.IsPromoActive,
 			Discount:       productDomain.Discount,
 			PromoStartDate: productDomain.PromoStartDate,

@@ -68,7 +68,7 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
 
 	for _, prodProvider := range result.Products {
-		if *prodProvider.IsPromo {
+		if prodProvider.PriceStatus == "promo" {
 			parsedStartDate, _ = time.Parse(layoutFormat, prodProvider.PromoStartDate)
 			parsedEndDate, _ = time.Parse(layoutFormat, prodProvider.PromoEndDate)
 

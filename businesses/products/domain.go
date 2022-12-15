@@ -17,9 +17,9 @@ type Domain struct {
 	TotalPurchased        int
 	AdditionalInformation string
 	IsAvailable           *bool
-	IsPromo               *bool
+	PriceStatus           string
 	IsPromoActive         *bool
-	Discount              int
+	Discount              *int
 	PromoStartDate        string
 	PromoEndDate          string
 	CreatedAt             time.Time
@@ -36,9 +36,9 @@ type UpdateDataDomain struct {
 	Status                string
 	AdditionalInformation string
 	IsAvailable           *bool
-	IsPromo               *bool
+	PriceStatus           string
 	IsPromoActive         *bool
-	Discount              int
+	Discount              *int
 	PromoStartDate        string
 	PromoEndDate          string
 }

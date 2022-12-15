@@ -138,7 +138,7 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 			Status:                v.Status,
 			AdditionalInformation: v.AdditionalInformation,
 			IsAvailable:           v.IsAvailable,
-			IsPromo:               v.IsPromo,
+			PriceStatus:           v.PriceStatus,
 			IsPromoActive:         v.IsPromoActive,
 			Discount:              v.Discount,
 			PromoStartDate:        v.PromoStartDate,

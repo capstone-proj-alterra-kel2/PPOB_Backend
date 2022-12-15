@@ -128,12 +128,12 @@ func (tc *TransactionController) Create(c echo.Context) error {
 	}
 
 	if *product.IsPromoActive {
-		if user.Wallet.Balance < (product.Price - product.Discount) {
+		if user.Wallet.Balance < (product.Price - *product.Discount) {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "not enough balance")
 		}
 
-		totalAmount = product.Price - product.Discount
-		productDiscount = product.Discount
+		totalAmount = product.Price - *product.Discount
+		productDiscount = *product.Discount
 	} else {
 		if user.Wallet.Balance < product.Price {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "not enough balance")
@@ -148,7 +148,7 @@ func (tc *TransactionController) Create(c echo.Context) error {
 
 	// update balance
 	if *product.IsPromoActive {
-		updatedBalance = user.Wallet.Balance - (product.Price - product.Discount)
+		updatedBalance = user.Wallet.Balance - (product.Price - *product.Discount)
 	} else {
 		updatedBalance = user.Wallet.Balance - product.Price
 	}
