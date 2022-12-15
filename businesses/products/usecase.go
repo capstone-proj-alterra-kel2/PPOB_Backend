@@ -27,12 +27,13 @@ func (pu *productUsecase) Create(productDomain *Domain) Domain {
 func (pu *productUsecase) GetOne(product_id int) Domain {
 	var parsedStartDate time.Time
 	var parsedEndDate time.Time
-	var parsedCurrentTime time.Time
 
-	layoutFormat := "2006-01-02 15:04:05"
+	layoutFormat := "2006-01-02"
 
-	currentTime := time.Now().Local().Format(layoutFormat)
-	parsedCurrentTime, _ = time.Parse(layoutFormat, currentTime)
+	currentDate := time.Now()
+	formatDate := currentDate.Format("2006-01-02")
+
+	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
 
 	result := pu.productRepository.GetOne(product_id)
 
@@ -40,7 +41,7 @@ func (pu *productUsecase) GetOne(product_id int) Domain {
 		parsedStartDate, _ = time.Parse(layoutFormat, result.PromoStartDate)
 		parsedEndDate, _ = time.Parse(layoutFormat, result.PromoEndDate)
 
-		if parsedCurrentTime.Before(parsedEndDate) && parsedCurrentTime.After(parsedStartDate) {
+		if parsedCurrentDate.Before(parsedEndDate) && parsedCurrentDate.After(parsedStartDate) {
 			*result.IsPromoActive = true
 		} else {
 			*result.IsPromoActive = false
