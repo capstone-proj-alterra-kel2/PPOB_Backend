@@ -32,7 +32,6 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 	var prefixes Prefixes
 	var parsedStartDate time.Time
 	var parsedEndDate time.Time
-	var parsedCurrentTime time.Time
 	var providerResult Domain
 
 	sliced_phone_number := phone_number[:4]
@@ -61,17 +60,19 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 		return providerResult, false
 	}
 
-	layoutFormat := "2006-01-02 15:04:05"
+	layoutFormat := "2006-01-02"
 
-	currentTime := time.Now().Local().Format(layoutFormat)
-	parsedCurrentTime, _ = time.Parse(layoutFormat, currentTime)
+	currentDate := time.Now()
+	formatDate := currentDate.Format("2006-01-02")
+
+	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
 
 	for _, prodProvider := range result.Products {
 		if *prodProvider.IsPromo {
 			parsedStartDate, _ = time.Parse(layoutFormat, prodProvider.PromoStartDate)
 			parsedEndDate, _ = time.Parse(layoutFormat, prodProvider.PromoEndDate)
 
-			if parsedCurrentTime.Before(parsedEndDate) && parsedCurrentTime.After(parsedStartDate) {
+			if parsedCurrentDate.Before(parsedEndDate) && parsedCurrentDate.After(parsedStartDate) {
 				*prodProvider.IsPromoActive = true
 			} else {
 				*prodProvider.IsPromoActive = false
