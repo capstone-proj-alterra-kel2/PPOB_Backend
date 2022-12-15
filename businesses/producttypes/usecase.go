@@ -18,7 +18,7 @@ func (ptu *productTypeUsecase) Create(productTypeDomain *Domain) Domain {
 	return ptu.productTypeRepository.Create(productTypeDomain)
 }
 
-func (ptu *productTypeUsecase) GetOne(product_type_id int) Domain {
+func (ptu *productTypeUsecase) GetOne(product_type_id int) (Domain, error) {
 	return ptu.productTypeRepository.GetOne(product_type_id)
 }
 

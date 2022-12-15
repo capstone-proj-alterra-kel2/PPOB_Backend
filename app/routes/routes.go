@@ -137,6 +137,9 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminTransaction.Use(middlewares.CheckStatusToken)
 	adminTransaction.GET("", cl.TransactionController.GetAll)
+	adminTransaction.POST("/create", cl.TransactionController.Create)
+	adminTransaction.PUT("/:transaction_id", cl.TransactionController.Update)
+	adminTransaction.DELETE("/:transaction_id", cl.TransactionController.Delete)
 
 	// Admin - Wallet
 	adminWallet := v1.Group("/admin/wallets", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)

@@ -27,6 +27,11 @@ func (tu *transactionUsecase) GetDetail(transaction_id int) (Domain, bool) {
 func (tu *transactionUsecase) GetTransactionHistory(user_id int) []Domain {
 	return tu.transactionRepository.GetTransactionHistory(user_id)
 }
+
+func (tu *transactionUsecase) Update(trasnactionDomain *Domain, transaction_id int) (Domain, bool) {
+	return tu.transactionRepository.Update(trasnactionDomain, transaction_id)
+}
+
 func (tu *transactionUsecase) Create(productDomain *products.Domain, userDomain *users.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain {
 
 	transaction := Domain{
