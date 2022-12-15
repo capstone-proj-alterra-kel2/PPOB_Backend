@@ -9,7 +9,6 @@ import (
 type Domain struct {
 	ID                    uint
 	Name                  string
-	Category              string
 	Description           string
 	Price                 int
 	ProviderID            int
@@ -18,9 +17,9 @@ type Domain struct {
 	TotalPurchased        int
 	AdditionalInformation string
 	IsAvailable           *bool
-	IsPromo               *bool
+	PriceStatus           string
 	IsPromoActive         *bool
-	Discount              int
+	Discount              *int
 	PromoStartDate        string
 	PromoEndDate          string
 	CreatedAt             time.Time
@@ -30,7 +29,6 @@ type Domain struct {
 
 type UpdateDataDomain struct {
 	Name                  string
-	Category              string
 	Description           string
 	Price                 int
 	ProviderID            int
@@ -38,9 +36,9 @@ type UpdateDataDomain struct {
 	Status                string
 	AdditionalInformation string
 	IsAvailable           *bool
-	IsPromo               *bool
+	PriceStatus           string
 	IsPromoActive         *bool
-	Discount              int
+	Discount              *int
 	PromoStartDate        string
 	PromoEndDate          string
 }
@@ -55,8 +53,9 @@ type UpdateStockStatusDomain struct {
 type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
-	GetOne(product_id int) Domain
+	GetOne(product_id int) (Domain, error)
 	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)
 }
@@ -64,8 +63,9 @@ type Usecase interface {
 type Repository interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	Create(productDomain *Domain) Domain
-	GetOne(product_id int) Domain
+	GetOne(product_id int) (Domain, error)
 	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)
 }

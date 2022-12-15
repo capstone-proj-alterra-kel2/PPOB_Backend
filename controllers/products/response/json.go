@@ -10,7 +10,6 @@ import (
 type Product struct {
 	ID                    uint           `json:"id" gorm:"size:100;primaryKey"`
 	Name                  string         `json:"name"`
-	Category              string         `json:"category"`
 	Description           string         `json:"description"`
 	Price                 int            `json:"price"`
 	ProviderID            int            `json:"provider_id"`
@@ -19,9 +18,9 @@ type Product struct {
 	TotalPurchased        int            `json:"total_purchased"`
 	AdditionalInformation string         `json:"additional_information"`
 	IsAvailable           *bool          `json:"is_available"`
-	IsPromo               *bool          `json:"is_promo"`
+	PriceStatus           string         `json:"price_status"`
 	IsPromoActive         *bool          `json:"is_promo_active"`
-	Discount              int            `json:"discount"`
+	Discount              *int           `json:"discount"`
 	PromoStartDate        string         `json:"promo_start_date"`
 	PromoEndDate          string         `json:"promo_end_date"`
 	CreatedAt             time.Time      `json:"created_at"`
@@ -33,7 +32,6 @@ func FromDomain(domain products.Domain) Product {
 	return Product{
 		ID:                    domain.ID,
 		Name:                  domain.Name,
-		Category:              domain.Category,
 		Description:           domain.Description,
 		Price:                 domain.Price,
 		ProviderID:            domain.ProviderID,
@@ -42,7 +40,7 @@ func FromDomain(domain products.Domain) Product {
 		TotalPurchased:        domain.TotalPurchased,
 		AdditionalInformation: domain.AdditionalInformation,
 		IsAvailable:           domain.IsAvailable,
-		IsPromo:               domain.IsPromo,
+		PriceStatus:           domain.PriceStatus,
 		IsPromoActive:         domain.IsPromoActive,
 		Discount:              domain.Discount,
 		PromoStartDate:        domain.PromoStartDate,

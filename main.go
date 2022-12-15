@@ -33,6 +33,9 @@ import (
 	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
 	_transactionController "PPOB_BACKEND/controllers/transactions"
 
+	_categoryUseCase "PPOB_BACKEND/businesses/category"
+	_categoryController "PPOB_BACKEND/controllers/category"
+
 	_driverFactory "PPOB_BACKEND/drivers"
 
 	_middleware "PPOB_BACKEND/app/middlewares"
@@ -83,14 +86,14 @@ func main() {
 	providerRepo := _driverFactory.NewProviderRepository(db)
 	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
 	providerCtrl := _providerController.NewProviderController(providerUsecase)
-	// Wallet
-	walletRepo := _driverFactory.NewWalletRepository(db)
-	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
-	walletCtrl := _walletController.NewWalletController(walletUseCase)
 	// Wallet History
 	walletHistoryRepo := _driverFactory.NewWalletHistoryRepository(db)
 	walletHistoryUseCase := _walletHistoryUseCase.NewWalletHistoryUseCase(walletHistoryRepo)
 	walletHistoryCtrl := _walletHistoryController.NewWalletHistoryController(walletHistoryUseCase, userUseCase)
+	// Wallet
+	walletRepo := _driverFactory.NewWalletRepository(db)
+	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
+	walletCtrl := _walletController.NewWalletController(walletUseCase, walletHistoryUseCase)
 	// Transaction
 	transactionRepo := _driverFactory.NewTransactionRepository(db)
 	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
@@ -110,6 +113,12 @@ func main() {
 	paymentmethodController := _paymentmethodController.NewPaymentController(paymentmethodUsecase)
 
 	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
+
+	// Category
+	categoryRepo := _driverFactory.NewCategoryRepository(db)
+	categoryUseCase := _categoryUseCase.NewCategoryUseCase(categoryRepo)
+	categoryCtrl := _categoryController.NewCategoryController(categoryUseCase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:        configLogger.Init(),
 		JWTMIddleware:           configJWT.Init(),
@@ -121,6 +130,7 @@ func main() {
 		ProductController:       *productCtrl,
 		TransactionController:   *transactionCtrl,
 		PaymentController: *paymentmethodController,
+		CategoryController:      *categoryCtrl,
 	}
 	routesInit.RouteRegister(e)
 

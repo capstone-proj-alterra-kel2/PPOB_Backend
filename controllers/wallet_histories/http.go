@@ -29,7 +29,13 @@ func (ctrl *WalletHistoryController) GetWalletHistories(c echo.Context) error {
 	profile := ctrl.userUsecase.Profile(idUser)
 	walletHistoryData := ctrl.walletHistoryUsecase.GetWalletHistories(profile.Wallet.NoWallet)
 
-	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet histories", walletHistoryData)
+	histories := []response.WalletHistory{}
+
+	for _, history := range walletHistoryData {
+		histories = append(histories, response.FromDomain(history))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "data wallet histories", histories)
 }
 
 func (ctrl *WalletHistoryController) GetCashInCashOutMonthly(c echo.Context) error {

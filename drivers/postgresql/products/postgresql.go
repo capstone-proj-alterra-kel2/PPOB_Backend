@@ -52,12 +52,14 @@ func (pr *productRepository) Create(productDomain *products.Domain) products.Dom
 	return prod.ToDomain()
 }
 
-func (pr *productRepository) GetOne(product_id int) products.Domain {
+func (pr *productRepository) GetOne(product_id int) (products.Domain, error) {
 	var prod Product
 
-	pr.conn.First(&prod, product_id)
+	if err := pr.conn.First(&prod, product_id).Error; err != nil {
+		return prod.ToDomain(), err
+	}
 
-	return prod.ToDomain()
+	return prod.ToDomain(), nil
 }
 
 func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) (products.Domain, error) {
@@ -71,14 +73,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
-			Name:           productDomain.Name,
-			Category:       productDomain.Category,
-			Description:    productDomain.Description,
-			Price:          productDomain.Price,
-			ProviderID:     productDomain.ProviderID,
-			Status:         productDomain.Status,
-			IsAvailable:    productDomain.IsAvailable,
-			IsPromo:        productDomain.IsPromo,
+			PriceStatus:    productDomain.PriceStatus,
 			IsPromoActive:  productDomain.IsPromoActive,
 			Discount:       productDomain.Discount,
 			PromoStartDate: productDomain.PromoStartDate,
@@ -87,6 +82,29 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 	)
 
 	return prod.ToDomain(), nil
+}
+
+func (pr *productRepository) UpdatePromo(productDomain *products.Domain) products.Domain {
+	prod := FromDomain(productDomain)
+
+	pr.conn.Model(&prod).Where("id = ?", productDomain.ID).Updates(
+		Product{
+			ID:             productDomain.ID,
+			Name:           productDomain.Name,
+			Description:    productDomain.Description,
+			Price:          productDomain.Price,
+			ProviderID:     productDomain.ProviderID,
+			Status:         productDomain.Status,
+			IsAvailable:    productDomain.IsAvailable,
+			PriceStatus:    productDomain.PriceStatus,
+			IsPromoActive:  productDomain.IsPromoActive,
+			Discount:       productDomain.Discount,
+			PromoStartDate: productDomain.PromoStartDate,
+			PromoEndDate:   productDomain.PromoEndDate,
+		},
+	)
+
+	return prod.ToDomain()
 }
 
 func (pr *productRepository) UpdateStockStatus(productDomain *products.UpdateStockStatusDomain, product_id int) products.Domain {

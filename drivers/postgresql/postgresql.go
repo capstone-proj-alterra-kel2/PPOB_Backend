@@ -1,6 +1,7 @@
 package postgres_driver
 
 import (
+	"PPOB_BACKEND/drivers/postgresql/category"
 	"PPOB_BACKEND/drivers/postgresql/products"
 	"PPOB_BACKEND/drivers/postgresql/producttypes"
 	"PPOB_BACKEND/drivers/postgresql/providers"
@@ -51,6 +52,7 @@ func DBMigrate(db *gorm.DB) {
 		&roles.Role{}, // role
 		&users.User{}, // User
 		&payment_method.Payment_Method{}, //Payment_Method
+		&category.Category{},
 		&wallets.Wallet{},
 		&wallet_histories.WalletHistory{},
 		&producttypes.ProductType{}, // ProductType

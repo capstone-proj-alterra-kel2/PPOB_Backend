@@ -30,6 +30,7 @@ type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) ([]Domain, *gorm.DB)
 	GetDetail(transaction_id int) (Domain, bool)
 	GetTransactionHistory(user_id int) []Domain
+	Update(transactionDomain *Domain, transaction_id int) (Domain, bool)
 	Create(productDomain *products.Domain, userDomain *users.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain
 	Delete(transaction_id int) (Domain, bool)
 }
@@ -38,6 +39,7 @@ type Repository interface {
 	GetAll(Page int, Size int, Sort string, Search string) ([]Domain, *gorm.DB)
 	GetDetail(transaction_id int) (Domain, bool)
 	GetTransactionHistory(user_id int) []Domain
+	Update(transactionDomain *Domain, transaction_id int) (Domain, bool)
 	Create(domain *Domain) Domain
 	Delete(transaction_id int) (Domain, bool)
 }

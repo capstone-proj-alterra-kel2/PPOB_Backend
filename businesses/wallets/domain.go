@@ -25,7 +25,7 @@ type Usecase interface {
 	GetAllWallet(Page int, Size int, Sort string) (*gorm.DB, []Domain)
 	GetDetailWallet(noWallet string) Domain
 	UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
-	IsiSaldo(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
+	TopUpBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
 }
 
 type Repository interface {
@@ -33,5 +33,5 @@ type Repository interface {
 	GetAllWallet(Page int, Size int, Sort string) (*gorm.DB, []Domain)
 	GetDetailWallet(noWallet string) Domain
 	UpdateBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
-	IsiSaldo(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
+	TopUpBalance(idUser string, balanceDomain *UpdateBalanceDomain) (Domain, error)
 }

@@ -7,14 +7,16 @@ import (
 )
 
 type ProductType struct {
-	Name  string `json:"name" form:"name" validate:"required"`
-	Image string `json:"image" form :"image" validate:"required"`
+	Name       string `json:"name" form:"name" validate:"required"`
+	Image      string `json:"image" form :"image" validate:"required"`
+	CategoryID int    `json:"category_id" form:"category_id" validate:"required"`
 }
 
 func (req *ProductType) ToDomain() *producttypes.Domain {
 	return &producttypes.Domain{
-		Name:  req.Name,
-		Image: req.Image,
+		Name:       req.Name,
+		Image:      req.Image,
+		CategoryID: req.CategoryID,
 	}
 }
 
@@ -26,14 +28,16 @@ func (req *ProductType) Validate() error {
 }
 
 type UpdateProductType struct {
-	Name  string `json:"name" form:"name" validate:"required"`
-	Image string `json:"image" form :"image"`
+	Name       string `json:"name" form:"name" validate:"required"`
+	CategoryID int    `json:"category_id" form:"category_id" validate:"required"`
+	Image      string `json:"image" form :"image"`
 }
 
 func (req *UpdateProductType) ToDomain() *producttypes.Domain {
 	return &producttypes.Domain{
-		Name:  req.Name,
-		Image: req.Image,
+		Name:       req.Name,
+		Image:      req.Image,
+		CategoryID: req.CategoryID,
 	}
 }
 
