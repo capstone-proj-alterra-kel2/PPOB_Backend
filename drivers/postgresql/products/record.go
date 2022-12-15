@@ -18,9 +18,9 @@ type Product struct {
 	TotalPurchased        int            `json:"total_purchased"`
 	AdditionalInformation string         `json:"additional_information"`
 	IsAvailable           *bool          `json:"is_available"`
-	IsPromo               *bool          `json:"is_promo"`
+	PriceStatus           string         `json:"price_status"`
 	IsPromoActive         *bool          `json:"is_promo_active" gorm:"default:false"`
-	Discount              int            `json:"discount"`
+	Discount              *int           `json:"discount"`
 	PromoStartDate        string         `json:"promo_start_date"`
 	PromoEndDate          string         `json:"promo_end_date"`
 	CreatedAt             time.Time      `json:"created_at"`
@@ -41,7 +41,7 @@ func FromDomain(domain *products.Domain) *Product {
 		TotalPurchased:        domain.TotalPurchased,
 		AdditionalInformation: domain.AdditionalInformation,
 		IsAvailable:           domain.IsAvailable,
-		IsPromo:               domain.IsPromo,
+		PriceStatus:           domain.PriceStatus,
 		IsPromoActive:         domain.IsPromoActive,
 		Discount:              domain.Discount,
 		PromoStartDate:        domain.PromoStartDate,
@@ -64,7 +64,7 @@ func (recProd *Product) ToDomain() products.Domain {
 		TotalPurchased:        recProd.TotalPurchased,
 		AdditionalInformation: recProd.AdditionalInformation,
 		IsAvailable:           recProd.IsAvailable,
-		IsPromo:               recProd.IsPromo,
+		PriceStatus:           recProd.PriceStatus,
 		IsPromoActive:         recProd.IsPromoActive,
 		Discount:              recProd.Discount,
 		PromoStartDate:        recProd.PromoStartDate,
@@ -86,7 +86,7 @@ func FromUpdatedDomain(domain *products.UpdateDataDomain) *Product {
 		Status:                domain.Status,
 		AdditionalInformation: domain.AdditionalInformation,
 		IsAvailable:           domain.IsAvailable,
-		IsPromo:               domain.IsPromo,
+		PriceStatus:           domain.PriceStatus,
 		IsPromoActive:         domain.IsPromoActive,
 		Discount:              domain.Discount,
 		PromoStartDate:        domain.PromoStartDate,

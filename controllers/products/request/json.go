@@ -15,10 +15,10 @@ type Product struct {
 	Status                string `json:"status" form:"status" validate:"required"`
 	TotalPurchased        int    `json:"total_purchased"`
 	AdditionalInformation string `json:"additional_information" form:"additional_information"`
-	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`
+	PriceStatus           string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
+	IsAvailable           *bool  `json:"is_available" form:"is_available"`
 	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
-	Discount              int    `json:"discount" form:"discount"`
+	Discount              *int   `json:"discount" form:"discount"`
 	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
 	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
 }
@@ -32,8 +32,8 @@ func (req *Product) ToDomain() *products.Domain {
 		Stock:                 req.Stock,
 		Status:                req.Status,
 		AdditionalInformation: req.AdditionalInformation,
+		PriceStatus:           req.PriceStatus,
 		IsAvailable:           req.IsAvailable,
-		IsPromo:               req.IsPromo,
 		IsPromoActive:         req.IsPromoActive,
 		Discount:              req.Discount,
 		PromoStartDate:        req.PromoStartDate,
@@ -55,10 +55,10 @@ type UpdateDataProduct struct {
 	ProviderID     int    `json:"provider_id" form:"provider_id" validate:"required"`
 	Stock          *int   `json:"stock" form:"stock" validate:"required"`
 	Status         string `json:"status" form:"status" validate:"required"`
+	PriceStatus    string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
 	IsAvailable    *bool  `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo        *bool  `json:"is_promo" form:"is_promo" validate:"required"`
 	IsPromoActive  *bool  `json:"is_promo_active" form:"is_promo_active"`
-	Discount       int    `json:"discount" form:"discount"`
+	Discount       *int   `json:"discount" form:"discount"`
 	PromoStartDate string `json:"promo_start_date" form:"promo_start_date"`
 	PromoEndDate   string `json:"promo_end_date" form:"promo_end_date"`
 }
@@ -72,7 +72,7 @@ func (req *UpdateDataProduct) ToDomain() *products.UpdateDataDomain {
 		Stock:          req.Stock,
 		Status:         req.Status,
 		IsAvailable:    req.IsAvailable,
-		IsPromo:        req.IsPromo,
+		PriceStatus:    req.PriceStatus,
 		IsPromoActive:  req.IsPromoActive,
 		Discount:       req.Discount,
 		PromoStartDate: req.PromoStartDate,
@@ -111,39 +111,24 @@ func (req *UpdateStockStatus) Validate() error {
 }
 
 type UpdatePromoProduct struct {
-	ID                    uint   `json:"id"`
-	Name                  string `json:"name" form:"name" validate:"required"`
-	Description           string `json:"description" form:"description" validate:"required"`
-	Price                 int    `json:"price" form:"price" validate:"required"`
-	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
-	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
-	Status                string `json:"status" form:"status" validate:"required"`
-	TotalPurchased        int    `json:"total_purchased"`
-	AdditionalInformation string `json:"additional_information" form:"additional_information"`
-	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`
-	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
-	Discount              int    `json:"discount" form:"discount"`
-	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
-	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
+	ID             uint   `json:"id"`
+	IsAvailable    *bool  `json:"is_available" form:"is_available" validate:"required"`
+	PriceStatus    string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
+	IsPromoActive  *bool  `json:"is_promo_active" form:"is_promo_active"`
+	Discount       *int   `json:"discount" form:"discount"`
+	PromoStartDate string `json:"promo_start_date" form:"promo_start_date"`
+	PromoEndDate   string `json:"promo_end_date" form:"promo_end_date"`
 }
 
 func (req *UpdatePromoProduct) ToDomain() *products.Domain {
 	return &products.Domain{
-		ID:                    req.ID,
-		Name:                  req.Name,
-		Description:           req.Description,
-		Price:                 req.Price,
-		ProviderID:            req.ProviderID,
-		Stock:                 req.Stock,
-		Status:                req.Status,
-		AdditionalInformation: req.AdditionalInformation,
-		IsAvailable:           req.IsAvailable,
-		IsPromo:               req.IsPromo,
-		IsPromoActive:         req.IsPromoActive,
-		Discount:              req.Discount,
-		PromoStartDate:        req.PromoStartDate,
-		PromoEndDate:          req.PromoEndDate,
+		ID:             req.ID,
+		IsAvailable:    req.IsAvailable,
+		PriceStatus:    req.PriceStatus,
+		IsPromoActive:  req.IsPromoActive,
+		Discount:       req.Discount,
+		PromoStartDate: req.PromoStartDate,
+		PromoEndDate:   req.PromoEndDate,
 	}
 }
 

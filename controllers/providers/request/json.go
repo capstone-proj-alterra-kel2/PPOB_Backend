@@ -24,9 +24,10 @@ type UpdateCheckProduct struct {
 	Status                string `json:"status" form:"status" validate:"required"`
 	AdditionalInformation string `json:"additional_information" form:"additional_information"`
 	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
-	IsPromo               *bool  `json:"is_promo" form:"is_promo" validate:"required"`
+	PriceStatus           string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
+	IsPromo               *bool  `json:"is_promo" form:"is_promo"`
 	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
-	Discount              int    `json:"discount" form:"discount"`
+	Discount              *int   `json:"discount" form:"discount"`
 	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
 	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
 }
@@ -59,7 +60,6 @@ func (req *UpdateCheckProduct) ToDomain() *providers.UpdateDomain {
 		Status:                req.Status,
 		AdditionalInformation: req.AdditionalInformation,
 		IsAvailable:           req.IsAvailable,
-		IsPromo:               req.IsPromo,
 		IsPromoActive:         req.IsPromoActive,
 		Discount:              req.Discount,
 		PromoStartDate:        req.PromoStartDate,
