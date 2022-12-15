@@ -106,11 +106,11 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 	}
 
 	if input.PriceStatus == "promo" {
-		if *input.Discount == 0 {
+		if input.Discount == nil || *input.Discount == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
 
-		if input.PromoStartDate == "" || input.PromoEndDate == "" {
+		if len(input.PromoStartDate) == 0 || len(input.PromoEndDate) == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "promo start or end date aren't allowed empty")
 		}
 	} else {
