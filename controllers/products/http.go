@@ -5,7 +5,6 @@ import (
 	"PPOB_BACKEND/controllers"
 	"PPOB_BACKEND/controllers/products/request"
 	"PPOB_BACKEND/controllers/products/response"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -65,9 +64,9 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	productData := ctrl.productUsecase.GetOne(productID)
+	productData, err := ctrl.productUsecase.GetOne(productID)
 
-	if productData.ID == 0 {
+	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
 	}
 
@@ -101,7 +100,6 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
 	if err := input.Validate(); err != nil {
-		fmt.Println(err.Error())
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 

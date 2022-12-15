@@ -79,14 +79,31 @@ func (tr *transactionRepository) Create(transactionDomain *transactions.Domain) 
 	return *transactionDomain
 }
 
+func (tr *transactionRepository) Update(transactionDomain *transactions.Domain, transaction_id int) (transactions.Domain, bool) {
+	transactionData := FromDomain(transactionDomain)
+	var tx Transaction
+
+	if checkTransaction := tr.conn.First(&tx, transaction_id).Error; checkTransaction == gorm.ErrRecordNotFound {
+		return transactionData.ToDomain(), false
+	}
+
+	tr.conn.Model(&transactionData).Where("id = ?", transaction_id).Updates(
+		Transaction{
+			TargetPhoneNumber: transactionData.TargetPhoneNumber,
+		},
+	)
+
+	return transactionData.ToDomain(), true
+}
+
 func (tr *transactionRepository) Delete(transaction_id int) (transactions.Domain, bool) {
 	var tx Transaction
 
-	if checkTransaction := tr.conn.First(&tx, transaction_id).Error; checkTransaction != gorm.ErrRecordNotFound {
+	if checkTransaction := tr.conn.First(&tx, transaction_id).Error; checkTransaction == gorm.ErrRecordNotFound {
 		return tx.ToDomain(), false
 	}
 
-	tr.conn.Delete(&tx).Where("id = ?", transaction_id)
+	tr.conn.Unscoped().Delete(&tx).Where("id = ?", transaction_id)
 
 	return tx.ToDomain(), true
 }

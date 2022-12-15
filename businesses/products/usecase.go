@@ -55,7 +55,7 @@ func (pu *productUsecase) Create(productDomain *Domain) Domain {
 	return pu.productRepository.Create(productDomain)
 }
 
-func (pu *productUsecase) GetOne(product_id int) Domain {
+func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	var parsedStartDate time.Time
 	var parsedEndDate time.Time
 
@@ -66,7 +66,11 @@ func (pu *productUsecase) GetOne(product_id int) Domain {
 
 	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
 
-	result := pu.productRepository.GetOne(product_id)
+	result, err := pu.productRepository.GetOne(product_id)
+
+	if err != nil {
+		return result, err
+	}
 
 	if result.PriceStatus == "promo" {
 		parsedStartDate, _ = time.Parse(layoutFormat, result.PromoStartDate)
@@ -83,7 +87,7 @@ func (pu *productUsecase) GetOne(product_id int) Domain {
 		*result.IsAvailable = true
 	}
 
-	return result
+	return result, nil
 }
 
 func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error) {

@@ -36,11 +36,16 @@ func (ptr *productTypeRepository) Create(productTypeDomain *producttypes.Domain)
 
 	return prodtype.ToDomain()
 }
-func (ptr *productTypeRepository) GetOne(product_type_id int) producttypes.Domain {
+func (ptr *productTypeRepository) GetOne(product_type_id int) (producttypes.Domain, error) {
 	var prodtype ProductType
 
-	ptr.conn.Preload("Providers").First(&prodtype, product_type_id)
-	return prodtype.ToDomain()
+	err := ptr.conn.Preload("Providers").First(&prodtype, product_type_id).Error
+
+	if err != nil {
+		return prodtype.ToDomain(), err
+	}
+
+	return prodtype.ToDomain(), nil
 }
 
 func (ptr *productTypeRepository) Update(productTypeDomain *producttypes.Domain, product_type_id int) (producttypes.Domain, error) {

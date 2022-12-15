@@ -72,9 +72,9 @@ func (ctrl *ProductTypeController) GetOne(c echo.Context) error {
 	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
-	productTypeData := ctrl.productTypeUsecase.GetOne(productTypeID)
+	productTypeData, err := ctrl.productTypeUsecase.GetOne(productTypeID)
 
-	if productTypeData.ID == 0 {
+	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product type not found")
 	}
 

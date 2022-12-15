@@ -117,9 +117,9 @@ func (tc *TransactionController) Create(c echo.Context) error {
 	}
 
 	//get product
-	product := tc.productUsecase.GetOne(request.ProductID)
+	product, err := tc.productUsecase.GetOne(request.ProductID)
 
-	if product.ID == 0 {
+	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
 	}
 
@@ -176,8 +176,30 @@ func (tc *TransactionController) Create(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "transaction success", response.FromDomain(transaction))
 }
 
+func (tc *TransactionController) Update(c echo.Context) error {
+	paramID := c.Param("transaction_id")
+	transactionID, _ := strconv.Atoi(paramID)
+
+	input := request.TransactionUpdate{}
+
+	if err := c.Bind(&input); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+	if err := input.Validate(); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	}
+
+	_, isTransactionFound := tc.transactionUsecase.Update(input.ToDomain(), transactionID)
+
+	if !isTransactionFound {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "transaction not found")
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "transaction target phone number updated", "")
+}
+
 func (tc *TransactionController) Delete(c echo.Context) error {
-	paramID := c.Param("transaction-id")
+	paramID := c.Param("transaction_id")
 	transactionID, _ := strconv.Atoi(paramID)
 
 	_, isTransactionFound := tc.transactionUsecase.Delete(transactionID)

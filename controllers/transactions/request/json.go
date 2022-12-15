@@ -24,3 +24,20 @@ func (req *Transaction) Validate() error {
 	err := validate.Struct(req)
 	return err
 }
+
+type TransactionUpdate struct {
+	TargetPhoneNumber string `json:"target_phone_number" validate:"required"`
+}
+
+func (req *TransactionUpdate) ToDomain() *transactions.Domain {
+	return &transactions.Domain{
+		TargetPhoneNumber: req.TargetPhoneNumber,
+	}
+}
+
+func (req *TransactionUpdate) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}

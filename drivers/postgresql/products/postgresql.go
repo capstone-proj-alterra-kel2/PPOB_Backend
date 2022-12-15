@@ -52,12 +52,14 @@ func (pr *productRepository) Create(productDomain *products.Domain) products.Dom
 	return prod.ToDomain()
 }
 
-func (pr *productRepository) GetOne(product_id int) products.Domain {
+func (pr *productRepository) GetOne(product_id int) (products.Domain, error) {
 	var prod Product
 
-	pr.conn.First(&prod, product_id)
+	if err := pr.conn.First(&prod, product_id).Error; err != nil {
+		return prod.ToDomain(), err
+	}
 
-	return prod.ToDomain()
+	return prod.ToDomain(), nil
 }
 
 func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) (products.Domain, error) {
