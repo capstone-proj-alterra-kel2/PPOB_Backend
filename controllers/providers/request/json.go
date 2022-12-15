@@ -113,3 +113,14 @@ func (req *UpdateData) Validate() error {
 	err := validate.Struct(req)
 	return err
 }
+
+type InputPhone struct {
+	PhoneNumber string `json:"phone_number" form:"phone_number"`
+}
+
+func (req *InputPhone) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
