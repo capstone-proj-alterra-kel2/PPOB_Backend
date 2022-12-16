@@ -45,6 +45,18 @@ func (pr *productRepository) GetAll(Page int, Size int, Sort string, Search stri
 	return model, productDomain
 }
 
+func (pr *productRepository) GetAllForUser() []products.Domain {
+	var prod []Product
+
+	pr.conn.Find(&prod)
+	productDomain := []products.Domain{}
+	for _, product := range prod {
+		productDomain = append(productDomain, product.ToDomain())
+	}
+
+	return productDomain
+}
+
 func (pr *productRepository) Create(productDomain *products.Domain) products.Domain {
 	prod := FromDomain(productDomain)
 

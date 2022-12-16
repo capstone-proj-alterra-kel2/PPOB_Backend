@@ -51,6 +51,41 @@ func (pu *productUsecase) GetAll(Page int, Size int, Sort string, Search string)
 	return model, updatedDataDomain
 }
 
+func (pu *productUsecase) GetAllForUser() []Domain {
+	var parsedStartDate time.Time
+	var parsedEndDate time.Time
+
+	result := pu.productRepository.GetAllForUser()
+
+	layoutFormat := "2006-01-02"
+
+	currentDate := time.Now()
+	formatDate := currentDate.Format("2006-01-02")
+
+	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	updatedDataDomain := []Domain{}
+
+	for _, value := range result {
+		if value.PriceStatus == "promo" {
+			parsedStartDate, _ = time.Parse(layoutFormat, value.PromoStartDate)
+			parsedEndDate, _ = time.Parse(layoutFormat, value.PromoEndDate)
+
+			if parsedCurrentDate.Before(parsedEndDate) && parsedCurrentDate.After(parsedStartDate) {
+				*value.IsPromoActive = true
+			} else {
+				*value.IsPromoActive = false
+			}
+		}
+
+		if *value.Stock > 0 {
+			*value.IsAvailable = true
+		}
+		updatedDataDomain = append(updatedDataDomain, value)
+	}
+
+	return updatedDataDomain
+}
+
 func (pu *productUsecase) Create(productDomain *Domain) Domain {
 	return pu.productRepository.Create(productDomain)
 }
