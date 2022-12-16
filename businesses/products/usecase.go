@@ -23,11 +23,12 @@ func (pu *productUsecase) GetAll(Page int, Size int, Sort string, Search string)
 	model, result := pu.productRepository.GetAll(Page, Size, Sort, Search)
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 	updatedDataDomain := []Domain{}
 
 	for _, value := range result {
@@ -58,11 +59,12 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 	result := pu.productRepository.GetAllForUser()
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 	updatedDataDomain := []Domain{}
 
 	for _, value := range result {
@@ -114,11 +116,12 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	var parsedEndDate time.Time
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 
 	result, err := pu.productRepository.GetOne(product_id)
 

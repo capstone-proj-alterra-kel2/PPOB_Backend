@@ -61,11 +61,12 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 	}
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 
 	for _, prodProvider := range result.Products {
 		if prodProvider.PriceStatus == "promo" {

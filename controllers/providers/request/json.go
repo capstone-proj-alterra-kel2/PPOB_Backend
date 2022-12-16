@@ -59,6 +59,7 @@ func (req *UpdateCheckProduct) ToDomain() *providers.UpdateDomain {
 		Stock:                 req.Stock,
 		Status:                req.Status,
 		AdditionalInformation: req.AdditionalInformation,
+		PriceStatus:           req.PriceStatus,
 		IsAvailable:           req.IsAvailable,
 		IsPromoActive:         req.IsPromoActive,
 		Discount:              req.Discount,
