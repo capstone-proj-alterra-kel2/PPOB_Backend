@@ -2,6 +2,7 @@ package transactions
 
 import (
 	"PPOB_BACKEND/businesses/products"
+	"PPOB_BACKEND/businesses/producttypes"
 	"PPOB_BACKEND/businesses/users"
 	"time"
 
@@ -12,6 +13,8 @@ type Domain struct {
 	ID                uint
 	ProductID         int
 	ProductName       string
+	ProductTypeID     int
+	ProductType       string
 	UserID            int
 	UserEmail         string
 	TargetPhoneNumber string
@@ -31,7 +34,7 @@ type Usecase interface {
 	GetDetail(transaction_id int) (Domain, bool)
 	GetTransactionHistory(user_id int) []Domain
 	Update(transactionDomain *Domain, transaction_id int) (Domain, bool)
-	Create(productDomain *products.Domain, userDomain *users.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain
+	Create(productDomain *products.Domain, userDomain *users.Domain, productTypeDomain *producttypes.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain
 	Delete(transaction_id int) (Domain, bool)
 }
 

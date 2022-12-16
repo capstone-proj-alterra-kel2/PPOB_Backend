@@ -12,6 +12,7 @@ type Domain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
+	ProductTypeID         int
 	Stock                 *int
 	Status                string
 	TotalPurchased        int
@@ -32,6 +33,7 @@ type UpdateDataDomain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
+	ProductTypeID         int
 	Stock                 *int
 	Status                string
 	AdditionalInformation string
@@ -53,9 +55,9 @@ type UpdateStockStatusDomain struct {
 type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	GetAllForUser() []Domain
-	Create(productDomain *Domain) (Domain, bool)
+	Create(productDomain *Domain) (Domain, bool, bool)
 	GetOne(product_id int) (Domain, error)
-	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool)
+	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool, bool)
 	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)
@@ -64,9 +66,9 @@ type Usecase interface {
 type Repository interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	GetAllForUser() []Domain
-	Create(productDomain *Domain) Domain
+	Create(productDomain *Domain) (Domain, bool)
 	GetOne(product_id int) (Domain, error)
-	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool)
 	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)

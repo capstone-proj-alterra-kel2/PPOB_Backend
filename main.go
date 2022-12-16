@@ -92,15 +92,16 @@ func main() {
 	walletRepo := _driverFactory.NewWalletRepository(db)
 	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
 	walletCtrl := _walletController.NewWalletController(walletUseCase, walletHistoryUseCase)
-	// Transaction
-	transactionRepo := _driverFactory.NewTransactionRepository(db)
-	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
-	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase, walletUseCase, walletHistoryUseCase)
 
 	// Product Type
 	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
 	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
 	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
+
+	// Transaction
+	transactionRepo := _driverFactory.NewTransactionRepository(db)
+	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
+	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase, walletUseCase, walletHistoryUseCase, productTypeUseCase)
 
 	// Category
 	categoryRepo := _driverFactory.NewCategoryRepository(db)

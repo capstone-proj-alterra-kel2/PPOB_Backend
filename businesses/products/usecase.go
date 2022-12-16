@@ -88,7 +88,7 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 	return updatedDataDomain
 }
 
-func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool) {
+func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool, bool) {
 	var isDateValid bool
 
 	layoutFormat := "2006-01-02"
@@ -106,9 +106,9 @@ func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool) {
 		isDateValid = true
 	}
 
-	res := pu.productRepository.Create(productDomain)
+	res, isProviderFound := pu.productRepository.Create(productDomain)
 
-	return res, isDateValid
+	return res, isDateValid, isProviderFound
 }
 
 func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
@@ -147,7 +147,7 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	return result, nil
 }
 
-func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool) {
+func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool, bool) {
 	var isDateValid bool
 
 	layoutFormat := "2006-01-02"
@@ -165,9 +165,9 @@ func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id
 		isDateValid = true
 	}
 
-	res, err := pu.productRepository.UpdateData(productDomain, product_id)
+	res, err, isProviderFound := pu.productRepository.UpdateData(productDomain, product_id)
 
-	return res, err, isDateValid
+	return res, err, isDateValid, isProviderFound
 }
 
 func (pu *productUsecase) UpdatePromo(productDomain *Domain) Domain {

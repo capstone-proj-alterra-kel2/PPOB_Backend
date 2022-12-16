@@ -57,11 +57,23 @@ func (pr *productRepository) GetAllForUser() []products.Domain {
 	return productDomain
 }
 
-func (pr *productRepository) Create(productDomain *products.Domain) products.Domain {
+func (pr *productRepository) Create(productDomain *products.Domain) (products.Domain, bool) {
 	prod := FromDomain(productDomain)
 
+	var providerID int
+	var productTypeID int
+
+	pr.conn.Raw("SELECT id FROM providers WHERE id = ?", productDomain.ProviderID).Scan(&providerID)
+
+	if providerID == 0 {
+		return prod.ToDomain(), false
+	}
+
+	pr.conn.Raw("SELECT product_type_id FROM providers WHERE id = ?", productDomain.ProviderID).Scan(&productTypeID)
+	prod.ProductTypeID = productTypeID
+
 	pr.conn.Create(&prod)
-	return prod.ToDomain()
+	return prod.ToDomain(), true
 }
 
 func (pr *productRepository) GetOne(product_id int) (products.Domain, error) {
@@ -74,14 +86,25 @@ func (pr *productRepository) GetOne(product_id int) (products.Domain, error) {
 	return prod.ToDomain(), nil
 }
 
-func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) (products.Domain, error) {
+func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain, product_id int) (products.Domain, error, bool) {
+	var providerID int
+	var productTypeID int
+
 	prod := FromUpdatedDomain(productDomain)
 
 	err := pr.conn.First(&prod, product_id).Error
 
 	if err != nil {
-		return prod.ToDomain(), err
+		return prod.ToDomain(), err, false
 	}
+
+	pr.conn.Raw("SELECT id FROM providers WHERE id = ?", productDomain.ProviderID).Scan(&providerID)
+
+	if providerID == 0 {
+		return prod.ToDomain(), nil, false
+	}
+
+	pr.conn.Raw("SELECT product_type_id FROM providers WHERE id = ?", productDomain.ProviderID).Scan(&productTypeID)
 
 	pr.conn.Model(&prod).Where("id = ?", product_id).Updates(
 		Product{
@@ -89,6 +112,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 			Description:    productDomain.Description,
 			Price:          productDomain.Price,
 			ProviderID:     productDomain.ProviderID,
+			ProductTypeID:  productTypeID,
 			Status:         productDomain.Status,
 			IsAvailable:    productDomain.IsAvailable,
 			PriceStatus:    productDomain.PriceStatus,
@@ -99,7 +123,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 		},
 	)
 
-	return prod.ToDomain(), nil
+	return prod.ToDomain(), nil, true
 }
 
 func (pr *productRepository) UpdatePromo(productDomain *products.Domain) products.Domain {
