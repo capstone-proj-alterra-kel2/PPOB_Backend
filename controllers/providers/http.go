@@ -109,12 +109,19 @@ func (ctrl *ProviderController) GetOne(c echo.Context) error {
 }
 
 func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
-	phoneNumber := c.FormValue("phone_number")
+	phoneNumber := request.InputPhone{}
+
+	if err := c.Bind(&phoneNumber); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
+	}
+	if err := phoneNumber.Validate(); err != nil {
+		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
+	}
 
 	paramID := c.Param("product_type_id")
 	productTypeID, _ := strconv.Atoi(paramID)
 
-	providerData, isProductTypeFound := ctrl.providerUsecase.GetByPhone(phoneNumber, productTypeID)
+	providerData, isProductTypeFound := ctrl.providerUsecase.GetByPhone(phoneNumber.PhoneNumber, productTypeID)
 
 	if !isProductTypeFound {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product type not found")
