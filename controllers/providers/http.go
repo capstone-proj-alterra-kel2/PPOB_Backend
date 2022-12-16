@@ -207,6 +207,11 @@ func (ctrl *ProviderController) Delete(c echo.Context) error {
 	paramID := c.Param("provider_id")
 	providerID, _ := strconv.Atoi(paramID)
 
-	ctrl.providerUsecase.Delete(providerID)
+	_, err := ctrl.providerUsecase.Delete(providerID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider deleted", "")
 }

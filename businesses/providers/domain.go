@@ -71,7 +71,7 @@ type Usecase interface {
 	GetByPhone(phone_number string, product_type_id int) (Domain, bool)
 	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
-	Delete(provider_id int) Domain
+	Delete(provider_id int) (Domain, error)
 }
 
 type Repository interface {
@@ -81,5 +81,5 @@ type Repository interface {
 	GetByPhone(provider string, product_type_id int) (Domain, bool)
 	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
-	Delete(provider_id int) Domain
+	Delete(provider_id int) (Domain, error)
 }

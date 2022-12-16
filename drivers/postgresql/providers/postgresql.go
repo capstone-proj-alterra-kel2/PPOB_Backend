@@ -159,9 +159,15 @@ func (pr *providerRepository) UpdateCheck(providerDomain *providers.ProviderDoma
 	return updatedProviderData.ToDomain()
 }
 
-func (pr *providerRepository) Delete(provider_id int) providers.Domain {
+func (pr *providerRepository) Delete(provider_id int) (providers.Domain, error) {
 	var providerData Provider
 
+	err := pr.conn.First(&providerData, provider_id).Error
+
+	if err != nil {
+		return providerData.ToDomain(), err
+	}
+
 	pr.conn.Unscoped().Where("id = ?", provider_id).Delete(&providerData)
-	return providerData.ToDomain()
+	return providerData.ToDomain(), nil
 }
