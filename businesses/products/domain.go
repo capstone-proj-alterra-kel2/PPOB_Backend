@@ -53,9 +53,9 @@ type UpdateStockStatusDomain struct {
 type Usecase interface {
 	GetAll(Page int, Size int, Sort string, Search string) (*gorm.DB, []Domain)
 	GetAllForUser() []Domain
-	Create(productDomain *Domain) Domain
+	Create(productDomain *Domain) (Domain, bool)
 	GetOne(product_id int) (Domain, error)
-	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error)
+	UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool)
 	UpdatePromo(productDomain *Domain) Domain
 	UpdateStockStatus(productDomain *UpdateStockStatusDomain, product_id int) Domain
 	Delete(product_id int) (Domain, error)

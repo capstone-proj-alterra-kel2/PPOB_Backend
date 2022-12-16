@@ -194,7 +194,12 @@ func (ctrl *ProviderController) Update(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
 	}
 
-	providerData := ctrl.providerUsecase.Update(input.ToDomain(), providerID)
+	providerData, err := ctrl.providerUsecase.Update(input.ToDomain(), providerID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
+	}
+
 	return controllers.NewResponse(c, http.StatusOK, "success", "provider updated", response.FromDomain(providerData))
 }
 

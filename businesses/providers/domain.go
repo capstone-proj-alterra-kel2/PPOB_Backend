@@ -69,7 +69,7 @@ type Usecase interface {
 	Create(providerDomain *Domain, product_type_id int) (Domain, bool, bool)
 	GetOne(provider_id int, product_type_id int) (Domain, bool, bool)
 	GetByPhone(phone_number string, product_type_id int) (Domain, bool)
-	Update(providerDomain *Domain, provider_id int) Domain
+	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
 	Delete(provider_id int) Domain
 }
@@ -79,7 +79,7 @@ type Repository interface {
 	Create(providerDomain *Domain, product_type_id int) (Domain, bool, bool)
 	GetOne(provider_id int, product_type_id int) (Domain, bool, bool)
 	GetByPhone(provider string, product_type_id int) (Domain, bool)
-	Update(providerDomain *Domain, provider_id int) Domain
+	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
 	Delete(provider_id int) Domain
 }
