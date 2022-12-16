@@ -96,9 +96,9 @@ func (pu *providerUsecase) UpdateCheck(providerDomain *ProviderDomain, provider_
 	return pu.providerRepository.UpdateCheck(providerDomain, provider_id)
 }
 
-func (pu *providerUsecase) Update(providerDomain *Domain, provider_id int) Domain {
+func (pu *providerUsecase) Update(providerDomain *Domain, provider_id int) (Domain, error) {
 	return pu.providerRepository.Update(providerDomain, provider_id)
 }
-func (pu *providerUsecase) Delete(provider_id int) Domain {
+func (pu *providerUsecase) Delete(provider_id int) (Domain, error) {
 	return pu.providerRepository.Delete(provider_id)
 }

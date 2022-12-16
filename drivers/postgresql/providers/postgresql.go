@@ -126,8 +126,15 @@ func (pr *providerRepository) GetByPhone(provider string, product_type_id int) (
 	return providerData.ToDomain(), true
 }
 
-func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_id int) providers.Domain {
+func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_id int) (providers.Domain, error) {
 	providerData := FromDomain(providerDomain)
+	var prov Provider
+
+	err := pr.conn.First(&prov, provider_id).Error
+
+	if err != nil {
+		return providerData.ToDomain(), err
+	}
 
 	pr.conn.Model(&providerData).Where("id = ?", provider_id).Updates(
 		Provider{
@@ -136,7 +143,12 @@ func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_
 		},
 	)
 
-	return providerData.ToDomain()
+	if len(providerData.Image) != 0 {
+		prov.Image = providerData.Image
+	}
+	prov.Name = providerData.Name
+
+	return prov.ToDomain(), nil
 }
 
 func (pr *providerRepository) UpdateCheck(providerDomain *providers.ProviderDomain, provider_id int) providers.Domain {
@@ -147,9 +159,15 @@ func (pr *providerRepository) UpdateCheck(providerDomain *providers.ProviderDoma
 	return updatedProviderData.ToDomain()
 }
 
-func (pr *providerRepository) Delete(provider_id int) providers.Domain {
+func (pr *providerRepository) Delete(provider_id int) (providers.Domain, error) {
 	var providerData Provider
 
+	err := pr.conn.First(&providerData, provider_id).Error
+
+	if err != nil {
+		return providerData.ToDomain(), err
+	}
+
 	pr.conn.Unscoped().Where("id = ?", provider_id).Delete(&providerData)
-	return providerData.ToDomain()
+	return providerData.ToDomain(), nil
 }

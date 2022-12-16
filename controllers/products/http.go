@@ -138,17 +138,17 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		if input.Discount == nil || *input.Discount == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
-
-		if len(input.PromoStartDate) == 0 || len(input.PromoEndDate) == 0 {
-			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "promo start or end date aren't allowed empty")
-		}
 	} else {
 		input.Discount = &zeroValue
 		input.PromoStartDate = ""
 		input.PromoEndDate = ""
 	}
 
-	product := ctrl.productUsecase.Create(input.ToDomain())
+	product, isDateValid := ctrl.productUsecase.Create(input.ToDomain())
+
+	if !isDateValid {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "invalid date input")
+	}
 
 	if product.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
@@ -162,6 +162,8 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 func (ctrl *ProductController) UpdateData(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
+
+	promoActiveFalse := false
 	zeroValue := 0
 
 	input := request.UpdateDataProduct{}
@@ -171,23 +173,25 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 	}
 
 	if input.PriceStatus == "promo" {
-		if *input.Discount == 0 {
+		if input.Discount == nil || *input.Discount == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
 
-		if input.PromoStartDate == "" || input.PromoEndDate == "" {
-			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "promo start or end date aren't allowed empty")
-		}
 	} else {
 		input.Discount = &zeroValue
+		input.IsPromoActive = &promoActiveFalse
 		input.PromoStartDate = ""
 		input.PromoEndDate = ""
 	}
 
-	product, err := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+	product, err, isDateValid := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
 
 	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
+	if !isDateValid {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "invalid date input")
 	}
 
 	product.PriceStatus = input.PriceStatus

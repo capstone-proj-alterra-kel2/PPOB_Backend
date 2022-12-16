@@ -45,9 +45,6 @@ func (tc *TransactionController) GetAll(c echo.Context) error {
 	userID := middlewares.GetUserID(c)
 	user := tc.userUsecase.Profile(userID)
 
-	// if user.RoleName != "admin" || user.RoleName != "superadmin" {
-	// 	return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "unauthorized")
-	// }
 	if user.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "cannot get detail user")
 	}
@@ -109,9 +106,6 @@ func (tc *TransactionController) Create(c echo.Context) error {
 
 	user := tc.userUsecase.Profile(userID)
 
-	if user.RoleName == "admin" || user.RoleName == "superadmin" {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "prevent getting detail admin & superadmin")
-	}
 	if user.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "cannot get detail user")
 	}

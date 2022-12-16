@@ -86,8 +86,27 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 	return updatedDataDomain
 }
 
-func (pu *productUsecase) Create(productDomain *Domain) Domain {
-	return pu.productRepository.Create(productDomain)
+func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool) {
+	var isDateValid bool
+
+	layoutFormat := "2006-01-02"
+
+	_, errOne := time.Parse(layoutFormat, productDomain.PromoStartDate)
+	_, errTwo := time.Parse(layoutFormat, productDomain.PromoEndDate)
+
+	if productDomain.PriceStatus == "promo" {
+		if errOne == nil && errTwo == nil {
+			isDateValid = true
+		} else {
+			isDateValid = false
+		}
+	} else {
+		isDateValid = true
+	}
+
+	res := pu.productRepository.Create(productDomain)
+
+	return res, isDateValid
 }
 
 func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
@@ -125,8 +144,27 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	return result, nil
 }
 
-func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error) {
-	return pu.productRepository.UpdateData(productDomain, product_id)
+func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool) {
+	var isDateValid bool
+
+	layoutFormat := "2006-01-02"
+
+	_, errOne := time.Parse(layoutFormat, productDomain.PromoStartDate)
+	_, errTwo := time.Parse(layoutFormat, productDomain.PromoEndDate)
+
+	if productDomain.PriceStatus == "promo" {
+		if errOne == nil && errTwo == nil {
+			isDateValid = true
+		} else {
+			isDateValid = false
+		}
+	} else {
+		isDateValid = true
+	}
+
+	res, err := pu.productRepository.UpdateData(productDomain, product_id)
+
+	return res, err, isDateValid
 }
 
 func (pu *productUsecase) UpdatePromo(productDomain *Domain) Domain {
