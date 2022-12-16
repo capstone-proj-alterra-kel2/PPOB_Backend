@@ -79,6 +79,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	userProduct := v1.Group("/users/products", middleware.JWTWithConfig(cl.JWTMIddleware))
 	userProduct.Use(middlewares.CheckStatusToken)
 	userProduct.GET("/:product_id", cl.ProductController.GetOne)
+	userProduct.GET("", cl.ProductController.GetAllForUSer)
 
 	// User - Product Type
 	usersProductType := v1.Group("/users/product-types", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)

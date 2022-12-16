@@ -60,6 +60,37 @@ func (ctrl *ProductController) GetAll(c echo.Context) error {
 	return controllers.NewResponse(c, http.StatusOK, "success", "all products", pg.With(modelProduct).Request(c.Request()).Response(&products))
 }
 
+func (ctrl *ProductController) GetAllForUSer(c echo.Context) error {
+	productDomain := ctrl.productUsecase.GetAllForUser()
+
+	for _, value := range productDomain {
+		input := request.UpdatePromoProduct{
+			ID:             value.ID,
+			IsAvailable:    value.IsAvailable,
+			PriceStatus:    value.PriceStatus,
+			IsPromoActive:  value.IsPromoActive,
+			Discount:       value.Discount,
+			PromoStartDate: value.PromoStartDate,
+			PromoEndDate:   value.PromoEndDate,
+		}
+		updateResult := ctrl.productUsecase.UpdatePromo(input.ToDomain())
+
+		value.IsAvailable = updateResult.IsAvailable
+		value.PriceStatus = updateResult.PriceStatus
+		value.IsPromoActive = updateResult.IsPromoActive
+		value.Discount = updateResult.Discount
+		value.PromoStartDate = updateResult.PromoStartDate
+		value.PromoEndDate = updateResult.PromoEndDate
+	}
+
+	products := []response.Product{}
+	for _, product := range productDomain {
+		products = append(products, response.FromDomain(product))
+	}
+
+	return controllers.NewResponse(c, http.StatusOK, "success", "all products", &products)
+}
+
 func (ctrl *ProductController) GetOne(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
