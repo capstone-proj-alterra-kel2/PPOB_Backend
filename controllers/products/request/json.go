@@ -114,6 +114,9 @@ func (req *UpdateStockStatus) Validate() error {
 
 type UpdatePromoProduct struct {
 	ID             uint   `json:"id"`
+	Stock          *int   `json:"stock"`
+	Status         string `json:"status"`
+	TotalPurchased int    `json:"total_purchased"`
 	IsAvailable    *bool  `json:"is_available" form:"is_available" validate:"required"`
 	PriceStatus    string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
 	IsPromoActive  *bool  `json:"is_promo_active" form:"is_promo_active"`
@@ -125,6 +128,9 @@ type UpdatePromoProduct struct {
 func (req *UpdatePromoProduct) ToDomain() *products.Domain {
 	return &products.Domain{
 		ID:             req.ID,
+		Stock:          req.Stock,
+		Status:         req.Status,
+		TotalPurchased: req.TotalPurchased,
 		IsAvailable:    req.IsAvailable,
 		PriceStatus:    req.PriceStatus,
 		IsPromoActive:  req.IsPromoActive,

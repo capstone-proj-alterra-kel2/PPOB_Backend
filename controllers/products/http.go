@@ -35,6 +35,9 @@ func (ctrl *ProductController) GetAll(c echo.Context) error {
 	for _, value := range productDomain {
 		input := request.UpdatePromoProduct{
 			ID:             value.ID,
+			Stock:          value.Stock,
+			Status:         value.Status,
+			TotalPurchased: value.TotalPurchased,
 			IsAvailable:    value.IsAvailable,
 			PriceStatus:    value.PriceStatus,
 			IsPromoActive:  value.IsPromoActive,
@@ -66,6 +69,9 @@ func (ctrl *ProductController) GetAllForUSer(c echo.Context) error {
 	for _, value := range productDomain {
 		input := request.UpdatePromoProduct{
 			ID:             value.ID,
+			Stock:          value.Stock,
+			Status:         value.Status,
+			TotalPurchased: value.TotalPurchased,
 			IsAvailable:    value.IsAvailable,
 			PriceStatus:    value.PriceStatus,
 			IsPromoActive:  value.IsPromoActive,
@@ -103,6 +109,9 @@ func (ctrl *ProductController) GetOne(c echo.Context) error {
 
 	input := request.UpdatePromoProduct{
 		ID:             productData.ID,
+		Stock:          productData.Stock,
+		Status:         productData.Status,
+		TotalPurchased: productData.TotalPurchased,
 		IsAvailable:    productData.IsAvailable,
 		PriceStatus:    productData.PriceStatus,
 		IsPromoActive:  productData.IsPromoActive,
