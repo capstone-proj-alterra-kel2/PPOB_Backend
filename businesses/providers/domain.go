@@ -39,6 +39,7 @@ type UpdateDomain struct {
 	Description           string
 	Price                 int
 	ProviderID            int
+	ProductTypeID         int
 	Stock                 *int
 	Status                string
 	TotalPurchased        int

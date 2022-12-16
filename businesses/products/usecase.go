@@ -23,11 +23,12 @@ func (pu *productUsecase) GetAll(Page int, Size int, Sort string, Search string)
 	model, result := pu.productRepository.GetAll(Page, Size, Sort, Search)
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 	updatedDataDomain := []Domain{}
 
 	for _, value := range result {
@@ -58,11 +59,12 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 	result := pu.productRepository.GetAllForUser()
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 	updatedDataDomain := []Domain{}
 
 	for _, value := range result {
@@ -86,7 +88,7 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 	return updatedDataDomain
 }
 
-func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool) {
+func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool, bool) {
 	var isDateValid bool
 
 	layoutFormat := "2006-01-02"
@@ -104,9 +106,9 @@ func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool) {
 		isDateValid = true
 	}
 
-	res := pu.productRepository.Create(productDomain)
+	res, isProviderFound := pu.productRepository.Create(productDomain)
 
-	return res, isDateValid
+	return res, isDateValid, isProviderFound
 }
 
 func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
@@ -114,11 +116,12 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	var parsedEndDate time.Time
 
 	layoutFormat := "2006-01-02"
+	layoutFormatCurrent := "2006-01-02 15:04:05"
 
 	currentDate := time.Now()
-	formatDate := currentDate.Format("2006-01-02")
+	formatDate := currentDate.Format("2006-01-02 15:04:05")
 
-	parsedCurrentDate, _ := time.Parse(layoutFormat, formatDate)
+	parsedCurrentDate, _ := time.Parse(layoutFormatCurrent, formatDate)
 
 	result, err := pu.productRepository.GetOne(product_id)
 
@@ -144,7 +147,7 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 	return result, nil
 }
 
-func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool) {
+func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool, bool) {
 	var isDateValid bool
 
 	layoutFormat := "2006-01-02"
@@ -162,9 +165,9 @@ func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id
 		isDateValid = true
 	}
 
-	res, err := pu.productRepository.UpdateData(productDomain, product_id)
+	res, err, isProviderFound := pu.productRepository.UpdateData(productDomain, product_id)
 
-	return res, err, isDateValid
+	return res, err, isDateValid, isProviderFound
 }
 
 func (pu *productUsecase) UpdatePromo(productDomain *Domain) Domain {

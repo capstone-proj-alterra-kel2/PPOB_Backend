@@ -2,6 +2,7 @@ package transactions
 
 import (
 	"PPOB_BACKEND/businesses/products"
+	"PPOB_BACKEND/businesses/producttypes"
 	"PPOB_BACKEND/businesses/users"
 	"time"
 
@@ -32,11 +33,13 @@ func (tu *transactionUsecase) Update(trasnactionDomain *Domain, transaction_id i
 	return tu.transactionRepository.Update(trasnactionDomain, transaction_id)
 }
 
-func (tu *transactionUsecase) Create(productDomain *products.Domain, userDomain *users.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain {
+func (tu *transactionUsecase) Create(productDomain *products.Domain, userDomain *users.Domain, productTypeDomain *producttypes.Domain, totalAmount int, productDiscount int, targetPhoneNumber string) Domain {
 
 	transaction := Domain{
 		ProductID:         int(productDomain.ID),
 		ProductName:       productDomain.Name,
+		ProductTypeID:     int(productTypeDomain.ID),
+		ProductType:       productTypeDomain.Name,
 		UserID:            int(userDomain.ID),
 		UserEmail:         userDomain.Email,
 		TargetPhoneNumber: targetPhoneNumber,

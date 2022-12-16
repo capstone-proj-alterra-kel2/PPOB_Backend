@@ -11,6 +11,7 @@ type Product struct {
 	Description           string `json:"description" form:"description" validate:"required"`
 	Price                 int    `json:"price" form:"price" validate:"required"`
 	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
+	ProductTypeID         int    `json:"product_type_id"`
 	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
 	Status                string `json:"status" form:"status" validate:"required"`
 	TotalPurchased        int    `json:"total_purchased"`
@@ -29,6 +30,7 @@ func (req *Product) ToDomain() *products.Domain {
 		Description:           req.Description,
 		Price:                 req.Price,
 		ProviderID:            req.ProviderID,
+		ProductTypeID:         req.ProductTypeID,
 		Stock:                 req.Stock,
 		Status:                req.Status,
 		AdditionalInformation: req.AdditionalInformation,

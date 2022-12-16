@@ -144,13 +144,13 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		input.PromoEndDate = ""
 	}
 
-	product, isDateValid := ctrl.productUsecase.Create(input.ToDomain())
+	product, isDateValid, isProviderFound := ctrl.productUsecase.Create(input.ToDomain())
 
 	if !isDateValid {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "invalid date input")
 	}
 
-	if product.ID == 0 {
+	if !isProviderFound || product.ID == 0 {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
 	}
 
@@ -184,10 +184,14 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 		input.PromoEndDate = ""
 	}
 
-	product, err, isDateValid := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
+	product, err, isDateValid, isProviderFound := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
 
 	if err != nil {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product not found")
+	}
+
+	if !isProviderFound {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "provider not found")
 	}
 
 	if !isDateValid {

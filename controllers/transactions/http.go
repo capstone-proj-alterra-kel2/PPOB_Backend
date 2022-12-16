@@ -3,6 +3,7 @@ package transactions
 import (
 	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/businesses/products"
+	"PPOB_BACKEND/businesses/producttypes"
 	"PPOB_BACKEND/businesses/transactions"
 	"PPOB_BACKEND/businesses/users"
 	"PPOB_BACKEND/businesses/wallet_histories"
@@ -26,15 +27,17 @@ type TransactionController struct {
 	userUsecase          users.Usecase
 	walletUsecase        wallets.Usecase
 	walletHistoryUsecase wallet_histories.Usecase
+	productTypeUsecase   producttypes.Usecase
 }
 
-func NewTransactionController(transactionUC transactions.Usecase, productUC products.Usecase, userUC users.Usecase, walletUC wallets.Usecase, walletHistoryUC wallet_histories.Usecase) *TransactionController {
+func NewTransactionController(transactionUC transactions.Usecase, productUC products.Usecase, userUC users.Usecase, walletUC wallets.Usecase, walletHistoryUC wallet_histories.Usecase, productTypeUC producttypes.Usecase) *TransactionController {
 	return &TransactionController{
 		transactionUsecase:   transactionUC,
 		productUsecase:       productUC,
 		userUsecase:          userUC,
 		walletUsecase:        walletUC,
 		walletHistoryUsecase: walletHistoryUC,
+		productTypeUsecase:   productTypeUC,
 	}
 }
 
@@ -136,7 +139,14 @@ func (tc *TransactionController) Create(c echo.Context) error {
 		totalAmount = product.Price
 	}
 
-	transaction := tc.transactionUsecase.Create(&product, &user, totalAmount, productDiscount, request.TargetPhoneNumber)
+	// get product type
+	productType, err := tc.productTypeUsecase.GetOne(product.ProductTypeID)
+
+	if err != nil {
+		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "product type not found")
+	}
+
+	transaction := tc.transactionUsecase.Create(&product, &user, &productType, totalAmount, productDiscount, request.TargetPhoneNumber)
 
 	var updatedBalance int
 

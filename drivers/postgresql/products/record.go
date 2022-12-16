@@ -13,6 +13,7 @@ type Product struct {
 	Description           string         `json:"description"`
 	Price                 int            `json:"price"`
 	ProviderID            int            `json:"provider_id"`
+	ProductTypeID         int            `json:"product_type_id"`
 	Stock                 *int           `json:"stock"`
 	Status                string         `json:"status"`
 	TotalPurchased        int            `json:"total_purchased"`
@@ -36,6 +37,7 @@ func FromDomain(domain *products.Domain) *Product {
 		Price:                 domain.Price,
 		Description:           domain.Description,
 		ProviderID:            domain.ProviderID,
+		ProductTypeID:         domain.ProductTypeID,
 		Stock:                 domain.Stock,
 		Status:                domain.Status,
 		TotalPurchased:        domain.TotalPurchased,
@@ -59,6 +61,7 @@ func (recProd *Product) ToDomain() products.Domain {
 		Price:                 recProd.Price,
 		Description:           recProd.Description,
 		ProviderID:            recProd.ProviderID,
+		ProductTypeID:         recProd.ProductTypeID,
 		Stock:                 recProd.Stock,
 		Status:                recProd.Status,
 		TotalPurchased:        recProd.TotalPurchased,
