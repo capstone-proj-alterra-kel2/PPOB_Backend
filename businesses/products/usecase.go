@@ -90,6 +90,8 @@ func (pu *productUsecase) GetAllForUser() []Domain {
 
 func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool, bool) {
 	var isDateValid bool
+	var res Domain
+	var isProviderFound bool
 
 	layoutFormat := "2006-01-02"
 
@@ -101,12 +103,14 @@ func (pu *productUsecase) Create(productDomain *Domain) (Domain, bool, bool) {
 			isDateValid = true
 		} else {
 			isDateValid = false
+			isProviderFound = false
+			return res, isDateValid, isProviderFound
 		}
 	} else {
 		isDateValid = true
 	}
 
-	res, isProviderFound := pu.productRepository.Create(productDomain)
+	res, isProviderFound = pu.productRepository.Create(productDomain)
 
 	return res, isDateValid, isProviderFound
 }
@@ -149,6 +153,9 @@ func (pu *productUsecase) GetOne(product_id int) (Domain, error) {
 
 func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id int) (Domain, error, bool, bool) {
 	var isDateValid bool
+	var isProviderFound bool
+	var err error
+	var res Domain
 
 	layoutFormat := "2006-01-02"
 
@@ -160,12 +167,15 @@ func (pu *productUsecase) UpdateData(productDomain *UpdateDataDomain, product_id
 			isDateValid = true
 		} else {
 			isDateValid = false
+			isProviderFound = false
+
+			return res, nil, isDateValid, isProviderFound
 		}
 	} else {
 		isDateValid = true
 	}
 
-	res, err, isProviderFound := pu.productRepository.UpdateData(productDomain, product_id)
+	res, err, isProviderFound = pu.productRepository.UpdateData(productDomain, product_id)
 
 	return res, err, isDateValid, isProviderFound
 }
