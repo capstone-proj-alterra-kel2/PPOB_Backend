@@ -176,6 +176,7 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 		if input.Discount == nil || *input.Discount == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
+
 	} else {
 		input.Discount = &zeroValue
 		input.IsPromoActive = &promoActiveFalse
