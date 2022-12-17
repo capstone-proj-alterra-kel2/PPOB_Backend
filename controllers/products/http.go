@@ -147,7 +147,7 @@ func (ctrl *ProductController) Create(c echo.Context) error {
 		if input.Discount == nil || *input.Discount == 0 {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
-	} else {
+	} else if input.PriceStatus == "normal" {
 		input.Discount = &zeroValue
 		input.PromoStartDate = ""
 		input.PromoEndDate = ""
@@ -172,7 +172,8 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 	paramID := c.Param("product_id")
 	productID, _ := strconv.Atoi(paramID)
 
-	promoActiveFalse := false
+	trueValue := true
+	falseValue := false
 	zeroValue := 0
 
 	input := request.UpdateDataProduct{}
@@ -186,11 +187,19 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 			return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "discount isn't allowed empty")
 		}
 
-	} else {
+	} else if input.PriceStatus == "normal" {
 		input.Discount = &zeroValue
-		input.IsPromoActive = &promoActiveFalse
+		input.IsPromoActive = &falseValue
 		input.PromoStartDate = ""
 		input.PromoEndDate = ""
+	}
+
+	if input.Stock != nil && *input.Stock > 0 {
+		input.Status = "Tersedia"
+		input.IsAvailable = &trueValue
+	} else if input.Stock != nil && *input.Stock == 0 {
+		input.Status = "Habis"
+		input.IsAvailable = &falseValue
 	}
 
 	product, err, isDateValid, isProviderFound := ctrl.productUsecase.UpdateData(input.ToDomain(), productID)
@@ -207,7 +216,6 @@ func (ctrl *ProductController) UpdateData(c echo.Context) error {
 		return controllers.NewResponseFail(c, http.StatusNotFound, "failed", "invalid date input")
 	}
 
-	product.PriceStatus = input.PriceStatus
 	return controllers.NewResponse(c, http.StatusOK, "success", "product updated", response.FromDomain(product))
 }
 

@@ -113,6 +113,7 @@ func (pr *productRepository) UpdateData(productDomain *products.UpdateDataDomain
 			Price:          productDomain.Price,
 			ProviderID:     productDomain.ProviderID,
 			ProductTypeID:  productTypeID,
+			Stock:          productDomain.Stock,
 			Status:         productDomain.Status,
 			IsAvailable:    productDomain.IsAvailable,
 			PriceStatus:    productDomain.PriceStatus,
