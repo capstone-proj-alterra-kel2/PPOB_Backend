@@ -108,9 +108,6 @@ func (ctrl *ProductTypeController) Update(c echo.Context) error {
 	if err := c.Bind(&input); err != nil {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "invalid request")
 	}
-	if err := input.Validate(); err != nil {
-		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "validation failed")
-	}
 
 	productType, err := ctrl.productTypeUsecase.Update(input.ToDomain(), productTypeID)
 
