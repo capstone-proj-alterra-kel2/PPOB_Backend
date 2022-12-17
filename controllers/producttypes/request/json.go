@@ -28,22 +28,13 @@ func (req *ProductType) Validate() error {
 }
 
 type UpdateProductType struct {
-	Name       string `json:"name" form:"name" validate:"required"`
-	CategoryID int    `json:"category_id" form:"category_id" validate:"required"`
-	Image      string `json:"image" form :"image"`
+	Name  string `json:"name" form:"name"`
+	Image string `json:"image" form :"image"`
 }
 
 func (req *UpdateProductType) ToDomain() *producttypes.Domain {
 	return &producttypes.Domain{
-		Name:       req.Name,
-		Image:      req.Image,
-		CategoryID: req.CategoryID,
+		Name:  req.Name,
+		Image: req.Image,
 	}
-}
-
-func (req *UpdateProductType) Validate() error {
-	validate := validator.New()
-
-	err := validate.Struct(req)
-	return err
 }

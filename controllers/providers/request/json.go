@@ -98,7 +98,7 @@ func (req *Provider) Validate() error {
 
 type UpdateData struct {
 	Image string `json:"image" form:"image"`
-	Name  string `json:"name" form:"name" validate:"required"`
+	Name  string `json:"name" form:"name" `
 }
 
 func (req *UpdateData) ToDomain() *providers.Domain {
@@ -106,13 +106,6 @@ func (req *UpdateData) ToDomain() *providers.Domain {
 		Name:  req.Name,
 		Image: req.Image,
 	}
-}
-
-func (req *UpdateData) Validate() error {
-	validate := validator.New()
-
-	err := validate.Struct(req)
-	return err
 }
 
 type InputPhone struct {

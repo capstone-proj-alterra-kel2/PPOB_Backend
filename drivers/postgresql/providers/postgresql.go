@@ -145,8 +145,9 @@ func (pr *providerRepository) Update(providerDomain *providers.Domain, provider_
 
 	if len(providerData.Image) != 0 {
 		prov.Image = providerData.Image
+	} else if len(providerData.Name) != 0 {
+		prov.Name = providerData.Name
 	}
-	prov.Name = providerData.Name
 
 	return prov.ToDomain(), nil
 }
