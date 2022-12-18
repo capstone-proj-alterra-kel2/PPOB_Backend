@@ -71,7 +71,7 @@ func (ctrl *WalletController) GetDetailWallet(c echo.Context) error {
 }
 
 func (ctrl *WalletController) UpdateBalance(c echo.Context) error {
-	idUser := middlewares.GetUserID(c)
+	idUser := c.Param("user_id")
 	input := request.UpdateBalance{}
 
 	if err := c.Bind(&input); err != nil {
