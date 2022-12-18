@@ -4,6 +4,7 @@ import (
 	productdomain "PPOB_BACKEND/businesses/products"
 	"PPOB_BACKEND/businesses/providers"
 	"PPOB_BACKEND/drivers/postgresql/products"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -33,6 +34,7 @@ func FromDomainUpdate(domain *providers.ProviderDomain) *Provider {
 			Stock:                 product.Stock,
 			Status:                product.Status,
 			ProviderID:            product.ProviderID,
+			ProductTypeID:         product.ProductTypeID,
 			TotalPurchased:        product.TotalPurchased,
 			AdditionalInformation: product.AdditionalInformation,
 			IsAvailable:           product.IsAvailable,
@@ -101,6 +103,7 @@ func FromDomain(domain *providers.Domain) *Provider {
 func (recProvider *Provider) ToDomain() providers.Domain {
 	var productFromDomain []productdomain.Domain
 	for _, products := range recProvider.Products {
+		fmt.Println("di postgre", products.ProductTypeID)
 		productFromDomain = append(productFromDomain, products.ToDomain())
 	}
 
@@ -110,24 +113,6 @@ func (recProvider *Provider) ToDomain() providers.Domain {
 		Image:         recProvider.Image,
 		ProductTypeID: recProvider.ProductTypeID,
 		Products:      productFromDomain,
-		CreatedAt:     recProvider.CreatedAt,
-		UpdateAt:      recProvider.UpdatedAt,
-		DeletedAt:     recProvider.DeletedAt,
-	}
-}
-
-func (recProvider *Provider) ToDomainUpdate() providers.ProviderDomain {
-	var products []providers.UpdateDomain
-	for _, product := range recProvider.Products {
-		products = append(products, providers.UpdateDomain(product.ToDomain()))
-	}
-
-	return providers.ProviderDomain{
-		ID:            uint(recProvider.ID),
-		Name:          recProvider.Name,
-		Image:         recProvider.Image,
-		Products:      products,
-		ProductTypeID: recProvider.ProductTypeID,
 		CreatedAt:     recProvider.CreatedAt,
 		UpdateAt:      recProvider.UpdatedAt,
 		DeletedAt:     recProvider.DeletedAt,

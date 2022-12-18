@@ -2,6 +2,7 @@ package providers
 
 import (
 	"PPOB_BACKEND/businesses/providers"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -37,14 +38,11 @@ func (pr *providerRepository) GetAll(product_type_id int) ([]providers.Domain, b
 	return providerDomain, true
 }
 
-func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, bool, bool) {
+func (pr *providerRepository) Create(providerDomain *providers.Domain, product_type_id int) (providers.Domain, bool) {
 	providerData := FromDomain(providerDomain)
-
-	checkName := providerData.Name
 
 	var productTypeID int
 	var isProductTypeFound bool
-	var isNameDuplicated bool
 
 	pr.conn.Raw("SELECT pt.id FROM providers RIGHT JOIN product_types AS pt ON pt.id = ?", product_type_id).Scan(&productTypeID)
 
@@ -54,24 +52,24 @@ func (pr *providerRepository) Create(providerDomain *providers.Domain, product_t
 		isProductTypeFound = true
 	}
 
-	if checkProvider := pr.conn.First(&providerData, "name = ? AND product_type_id = ?", checkName, product_type_id).Error; checkProvider != gorm.ErrRecordNotFound {
-		isNameDuplicated = true
+	pr.conn.Create(&providerData)
+
+	return providerData.ToDomain(), isProductTypeFound
+}
+
+func (pr *providerRepository) CheckProviderName(name string, product_type_id int) bool {
+	var providerData []Provider
+	isProviderDuplicated := false
+
+	pr.conn.Where("product_type_id = ?", product_type_id).Find(&providerData)
+
+	for _, res := range providerData {
+		if strings.ToLower(name) == strings.ToLower(res.Name) {
+			isProviderDuplicated = true
+		}
 	}
 
-	if !isProductTypeFound {
-		return providerData.ToDomain(), false, false
-	}
-
-	if isNameDuplicated {
-		return providerData.ToDomain(), true, true
-	}
-
-	if !isNameDuplicated && isProductTypeFound {
-		pr.conn.Create(&providerData)
-		return providerData.ToDomain(), true, false
-	}
-
-	return providerData.ToDomain(), false, false
+	return isProviderDuplicated
 }
 
 func (pr *providerRepository) GetOne(provider_id int, product_type_id int) (providers.Domain, bool, bool) {

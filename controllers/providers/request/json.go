@@ -14,24 +14,6 @@ type InputProvider struct {
 	ProductTypeID int                  `json:"product_type_id"`
 }
 
-type UpdateCheckProduct struct {
-	ID                    int    `json:"id" form:"id" validate:"required"`
-	Name                  string `json:"name" form:"name" validate:"required"`
-	Description           string `json:"description" form:"description" validate:"required"`
-	Price                 int    `json:"price" form:"price" validate:"required"`
-	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
-	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
-	Status                string `json:"status" form:"status" validate:"required"`
-	AdditionalInformation string `json:"additional_information" form:"additional_information"`
-	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
-	PriceStatus           string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
-	IsPromo               *bool  `json:"is_promo" form:"is_promo"`
-	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
-	Discount              *int   `json:"discount" form:"discount"`
-	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
-	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
-}
-
 func (req *InputProvider) ToDomain() *providers.ProviderDomain {
 
 	var products []providers.UpdateDomain
@@ -46,33 +28,6 @@ func (req *InputProvider) ToDomain() *providers.ProviderDomain {
 		Products:      products,
 		ProductTypeID: req.ProductTypeID,
 	}
-}
-
-func (req *UpdateCheckProduct) ToDomain() *providers.UpdateDomain {
-
-	return &providers.UpdateDomain{
-		ID:                    uint(req.ID),
-		Name:                  req.Name,
-		Description:           req.Description,
-		Price:                 req.Price,
-		ProviderID:            req.ProviderID,
-		Stock:                 req.Stock,
-		Status:                req.Status,
-		AdditionalInformation: req.AdditionalInformation,
-		PriceStatus:           req.PriceStatus,
-		IsAvailable:           req.IsAvailable,
-		IsPromoActive:         req.IsPromoActive,
-		Discount:              req.Discount,
-		PromoStartDate:        req.PromoStartDate,
-		PromoEndDate:          req.PromoEndDate,
-	}
-}
-
-func (req *UpdateCheckProduct) Validate() error {
-	validate := validator.New()
-
-	err := validate.Struct(req)
-	return err
 }
 
 type Provider struct {
@@ -113,6 +68,53 @@ type InputPhone struct {
 }
 
 func (req *InputPhone) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(req)
+	return err
+}
+
+type UpdateCheckProduct struct {
+	ID                    int    `json:"id" form:"id" validate:"required"`
+	Name                  string `json:"name" form:"name" validate:"required"`
+	Description           string `json:"description" form:"description" validate:"required"`
+	Price                 int    `json:"price" form:"price" validate:"required"`
+	ProviderID            int    `json:"provider_id" form:"provider_id" validate:"required"`
+	ProductTypeID         int    `json:"product_type_id"`
+	Stock                 *int   `json:"stock" form:"stock" validate:"required"`
+	Status                string `json:"status" form:"status" validate:"required"`
+	AdditionalInformation string `json:"additional_information" form:"additional_information"`
+	IsAvailable           *bool  `json:"is_available" form:"is_available" validate:"required"`
+	PriceStatus           string `json:"price_status" form:"price_status" validate:"required,oneof=normal promo"`
+	IsPromo               *bool  `json:"is_promo" form:"is_promo"`
+	IsPromoActive         *bool  `json:"is_promo_active" form:"is_promo_active"`
+	Discount              *int   `json:"discount" form:"discount"`
+	PromoStartDate        string `json:"promo_start_date" form:"promo_start_date"`
+	PromoEndDate          string `json:"promo_end_date" form:"promo_end_date"`
+}
+
+func (req *UpdateCheckProduct) ToDomain() *providers.UpdateDomain {
+
+	return &providers.UpdateDomain{
+		ID:                    uint(req.ID),
+		Name:                  req.Name,
+		Description:           req.Description,
+		Price:                 req.Price,
+		ProviderID:            req.ProviderID,
+		ProductTypeID:         req.ProductTypeID,
+		Stock:                 req.Stock,
+		Status:                req.Status,
+		AdditionalInformation: req.AdditionalInformation,
+		PriceStatus:           req.PriceStatus,
+		IsAvailable:           req.IsAvailable,
+		IsPromoActive:         req.IsPromoActive,
+		Discount:              req.Discount,
+		PromoStartDate:        req.PromoStartDate,
+		PromoEndDate:          req.PromoEndDate,
+	}
+}
+
+func (req *UpdateCheckProduct) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(req)

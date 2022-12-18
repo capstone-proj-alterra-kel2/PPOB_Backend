@@ -77,7 +77,7 @@ func (ctrl *ProviderController) Create(c echo.Context) error {
 
 	providerData, isProductTypeFound, isNameDuplicated := ctrl.providerUsecase.Create(input.ToDomain(), productTypeID)
 
-	if !isProductTypeFound || providerData.ID == 0 {
+	if !isProductTypeFound {
 		return controllers.NewResponseFail(c, http.StatusBadRequest, "failed", "product types not found")
 	}
 
@@ -141,6 +141,7 @@ func (ctrl *ProviderController) GetByPhone(c echo.Context) error {
 			Description:           v.Description,
 			Price:                 v.Price,
 			ProviderID:            v.ProviderID,
+			ProductTypeID:         v.ProductTypeID,
 			Stock:                 v.Stock,
 			Status:                v.Status,
 			AdditionalInformation: v.AdditionalInformation,
