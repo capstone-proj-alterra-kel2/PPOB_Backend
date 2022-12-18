@@ -22,7 +22,16 @@ func (pu *providerUsecase) GetAll(product_type_id int) ([]Domain, bool) {
 	return pu.providerRepository.GetAll(product_type_id)
 }
 func (pu *providerUsecase) Create(providerDomain *Domain, product_type_id int) (Domain, bool, bool) {
-	return pu.providerRepository.Create(providerDomain, product_type_id)
+	var provider Domain
+	isNameDuplicated := pu.CheckProviderName(providerDomain.Name, product_type_id)
+
+	if isNameDuplicated {
+		return provider, true, isNameDuplicated
+	}
+
+	provider, isProductTypeFound := pu.providerRepository.Create(providerDomain, product_type_id)
+
+	return provider, isProductTypeFound, isNameDuplicated
 }
 func (pu *providerUsecase) GetOne(provider_id int, product_type_id int) (Domain, bool, bool) {
 	return pu.providerRepository.GetOne(provider_id, product_type_id)
@@ -85,6 +94,7 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 
 	providerResult.ID = result.ID
 	providerResult.Image = result.Image
+	providerResult.ProductTypeID = result.ProductTypeID
 	providerResult.Name = result.Name
 	providerResult.CreatedAt = result.CreatedAt
 	providerResult.UpdateAt = result.UpdateAt
@@ -95,6 +105,10 @@ func (pu *providerUsecase) GetByPhone(phone_number string, product_type_id int) 
 
 func (pu *providerUsecase) UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain {
 	return pu.providerRepository.UpdateCheck(providerDomain, provider_id)
+}
+
+func (pu *providerUsecase) CheckProviderName(name string, product_type_id int) bool {
+	return pu.providerRepository.CheckProviderName(name, product_type_id)
 }
 
 func (pu *providerUsecase) Update(providerDomain *Domain, provider_id int) (Domain, error) {

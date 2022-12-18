@@ -72,15 +72,17 @@ type Usecase interface {
 	GetByPhone(phone_number string, product_type_id int) (Domain, bool)
 	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
+	CheckProviderName(name string, product_type_id int) bool
 	Delete(provider_id int) (Domain, error)
 }
 
 type Repository interface {
 	GetAll(product_type_id int) ([]Domain, bool)
-	Create(providerDomain *Domain, product_type_id int) (Domain, bool, bool)
+	Create(providerDomain *Domain, product_type_id int) (Domain, bool)
 	GetOne(provider_id int, product_type_id int) (Domain, bool, bool)
 	GetByPhone(provider string, product_type_id int) (Domain, bool)
 	Update(providerDomain *Domain, provider_id int) (Domain, error)
 	UpdateCheck(providerDomain *ProviderDomain, provider_id int) Domain
+	CheckProviderName(name string, product_type_id int) bool
 	Delete(provider_id int) (Domain, error)
 }
