@@ -34,6 +34,9 @@ import (
 	_categoryUseCase "PPOB_BACKEND/businesses/category"
 	_categoryController "PPOB_BACKEND/controllers/category"
 
+	_faqUseCase "PPOB_BACKEND/businesses/landing_pages/faq"
+	_faqController "PPOB_BACKEND/controllers/landing_pages/faq"
+
 	_driverFactory "PPOB_BACKEND/drivers"
 
 	_middleware "PPOB_BACKEND/app/middlewares"
@@ -108,6 +111,11 @@ func main() {
 	categoryUseCase := _categoryUseCase.NewCategoryUseCase(categoryRepo)
 	categoryCtrl := _categoryController.NewCategoryController(categoryUseCase)
 
+	// FAQ
+	faqRepo := _driverFactory.NewFAQRepository(db)
+	faqUseCase := _faqUseCase.NewFaqUsecase(faqRepo)
+	faqCtrl := _faqController.NewFAQController(faqUseCase)
+
 	routesInit := _routes.ControllerList{
 		LoggerMiddleware:        configLogger.Init(),
 		JWTMIddleware:           configJWT.Init(),
@@ -119,6 +127,7 @@ func main() {
 		ProductController:       *productCtrl,
 		TransactionController:   *transactionCtrl,
 		CategoryController:      *categoryCtrl,
+		FAQContoller:            *faqCtrl,
 	}
 	routesInit.RouteRegister(e)
 
