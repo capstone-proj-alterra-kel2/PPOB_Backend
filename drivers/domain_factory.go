@@ -1,11 +1,14 @@
 package drivers
 
 import (
+	faqDomain "PPOB_BACKEND/businesses/landing_pages/faq"
 	productDomain "PPOB_BACKEND/businesses/products"
 	productTypeDomain "PPOB_BACKEND/businesses/producttypes"
 	providerDomain "PPOB_BACKEND/businesses/providers"
 	trnsactionDomain "PPOB_BACKEND/businesses/transactions"
 	userDomain "PPOB_BACKEND/businesses/users"
+	faqDB "PPOB_BACKEND/drivers/postgresql/landing_pages/faq"
+
 	productDB "PPOB_BACKEND/drivers/postgresql/products"
 	productTypeDB "PPOB_BACKEND/drivers/postgresql/producttypes"
 	providerDB "PPOB_BACKEND/drivers/postgresql/providers"
@@ -54,4 +57,8 @@ func NewTransactionRepository(conn *gorm.DB) trnsactionDomain.Repository {
 
 func NewCategoryRepository(conn *gorm.DB) categoryDomain.Repository {
 	return categoryDB.NewCategoryRepository(conn)
+}
+
+func NewFAQRepository(conn *gorm.DB) faqDomain.Repository {
+	return faqDB.NewFAQRepository(conn)
 }

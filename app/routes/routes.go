@@ -3,6 +3,7 @@ package routes
 import (
 	"PPOB_BACKEND/app/middlewares"
 	"PPOB_BACKEND/controllers/category"
+	"PPOB_BACKEND/controllers/landing_pages/faq"
 	"PPOB_BACKEND/controllers/products"
 	"PPOB_BACKEND/controllers/producttypes"
 	"PPOB_BACKEND/controllers/providers"
@@ -26,6 +27,7 @@ type ControllerList struct {
 	WalletController        wallets.WalletController                 // Wallet
 	WalletHistoryController wallet_histories.WalletHistoryController // Wallet Histories
 	CategoryController      category.CategoryController
+	FAQContoller            faq.FAQController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -96,6 +98,13 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	userCategory.Use(middlewares.CheckStatusToken)
 	userCategory.GET("", cl.CategoryController.GetAll)
 
+	// User - Landing Page
+	userLandingPage := v1.Group("/users/landing-pages", middleware.JWTWithConfig(cl.JWTMIddleware))
+	userLandingPage.Use(middlewares.CheckStatusToken)
+
+	userFaq := userLandingPage.Group("/faq")
+	userFaq.GET("", cl.CategoryController.GetAll)
+
 	// Admin - Category
 	adminCategory := v1.Group("/admin/category", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
 	adminCategory.Use(middlewares.CheckStatusToken)
@@ -132,7 +141,16 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	adminProvider.PUT("/:provider_id", cl.ProviderController.Update)
 	adminProvider.DELETE("/:provider_id", cl.ProviderController.Delete)
 
-	// Admin - Voucher
+	// Admin - Landing Page
+	adminLandingPage := v1.Group("/admin/landing-pages", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
+	adminLandingPage.Use(middlewares.CheckStatusToken)
+
+	// Admin - FAQ
+	adminFaq := adminLandingPage.Group("/faq")
+	adminFaq.GET("", cl.FAQContoller.GetAll)
+	adminFaq.POST("", cl.FAQContoller.Create)
+	adminFaq.PUT("/:faq_id", cl.FAQContoller.Update)
+	adminFaq.DELETE("/:faq_id", cl.FAQContoller.Delete)
 
 	// Admin - Transaction
 	adminTransaction := v1.Group("/admin/transactions", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
