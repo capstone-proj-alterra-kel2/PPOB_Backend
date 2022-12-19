@@ -60,7 +60,7 @@ func (tr *transactionRepository) GetDetail(transaction_id int) (transactions.Dom
 func (tr *transactionRepository) GetTransactionHistory(user_id int) []transactions.Domain {
 	var tx []Transaction
 
-	tr.conn.Where("user_id = ?", user_id).Find(&tx)
+	tr.conn.Where("user_id = ?", user_id).Order("transaction_date DESC").Find(&tx)
 	transactions := []transactions.Domain{}
 
 	for _, transaction := range tx {
