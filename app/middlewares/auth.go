@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -14,7 +16,7 @@ var whitelist []string = make([]string, 200)
 type JWTCustomClaims struct {
 	ID uint `json:"id"`
 	jwt.StandardClaims
-	RoleID uint `json:"role_id"`
+	HasRole string `json:"has_role"`
 }
 
 type ConfigJWT struct {
@@ -30,13 +32,14 @@ func (cj *ConfigJWT) Init() middleware.JWTConfig {
 }
 
 // GenerateToken perform generating token and exp from userID
-func (cj *ConfigJWT) GenerateToken(userID uint, roleID uint) string {
+func (cj *ConfigJWT) GenerateToken(userID uint, role string) string {
+
 	claims := JWTCustomClaims{
 		userID,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(int64(cj.ExpireDuration))).Unix(),
 		},
-		roleID,
+		role,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	listedToken, _ := token.SignedString([]byte(cj.SecretJWT))
@@ -44,7 +47,6 @@ func (cj *ConfigJWT) GenerateToken(userID uint, roleID uint) string {
 	whitelist = append(whitelist, listedToken)
 	return listedToken
 }
-
 
 // GetUser perform claims user
 func GetUser(c echo.Context) *JWTCustomClaims {
@@ -57,17 +59,39 @@ func GetUser(c echo.Context) *JWTCustomClaims {
 	return claims
 }
 
+// GetUserID perform get id user from JWT
+func GetUserID(c echo.Context) string {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*JWTCustomClaims)
+	userID := claims.ID
+	idUser := strconv.FormatUint(uint64(userID), 10)
+	return idUser
+}
+
+func CheckStatusToken(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID := GetUser(c)
+
+		if userID == nil {
+			return c.JSON(http.StatusUnauthorized, map[string]string{
+				"message": "invalid token",
+			})
+		}
+		return next(c)
+	}
+}
+
 // IsSuperAdmin perform athorized only Superadmin can access
 func IsSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*JWTCustomClaims)
-		roleID := claims.RoleID
+		HasRole := claims.HasRole
 
-		if roleID != 3 {
+		if HasRole == "superadmin" {
 			return next(c)
 		}
-		return echo.ErrUnauthorized
+		return echo.ErrForbidden
 	}
 }
 
@@ -76,12 +100,12 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user").(*jwt.Token)
 		claims := user.Claims.(*JWTCustomClaims)
-		roleID := claims.RoleID
+		HasRole := claims.HasRole
 
-		if roleID == 3 || roleID == 2 {
+		if HasRole == "admin" || HasRole == "superadmin" {
 			return next(c)
 		}
-		return echo.ErrUnauthorized
+		return echo.ErrForbidden
 	}
 }
 
@@ -95,7 +119,7 @@ func CheckToken(token string) bool {
 	return false
 }
 
-// logout perform deleting token in whitelist
+// Logout perform deleting token in whitelist
 func Logout(token string) bool {
 	for i, listedToken := range whitelist {
 		if listedToken == token {

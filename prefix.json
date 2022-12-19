@@ -1,0 +1,204 @@
+{
+    "prefixes" : [
+        {
+            "prefix" : "0852",
+            "provider" : "Telkomsel",
+            "type" : "Kartu AS"
+        },
+        {
+            "prefix" : "0853",
+            "provider" : "Telkomsel",
+            "type" : "Kartu AS"
+        },
+        {
+            "prefix" : "0811",
+            "provider" : "Telkomsel",
+            "type" : "HALO"
+        },
+        {
+            "prefix" : "0812",
+            "provider" : "Telkomsel",
+            "type" : "Simpati"
+        },
+        {
+            "prefix" : "0813",
+            "provider" : "Telkomsel",
+            "type" : "Simpati"
+        },
+        {
+            "prefix" : "0821",
+            "provider" : "Telkomsel",
+            "type" : "Simpati"
+        },
+        {
+            "prefix" : "0822",
+            "provider" : "Telkomsel",
+            "type" : "Simpati Loop"
+        },
+        {
+            "prefix" : "0823",
+            "provider" : "Telkomsel",
+            "type" : "AS"
+        },
+        {
+            "prefix" : "0851",
+            "provider" : "Telkomsel",
+            "type" : "AS"
+        },
+        {
+            "prefix" : "0855",
+            "provider" : "Indosat",
+            "type" : "Matrix"
+        },
+        {
+            "prefix" : "0856",
+            "provider" : "Indosat",
+            "type" : "IM3"
+        },
+        {
+            "prefix" : "0857",
+            "provider" : "Indosat",
+            "type" : "IM3"
+        },
+        {
+            "prefix" : "0858",
+            "provider" : "Indosat",
+            "type" : "Mentari"
+        },
+        {
+            "prefix" : "0814",
+            "provider" : "Indosat",
+            "type" : "Indosat M2"
+        },
+        {
+            "prefix" : "0815",
+            "provider" : "Indosat",
+            "type" : "Matrix"
+        },
+        {
+            "prefix" : "0816",
+            "provider" : "Indosat",
+            "type" : "Matrix"
+        },
+        {
+            "prefix" : "0817",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0818",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0819",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0859",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0877",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0878",
+            "provider" : "XL",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0813",
+            "provider" : "Axis",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0832",
+            "provider" : "Axis",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0833",
+            "provider" : "Axis",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0838",
+            "provider" : "Axis",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0895",
+            "provider" : "Three",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0896",
+            "provider" : "Three",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0897",
+            "provider" : "Three",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0898",
+            "provider" : "Three",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0899",
+            "provider" : "Three",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0881",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0882",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0883",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0884",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0885",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0886",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0887",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0888",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        },
+        {
+            "prefix" : "0889",
+            "provider" : "Smartfren",
+            "type" : "Prabayar"
+        }
+    ]
+}

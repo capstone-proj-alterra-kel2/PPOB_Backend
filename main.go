@@ -9,9 +9,33 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	
+
 	_userUseCase "PPOB_BACKEND/businesses/users"
 	_userController "PPOB_BACKEND/controllers/users"
+
+	_providerUseCase "PPOB_BACKEND/businesses/providers"
+	_providerController "PPOB_BACKEND/controllers/providers"
+
+	_productTypeUseCase "PPOB_BACKEND/businesses/producttypes"
+	_productTypeController "PPOB_BACKEND/controllers/producttypes"
+
+	_productUseCase "PPOB_BACKEND/businesses/products"
+	_productController "PPOB_BACKEND/controllers/products"
+
+	_walletUseCase "PPOB_BACKEND/businesses/wallets"
+	_walletController "PPOB_BACKEND/controllers/wallets"
+
+	_walletHistoryUseCase "PPOB_BACKEND/businesses/wallet_histories"
+	_walletHistoryController "PPOB_BACKEND/controllers/wallet_histories"
+
+	_transactionUseCase "PPOB_BACKEND/businesses/transactions"
+	_transactionController "PPOB_BACKEND/controllers/transactions"
+
+	_categoryUseCase "PPOB_BACKEND/businesses/category"
+	_categoryController "PPOB_BACKEND/controllers/category"
+
+	_faqUseCase "PPOB_BACKEND/businesses/landing_pages/faq"
+	_faqController "PPOB_BACKEND/controllers/landing_pages/faq"
 
 	_driverFactory "PPOB_BACKEND/drivers"
 
@@ -20,9 +44,9 @@ import (
 	_dbDriver "PPOB_BACKEND/drivers/postgresql"
 
 	util "PPOB_BACKEND/utils"
+
 	"github.com/labstack/echo/v4"
 )
-
 
 type operation func(ctx context.Context) error
 
@@ -54,20 +78,56 @@ func main() {
 	userUseCase := _userUseCase.NewUserUseCase(userRepo, &configJWT)
 	userCtrl := _userController.NewUserController(userUseCase)
 
+	// Product
+	productRepo := _driverFactory.NewProductRepository(db)
+	productUseCase := _productUseCase.NewProductUseCase(productRepo)
+	productCtrl := _productController.NewProductController(productUseCase)
+
 	// Provider
+	providerRepo := _driverFactory.NewProviderRepository(db)
+	providerUsecase := _providerUseCase.NewProviderUseCase(providerRepo)
+	providerCtrl := _providerController.NewProviderController(providerUsecase)
+	// Wallet History
+	walletHistoryRepo := _driverFactory.NewWalletHistoryRepository(db)
+	walletHistoryUseCase := _walletHistoryUseCase.NewWalletHistoryUseCase(walletHistoryRepo)
+	walletHistoryCtrl := _walletHistoryController.NewWalletHistoryController(walletHistoryUseCase, userUseCase)
+	// Wallet
+	walletRepo := _driverFactory.NewWalletRepository(db)
+	walletUseCase := _walletUseCase.NewWalletUseCase(walletRepo)
+	walletCtrl := _walletController.NewWalletController(walletUseCase, walletHistoryUseCase)
 
 	// Product Type
+	productTypeRepo := _driverFactory.NewProductTypeRepository(db)
+	productTypeUseCase := _productTypeUseCase.NewProductTypeUseCase(productTypeRepo)
+	productTypeCtrl := _productTypeController.NewProductTypeController(productTypeUseCase)
 
- // Product
+	// Transaction
+	transactionRepo := _driverFactory.NewTransactionRepository(db)
+	transactionUsecase := _transactionUseCase.NewTransactionUsecase(transactionRepo)
+	transactionCtrl := _transactionController.NewTransactionController(transactionUsecase, productUseCase, userUseCase, walletUseCase, walletHistoryUseCase, productTypeUseCase)
 
-	// Voucher
+	// Category
+	categoryRepo := _driverFactory.NewCategoryRepository(db)
+	categoryUseCase := _categoryUseCase.NewCategoryUseCase(categoryRepo)
+	categoryCtrl := _categoryController.NewCategoryController(categoryUseCase)
 
+	// FAQ
+	faqRepo := _driverFactory.NewFAQRepository(db)
+	faqUseCase := _faqUseCase.NewFaqUsecase(faqRepo)
+	faqCtrl := _faqController.NewFAQController(faqUseCase)
 
 	routesInit := _routes.ControllerList{
-		LoggerMiddleware:      configLogger.Init(),
-		JWTMIddleware:         configJWT.Init(),
-		UserController:        *userCtrl,
-
+		LoggerMiddleware:        configLogger.Init(),
+		JWTMIddleware:           configJWT.Init(),
+		UserController:          *userCtrl,
+		WalletHistoryController: *walletHistoryCtrl,
+		WalletController:        *walletCtrl,
+		ProviderController:      *providerCtrl,
+		ProductTypeController:   *productTypeCtrl,
+		ProductController:       *productCtrl,
+		TransactionController:   *transactionCtrl,
+		CategoryController:      *categoryCtrl,
+		FAQContoller:            *faqCtrl,
 	}
 	routesInit.RouteRegister(e)
 

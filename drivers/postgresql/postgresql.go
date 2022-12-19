@@ -1,7 +1,16 @@
 package postgres_driver
 
 import (
+	"PPOB_BACKEND/drivers/postgresql/category"
+	"PPOB_BACKEND/drivers/postgresql/landing_pages/faq"
+	"PPOB_BACKEND/drivers/postgresql/products"
+	"PPOB_BACKEND/drivers/postgresql/producttypes"
+	"PPOB_BACKEND/drivers/postgresql/providers"
+	"PPOB_BACKEND/drivers/postgresql/roles"
+	"PPOB_BACKEND/drivers/postgresql/transactions"
 	"PPOB_BACKEND/drivers/postgresql/users"
+	"PPOB_BACKEND/drivers/postgresql/wallet_histories"
+	"PPOB_BACKEND/drivers/postgresql/wallets"
 	"fmt"
 
 	"log"
@@ -40,7 +49,16 @@ func (config *ConfigDB) InitDB() *gorm.DB {
 // Migrating Struct into Table in Database
 func DBMigrate(db *gorm.DB) {
 	db.AutoMigrate(
+		&roles.Role{}, // role
 		&users.User{}, // User
+		&category.Category{},
+		&wallets.Wallet{},
+		&wallet_histories.WalletHistory{},
+		&producttypes.ProductType{}, // ProductType
+		&providers.Provider{},       // Provider
+		&products.Product{},         // Product
+		&transactions.Transaction{}, // Transaction
+		&faq.FAQ{},
 		// Provider
 		// ProductType
 		// ...
