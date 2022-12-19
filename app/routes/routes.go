@@ -101,7 +101,9 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// User - Landing Page
 	userLandingPage := v1.Group("/users/landing-pages", middleware.JWTWithConfig(cl.JWTMIddleware))
 	userLandingPage.Use(middlewares.CheckStatusToken)
-	userLandingPage.GET("", cl.CategoryController.GetAll)
+
+	userFaq := userLandingPage.Group("/faq")
+	userFaq.GET("", cl.CategoryController.GetAll)
 
 	// Admin - Category
 	adminCategory := v1.Group("/admin/category", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.IsAdmin)
