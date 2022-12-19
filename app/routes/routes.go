@@ -163,7 +163,7 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	// Admin - Wallet
 	adminWallet := v1.Group("/admin/wallets", middleware.JWTWithConfig(cl.JWTMIddleware), middlewares.CheckStatusToken)
 	adminWallet.GET("", cl.WalletController.GetAllWallet)
-	adminWallet.GET("/:user_id", cl.WalletController.GetDetailWallet)
+	adminWallet.GET("/:user_id", cl.WalletController.GetWalletUserByUserID)
 	adminWallet.PUT("/:user_id", cl.WalletController.UpdateBalance)
 	// Admin - Wallet History
 	adminWalletHistory := adminWallet.Group("/:no_wallet/histories")
